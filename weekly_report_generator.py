@@ -3,6 +3,7 @@ from github_utils import get_prs_and_commits, get_merged_prs, get_reviewed_prs
 from sonarqube_utils import get_test_coverage
 from google_calendar_utils import get_events_for_week
 from llm_utils import summarize_accomplishments_with_llm
+from config import REPO_OWNER, REPO_NAME
 import user_input
 
 def generate_weekly_report():
@@ -90,7 +91,7 @@ def format_deployments(merged_prs):
     return [f"{pr['title']} #{pr['number']}" for pr in merged_prs]
 
 def format_reviewed_prs(reviewed_prs):
-    return [f"{pr['title']} [#{pr['number']}](https://github.com/GDP-ADMIN/CATAPA-API/pull/{pr['number']})" for pr in reviewed_prs]
+    return [f"{pr['title']} [#{pr['number']}](https://github.com/{REPO_OWNER}/{REPO_NAME}/pull/{pr['number']})" for pr in reviewed_prs]
 
 def format_meetings(meetings_and_activities):
     if not meetings_and_activities:

@@ -6,9 +6,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from collections import defaultdict
-from config import GOOGLE_CLIENT_SECRET_FILE
-
-SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+from config import GOOGLE_CLIENT_SECRET_FILE, GOOGLE_CALENDAR_SCOPES
 
 EXCLUDED_MEETINGS = [
     'Isi Data Kehadiran CATAPA',
@@ -17,12 +15,12 @@ EXCLUDED_MEETINGS = [
 def get_credentials():
     creds = None
     if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        creds = Credentials.from_authorized_user_file('token.json', GOOGLE_CALENDAR_SCOPES)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(GOOGLE_CLIENT_SECRET_FILE, SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(GOOGLE_CLIENT_SECRET_FILE, GOOGLE_CALENDAR_SCOPES)
             creds = flow.run_local_server(port=0)
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
