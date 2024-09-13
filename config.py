@@ -7,7 +7,6 @@ def check_env_variables():
     required_vars = [
         'GITHUB_PERSONAL_ACCESS_TOKEN',
         'GITHUB_USERNAME',
-        'GOOGLE_CLIENT_SECRET_FILE',
         'GOOGLE_GEMINI_API_KEY',
         'GROQ_API_KEY',
         'REPO_NAME',
@@ -17,8 +16,13 @@ def check_env_variables():
     
     missing_vars = [var for var in required_vars if not os.getenv(var)]
     
+    # Check if GOOGLE_CLIENT_SECRET_FILE exists
+    google_secret_file = os.getenv('GOOGLE_CLIENT_SECRET_FILE')
+    if not google_secret_file or not os.path.isfile(google_secret_file):
+        missing_vars.append('GOOGLE_CLIENT_SECRET_FILE (file not found)')
+    
     if missing_vars:
-        raise EnvironmentError(f"The following required environment variables are missing or empty: {', '.join(missing_vars)}")
+        raise EnvironmentError(f"The following required environment variables are missing, empty, or invalid: {', '.join(missing_vars)}")
 
 check_env_variables()
 
@@ -36,4 +40,7 @@ GITHUB_API_BASE_URL = "https://api.github.com"
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 
 SONARQUBE_API_URL = 'https://sqa.gdplabs.net/api/measures/component'
-SONARQUBE_COMPONENT = 'catapa-core:src/main/java/com/catapa/core/personnel'
+SONARQUBE_PROJECT = 'catapa-core'
+SONARQUBE_PROJECT_DIRECTORY = 'src/main/java/com/catapa/core/personnel'
+SONARQUBE_COMPONENT = f"{SONARQUBE_PROJECT}:src/main/java/com/catapa/core/personnel"
+SONARQUBE_COMPONENT_URL = f"https://sqa.gdplabs.net/code?id={SONARQUBE_PROJECT}&selected={SONARQUBE_COMPONENT}"

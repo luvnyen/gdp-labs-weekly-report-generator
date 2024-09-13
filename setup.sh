@@ -33,3 +33,7 @@ else
 fi
 
 echo "Setup complete! Don't forget to configure your credentials in the .env file before running the application."
+
+# Keep the terminal open
+echo "Press Enter to close this window..."
+read

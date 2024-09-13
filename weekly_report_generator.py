@@ -1,9 +1,9 @@
 import datetime
-from github_utils import get_prs_and_commits, get_merged_prs, get_reviewed_prs
+from github_utils import get_prs_and_commits, get_merged_prs, get_reviewed_prs, format_prs_and_commits
 from sonarqube_utils import get_test_coverage
 from google_calendar_utils import get_events_for_week
 from llm_utils import summarize_accomplishments_with_llm
-from config import REPO_OWNER, REPO_NAME
+from config import SONARQUBE_COMPONENT_URL
 import user_input
 
 def generate_weekly_report():
@@ -17,6 +17,7 @@ def generate_weekly_report():
 
     # Fetch GitHub data
     api_prs, api_pr_commits = get_prs_and_commits()
+    all_accomplishments = format_prs_and_commits(api_prs, api_pr_commits)
     api_merged_prs = get_merged_prs()
     api_reviewed_prs = get_reviewed_prs()
 
@@ -26,18 +27,12 @@ def generate_weekly_report():
     # Fetch Google Calendar data
     all_meetings_and_activities = get_events_for_week()
 
-    # Prepare data for the report
-    all_accomplishments = format_accomplishments(api_prs, api_pr_commits)
-    
     # Write raw accomplishments to file
     with open('ACCOMPLISHMENTS_RAW.md', 'w') as f:
-        f.write('\n'.join(all_accomplishments))
+        f.write(all_accomplishments)
     
-    all_deployments = format_deployments(api_merged_prs)
-    all_prs_reviewed = format_reviewed_prs(api_reviewed_prs)
-
     # Use LLM to summarize accomplishments
-    summarized_accomplishments = summarize_accomplishments_with_llm('\n'.join(all_accomplishments))
+    summarized_accomplishments = summarize_accomplishments_with_llm(all_accomplishments)
 
     # Generate the report using the template
     with open('TEMPLATE.md', 'r') as template_file:
@@ -54,9 +49,10 @@ def generate_weekly_report():
         'major_bugs_half_year': user_input.major_bugs_half_year,
         'minor_bugs_half_year': user_input.minor_bugs_half_year,
         'test_coverage': test_coverage,
+        'sonarqube_component_url': SONARQUBE_COMPONENT_URL,
         'accomplishments': summarized_accomplishments,
-        'deployments': format_list(all_deployments, indent="  "),
-        'prs_reviewed': format_list(all_prs_reviewed, indent="  "),
+        'deployments': format_list(api_merged_prs, indent="  "),
+        'prs_reviewed': format_list(api_reviewed_prs, indent="  "),
         'meetings_and_activities': format_meetings(all_meetings_and_activities),
         'wfo_days': format_wfo_days(user_input.wfo_days),
         'next_steps': format_list(user_input.next_steps, indent=""),
@@ -70,28 +66,6 @@ def format_list(items, indent=""):
     if not items:
         return f"{indent}* None"
     return '\n'.join(f"{indent}* {item}" for item in items)
-
-def format_accomplishments(prs, pr_commits):
-    accomplishments = []
-    for pr in prs:
-        pr_number = pr['number']
-        pr_title = pr['title']
-        commits = pr_commits.get(pr_number, [])
-        accomplishments.append(f"* PR #{pr_number} - {pr_title}")
-        for commit in commits:
-            message_lines = commit['message'].split('\n')
-            accomplishments.append(f"   * Commit: {message_lines[0]}")  # First line (commit title)
-            for line in message_lines[1:]:  # Remaining lines (description and bullet points)
-                if line.strip():  # Only include non-empty lines
-                    accomplishments.append(f"      {line.strip()}")
-        accomplishments.append("")  # Add an empty line between PRs
-    return accomplishments
-
-def format_deployments(merged_prs):
-    return [f"{pr['title']} #{pr['number']}" for pr in merged_prs]
-
-def format_reviewed_prs(reviewed_prs):
-    return [f"{pr['title']} [#{pr['number']}](https://github.com/{REPO_OWNER}/{REPO_NAME}/pull/{pr['number']})" for pr in reviewed_prs]
 
 def format_meetings(meetings_and_activities):
     if not meetings_and_activities:
