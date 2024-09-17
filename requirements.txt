@@ -6,3 +6,8 @@ google-generativeai
 groq
 python-dotenv
 requests
+crewai
+langchain
+langchain-community
+langchain-core
+langchain-google-genai

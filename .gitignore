@@ -1,3 +1,8 @@
-*
-!.env.example
-!.gitignore
+__pycache__
+output
+venv
+.env
+.env.local
+client_secret_*
+token.json
+ACCOMPLISHMENTS_RAW.md
