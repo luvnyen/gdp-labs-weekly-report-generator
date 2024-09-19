@@ -1,11 +1,11 @@
-# main.py
+# agent_main.py
 
 import os
-import time
-import sys
 from datetime import datetime, timedelta
 from crewai import Agent, Task, Crew
 from dotenv import load_dotenv
+from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Import existing utilities
 from weekly_report_generator import generate_weekly_report
@@ -14,37 +14,36 @@ from google_calendar_utils import get_events_for_week
 from sonarqube_utils import get_test_coverage
 from config import REPO_OWNER, REPO_NAME, GROQ_API_KEY, GOOGLE_GEMINI_API_KEY
 from api_utils import create_gmail_draft, create_google_sites_draft
-from llm_utils import summarize_with_groq, summarize_with_gemini
 
 load_dotenv()
 
-class CustomLLM:
-    def __init__(self, use_groq=True):
-        self.use_groq = use_groq
-    
-    def __call__(self, prompt):
-        if self.use_groq:
-            return summarize_with_groq(prompt)
-        else:
-            return summarize_with_gemini(prompt)
-
 def create_llm_agent(role, goal, backstory, use_groq=True):
-    llm = CustomLLM(use_groq=use_groq)
+    if use_groq:
+        llm = ChatGroq(model_name="groq/gemma2-9b-it", api_key=GROQ_API_KEY, verbose=True, temperature=0.5)
+    else:
+        llm = ChatGoogleGenerativeAI(model="gemini-1.0-pro", google_api_key=GOOGLE_GEMINI_API_KEY)
+
     
     return Agent(
         role=role,
         goal=goal,
         backstory=backstory,
+        verbose=True,
         llm=llm
     )
 
 def collect_all_data():
     print("Collecting data...")
     github_prs, github_commits = get_prs_and_commits()
+    print("GitHub data collected.")
     github_merged_prs = get_merged_prs()
+    print("GitHub merged PRs collected.")
     github_reviewed_prs = get_reviewed_prs()
+    print("GitHub reviewed PRs collected.")
     calendar_events = get_events_for_week()
+    print("Calendar events collected.")
     sonarqube_coverage = get_test_coverage()
+    print("SonarQube data collected.")
     
     return {
         'github_prs': github_prs,
@@ -60,19 +59,20 @@ def create_agents_and_tasks(collected_data):
         role='Data Compiler',
         goal='Compile all collected data into a structured format for the weekly report',
         backstory='Expert in organizing and structuring diverse datasets from multiple sources',
-        use_groq=True  # You can change this to False to use Gemini instead
+        use_groq=True
     )
     
     report_writer = create_llm_agent(
         role='Report Writer',
         goal='Create a comprehensive weekly report based on compiled data',
         backstory='Experienced technical writer specializing in clear, concise developer reports',
-        use_groq=False  # You can change this to True to use Groq instead
+        use_groq=True
     )
     
     compile_task = Task(
         description=f'Compile and structure the following data for the weekly report: {collected_data}',
-        agent=data_compiler
+        agent=data_compiler,
+        expected_output="A structured and organized compilation of the provided data, ready for report writing."
     )
     
     with open('TEMPLATE.md', 'r') as template_file:
@@ -80,7 +80,8 @@ def create_agents_and_tasks(collected_data):
     
     write_report_task = Task(
         description=f'Write the weekly report based on the compiled data. Use the following template: {template}',
-        agent=report_writer
+        agent=report_writer,
+        expected_output="A complete weekly report following the provided template, incorporating all the compiled data."
     )
     
     return [data_compiler, report_writer], [compile_task, write_report_task]
@@ -98,7 +99,8 @@ def get_user_approval():
 def refine_report(crew, feedback):
     refine_task = Task(
         description=f'Refine the report based on the following user feedback: {feedback}',
-        agent=crew.agents[1]  # Assuming the report writer is the second agent
+        agent=crew.agents[1],  # Assuming the report writer is the second agent
+        expected_output="An improved version of the report addressing the user's feedback."
     )
     return crew.kickoff(tasks=[refine_task])
 
