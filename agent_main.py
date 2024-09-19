@@ -2,13 +2,13 @@
 
 import os
 from datetime import datetime, timedelta
-from crewai import Agent, Task, Crew
+from crewai import Agent, Task, Crew, Process
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Import existing utilities
-from weekly_report_generator import generate_weekly_report, format_accomplishments, format_deployments, format_reviewed_prs, format_meetings, format_wfo_days
+from weekly_report_generator import format_accomplishments, format_deployments, format_reviewed_prs, format_meetings, format_wfo_days
 from github_utils import get_prs_and_commits, get_merged_prs, get_reviewed_prs
 from google_calendar_utils import get_events_for_week
 from sonarqube_utils import get_test_coverage
@@ -103,7 +103,7 @@ def create_agents_and_tasks(preprocessed_data):
         role='Report Writer',
         goal='Create a comprehensive weekly report based on analyzed data and insights',
         backstory='Experienced technical writer specializing in clear, concise developer reports',
-        use_groq=True
+        use_groq=True,
     )
     
     quality_assurance = create_llm_agent(
@@ -113,21 +113,20 @@ def create_agents_and_tasks(preprocessed_data):
         use_groq=True
     )
     
-    analyze_task = Task(
-        description=f'Analyze the following preprocessed data and extract key insights: {preprocessed_data}',
-        agent=data_analyzer,
-        expected_output="A detailed analysis of the preprocessed data, highlighting key insights and trends. Detailed list of urls and links are also recommended, because it will be used in the report.",
-        human_input=True
-    )
-    
     with open('TEMPLATE.md', 'r') as template_file:
         template = template_file.read()
+
+    analyze_task = Task(
+        description=f'Analyze the following preprocessed data and extract key insights: {preprocessed_data} and you can refer to this template file to see the structure of the report and fit the data you have analyzed: {template}',
+        agent=data_analyzer,
+        expected_output="A detailed analysis of the preprocessed data, highlighting key insights and trends. Detailed list of urls and links are also recommended, because it will be used in the report.",
+    )
+    
     
     write_report_task = Task(
-        description=f'Write the weekly report based on the analyzed data and insights. Use the following template: {template}',
+        description=f'Write the weekly report based on the analyzed data and insights. The report must only be based with the preprocessed data from Data Analyzer and you must not improvise too much. Use only and only the following template: {template}',
         agent=report_writer,
         expected_output="A complete weekly report following the provided template, incorporating all the analyzed data and insights. Detailed list of urls and links are also recommended, because it will be used in the report.",
-        human_input=True,
     )
     
     qa_task = Task(
@@ -154,7 +153,9 @@ def refine_report(crew, feedback):
         agent=crew.agents[1],  # Assuming the report writer is the second agent
         expected_output="An improved version of the report addressing the user's feedback."
     )
-    return crew.kickoff(tasks=[refine_task])
+
+    crew.tasks[1] = refine_task
+    return crew.kickoff()
 
 def save_report(report, filename):
     os.makedirs('output', exist_ok=True)
@@ -175,31 +176,27 @@ def main():
     collected_data = collect_all_data()
     preprocessed_data = preprocess_data(collected_data)
     agents, tasks = create_agents_and_tasks(preprocessed_data)
+
+    manager = create_llm_agent(
+        role="Content Manager",
+        goal="Efficiently manage the crew and ensure high-quality task completion for the weekly report",
+        backstory="You're an experienced content manager, skilled in overseeing little details and guiding teams to success. Your role is to coordinate the efforts of the crew members, ensuring that each task is completed on time and to the highest standard.",
+        allow_delegation=True,
+    )
     
     crew = Crew(agents=agents, tasks=tasks, verbose=True)
     
     result = crew.kickoff()
     print("\nDraft Report:\n")
     print(result)
-    # while True:
-    #     result = crew.kickoff()
-    #     print("\nDraft Report:\n")
-    #     print(result)
-    #     # print(f"\nType of raw is {type(result.raw)}")
-    #     # print(f"Result of raw is {result.raw}")
-    #     # print(f"\nType of pydantic is {type(result.pydantic)}")
-    #     # print(f"Result of pydantic is {result.pydantic}")
-    #     # print(f"\nType of json_dict is {type(result.json_dict)}")
-    #     # print(f"Result of json_dict is {result.json_dict}")
-    #     # print(f"\nType of tasks_output is {type(result.tasks_output)}")
-    #     # print(f"Result of tasks_output is {result.tasks_output}")
+    while True:
+        if get_user_approval():
+            break
+        else:
+            feedback = input("Please provide feedback for improvement: ")
+            result = refine_report(crew, feedback)
+            print("Refine report selesaiiii")
 
-        
-    #     if get_user_approval():
-    #         break
-    #     else:
-    #         feedback = input("Please provide feedback for improvement: ")
-    #         result = refine_report(crew, feedback)
     
     filename = f'Weekly_Report_{start_date}_to_{end_date}.md'
     save_report(result.raw, filename)
