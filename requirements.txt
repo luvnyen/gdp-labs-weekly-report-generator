@@ -1,10 +1,10 @@
 crewai
-groq
-google-generativeai
-python-dotenv
-langchain-groq
-langchain-google-genai
-requests
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
+google-generativeai
+groq
+langchain-google-genai
+langchain-groq
+python-dotenv
+requests

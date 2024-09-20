@@ -9,7 +9,8 @@ from agents.data_collector import collect_all_data
 from agents.data_preprocessor import preprocess_data
 from agents.agent_creator import create_agents_and_tasks
 from agents.report_generator import generate_report, save_report
-from api_utils import create_gmail_draft, create_google_sites_draft
+from agents.utils.api import create_gmail_draft
+from config import GMAIL_SEND_TO, GMAIL_SEND_CC
 
 load_dotenv()
 
@@ -34,26 +35,16 @@ def main():
     save_report(report, filename)
     
     # TODO: Implement sending the report via email and creating a Google Sites draft
+    # Needs to check the Google oAuth consent screen, because it is not yet working as expected
     try:
         create_gmail_draft(
             report,
-            to="sahat.n.simangunsong@gdplabs.id",
-            cc="ai@gdplabs.id, bosa-eng@gdplabs.id"
+            to=GMAIL_SEND_TO,
+            cc=GMAIL_SEND_CC
         )
         print("Gmail draft created successfully.")
     except Exception as e:
         print(f"Error creating Gmail draft: {str(e)}")
-    
-    # TODO: Implement creating a Google Sites draft
-    try:
-        create_google_sites_draft(
-            report,
-            site_id=os.getenv('GOOGLE_SITE_ID'),
-            page_name=f"Weekly Report {start_date} to {end_date}"
-        )
-        print("Google Sites draft created successfully.")
-    except Exception as e:
-        print(f"Error creating Google Sites draft: {str(e)}")
     
     print("Weekly report generation complete!")
 

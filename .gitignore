@@ -1,8 +1,9 @@
-__pycache__
-output
-venv
 .env
 .env.local
-client_secret_*
-token.json
+__pycache__
 ACCOMPLISHMENTS_RAW.md
+client_secret_*
+output
+token.json
+user_input.py
+venv

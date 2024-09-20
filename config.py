@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 def check_env_variables():
     required_vars = [
@@ -30,6 +30,9 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 REPO_NAME = os.getenv('REPO_NAME')
 REPO_OWNER = os.getenv('REPO_OWNER')
 SONARQUBE_USER_TOKEN = os.getenv('SONARQUBE_USER_TOKEN')
+
+GMAIL_SEND_TO = os.getenv('GMAIL_SEND_TO')
+GMAIL_SEND_CC = os.getenv('GMAIL_SEND_CC')
 
 GITHUB_API_BASE_URL = "https://api.github.com"
 

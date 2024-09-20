@@ -8,6 +8,7 @@ minor_bugs_half_year = 0
 
 wfo_days = [2, 3, 4]
 
+# Please update to your personal learning and next steps
 next_steps = [
     "Continue to work on increasing test coverage",
 ]
