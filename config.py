@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from zoneinfo import ZoneInfo
 
 load_dotenv()
 
@@ -35,9 +36,12 @@ REPO_NAME = os.getenv('REPO_NAME')
 REPO_OWNER = os.getenv('REPO_OWNER')
 SONARQUBE_USER_TOKEN = os.getenv('SONARQUBE_USER_TOKEN')
 
+TIMEZONE = ZoneInfo("Asia/Jakarta")
+
 GITHUB_API_BASE_URL = "https://api.github.com"
 
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 SONARQUBE_API_URL = 'https://sqa.gdplabs.net/api/measures/component'
 SONARQUBE_PROJECT = 'catapa-core'

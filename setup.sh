@@ -32,6 +32,15 @@ else
     echo "Warning: .env.example file not found. Please create .env file manually."
 fi
 
+# 7. Copy TEMPLATE.example.md to TEMPLATE.md
+echo "Copying TEMPLATE.example.md to TEMPLATE.md..."
+if [ -f TEMPLATE.example.md ]; then
+    cp TEMPLATE.example.md TEMPLATE.md
+    echo "TEMPLATE.md file created successfully."
+else
+    echo "Warning: TEMPLATE.example.md file not found. Please create TEMPLATE.md file manually."
+fi
+
 echo "Setup complete! Don't forget to configure your credentials in the .env file before running the application."
 
 # Keep the terminal open

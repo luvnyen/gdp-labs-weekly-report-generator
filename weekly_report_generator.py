@@ -2,8 +2,10 @@ import datetime
 from github_utils import get_prs_and_commits, get_merged_prs, get_reviewed_prs, format_prs_and_commits
 from sonarqube_utils import get_test_coverage
 from google_calendar_utils import get_events_for_week
+from google_forms_utils import get_this_week_filled_forms_formatted
 from llm_utils import summarize_accomplishments_with_llm
 from config import SONARQUBE_COMPONENT_URL
+from date_time_utils import ordinal
 import user_input
 
 def generate_weekly_report():
@@ -26,6 +28,9 @@ def generate_weekly_report():
 
     # Fetch Google Calendar data
     all_meetings_and_activities = get_events_for_week()
+
+    # Fetch Google Forms data using Gmail API
+    google_forms_filled = get_this_week_filled_forms_formatted()
 
     # Write raw accomplishments to file
     with open('ACCOMPLISHMENTS_RAW.md', 'w') as f:
@@ -54,6 +59,7 @@ def generate_weekly_report():
         'deployments': format_list(api_merged_prs, indent="  "),
         'prs_reviewed': format_list(api_reviewed_prs, indent="  "),
         'meetings_and_activities': format_meetings(all_meetings_and_activities),
+        'google_forms_filled': format_list(google_forms_filled, indent="  "),
         'wfo_days': format_wfo_days(user_input.wfo_days),
         'next_steps': format_list(user_input.next_steps, indent=""),
         'learning': format_list(user_input.learning, indent="")
@@ -84,10 +90,3 @@ def format_wfo_days(days):
             formatted_days.append(f"{day_names[day-1]}, {date.strftime('%B')} {ordinal(date.day)}, {date.year}")
     
     return format_list(formatted_days, indent="  ")
-
-def ordinal(n):
-    return str(n) + ("th" if 4 <= n % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(n % 10, "th"))
-
-if __name__ == "__main__":
-    report = generate_weekly_report()
-    print(report)
