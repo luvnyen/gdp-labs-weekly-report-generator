@@ -15,15 +15,22 @@ EXCLUDED_MEETINGS = [
 def get_credentials():
     creds = None
     if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', GOOGLE_CALENDAR_SCOPES)
+        try:
+            creds = Credentials.from_authorized_user_file('token.json', GOOGLE_CALENDAR_SCOPES)
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+        except Exception as e:
+            print("Token has expired or is invalid. Please log in again.")
+            if os.path.exists('token.json'):
+                os.remove('token.json')
+            creds = None
+
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(GOOGLE_CLIENT_SECRET_FILE, GOOGLE_CALENDAR_SCOPES)
-            creds = flow.run_local_server(port=0)
+        flow = InstalledAppFlow.from_client_secrets_file(GOOGLE_CLIENT_SECRET_FILE, GOOGLE_CALENDAR_SCOPES)
+        creds = flow.run_local_server(port=0)
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
+    
     return creds
 
 def ordinal(n):

@@ -103,11 +103,30 @@ def format_prs_and_commits(prs, pr_commits):
     
     return '\n'.join(formatted_output)
 
+def get_pr_details(pr_number):
+    url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{REPO_NAME}/pulls/{pr_number}"
+    response = requests.get(url, headers=get_github_headers())
+    if response.status_code == 200:
+        return response.json()
+    else:
+        print(f"Error fetching PR #{pr_number}: {response.status_code}")
+        return None
+
+def get_merged_prs_for_commit(commit_sha):
+    url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{REPO_NAME}/commits/{commit_sha}/pulls"
+    params = {"state": "closed"}
+    response = requests.get(url, params=params, headers=get_github_headers())
+    if response.status_code == 200:
+        return [pr for pr in response.json() if pr['merged_at'] is not None and pr['user']['login'] == GITHUB_USERNAME]
+    else:
+        print(f"Error fetching PRs for commit {commit_sha}: {response.status_code}")
+        return []
+
 def get_merged_prs():
     start_of_week = get_start_of_week()
     start_of_week_str = start_of_week.strftime("%Y-%m-%d")
 
-    query = f"repo:{REPO_OWNER}/{REPO_NAME} is:pr is:merged author:{GITHUB_USERNAME} merged:>={start_of_week_str}"
+    query = f"repo:{REPO_OWNER}/{REPO_NAME} is:pr is:merged author:{GITHUB_USERNAME} merged:>={start_of_week_str} base:master base:main"
     url = f"{GITHUB_API_BASE_URL}/search/issues"
     params = {
         "q": query,
@@ -119,7 +138,15 @@ def get_merged_prs():
     response = requests.get(url, params=params, headers=get_github_headers())
     if response.status_code == 200:
         merged_prs = response.json()['items']
-        return format_prs(merged_prs)
+        all_prs = []
+        for pr in merged_prs:
+            pr_details = get_pr_details(pr['number'])
+            if pr_details:
+                all_prs.append(pr_details)
+                merge_commit_sha = pr_details['merge_commit_sha']
+                nested_prs = get_merged_prs_for_commit(merge_commit_sha)
+                all_prs.extend(nested_prs)
+        return format_merged_prs(all_prs)
     else:
         print(f"Error: {response.status_code}")
         print(response.text)
@@ -149,3 +176,11 @@ def get_reviewed_prs():
 
 def format_prs(prs):
     return [f"{pr['title']} [#{pr['number']}]({PR_BASE_URL}/{pr['number']})" for pr in prs]
+
+def format_merged_prs(prs):
+    formatted_prs = []
+    for pr in prs:
+        base_branch = pr['base']['ref']
+        formatted_pr = f"{pr['title']} [#{pr['number']}]({PR_BASE_URL}/{pr['number']}) (merged into {base_branch})"
+        formatted_prs.append(formatted_pr)
+    return formatted_prs
