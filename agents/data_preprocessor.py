@@ -1,5 +1,3 @@
-# data_preprocessor.py
-
 from datetime import datetime
 from weekly_report_generator import format_accomplishments, format_deployments, format_reviewed_prs, format_meetings, format_wfo_days
 import user_input

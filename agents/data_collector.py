@@ -1,5 +1,3 @@
-# data_collector.py
-
 from github_utils import get_prs_and_commits, get_merged_prs, get_reviewed_prs
 from google_calendar_utils import get_events_for_week
 from sonarqube_utils import get_test_coverage

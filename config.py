@@ -37,6 +37,9 @@ GMAIL_SEND_CC = os.getenv('GMAIL_SEND_CC')
 GITHUB_API_BASE_URL = "https://api.github.com"
 
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
+GOOGLE_MAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.compose']
 
 SONARQUBE_API_URL = 'https://sqa.gdplabs.net/api/measures/component'
 SONARQUBE_COMPONENT = 'catapa-core:src/main/java/com/catapa/core/personnel'
+
+NAME_ON_REPORT = os.getenv('NAME_ON_REPORT')

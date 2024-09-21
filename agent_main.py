@@ -1,6 +1,3 @@
-# agent_main.py
-
-import os
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from crewai import Crew
@@ -9,7 +6,7 @@ from agents.data_collector import collect_all_data
 from agents.data_preprocessor import preprocess_data
 from agents.agent_creator import create_agents_and_tasks
 from agents.report_generator import generate_report, save_report
-from agents.utils.api import create_gmail_draft
+from utils.gmail_draft import create_gmail_draft
 from config import GMAIL_SEND_TO, GMAIL_SEND_CC
 
 load_dotenv()
@@ -34,8 +31,7 @@ def main():
     filename = f'Weekly_Report_{start_date}_to_{end_date}.md'
     save_report(report, filename)
     
-    # TODO: Implement sending the report via email and creating a Google Sites draft
-    # Needs to check the Google oAuth consent screen, because it is not yet working as expected
+    # TODO: Fix the Gmail draft creation, because the current implementation is very plain
     try:
         create_gmail_draft(
             report,

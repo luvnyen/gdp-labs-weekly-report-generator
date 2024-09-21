@@ -1,5 +1,3 @@
-# report_generator.py
-
 import os
 from crewai import Task
 
@@ -18,7 +16,7 @@ def generate_report(crew):
 
 def get_user_approval():
     while True:
-        response = input("Do you approve this report? (yes/no): ").lower()
+        response = input("Do you approve this report (Type 'no' if you want to provide feedback)? (yes/no): ").lower()
         if response in ['yes', 'y']:
             return True
         elif response in ['no', 'n']:
