@@ -4,7 +4,6 @@
 if [[ "$VIRTUAL_ENV" == "" ]]; then
     # Virtual environment is not activated, so activate it
     if [ -d "venv" ]; then
-        echo "Activating virtual environment..."
         source venv/bin/activate
     else
         echo "Error: Virtual environment 'venv' not found. Please run the setup script first."
@@ -20,6 +19,9 @@ python3 main.py
 # Deactivate the virtual environment when the script finishes
 # Only deactivate if we activated it in this script
 if [[ "$VIRTUAL_ENV" != "" && "$VIRTUAL_ENV" == *"/venv" ]]; then
-    echo "Deactivating virtual environment..."
     deactivate
 fi
+
+# Keep the terminal open
+echo "Press Enter to close this window..."
+read
