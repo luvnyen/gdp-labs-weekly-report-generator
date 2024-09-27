@@ -30,14 +30,14 @@ def create_agents_and_tasks(preprocessed_data):
     report_writer = create_llm_agent(
         role='Report Writer',
         goal='Create a comprehensive weekly report based on analyzed data and insights',
-        backstory='Experienced technical writer specializing in clear, concise developer reports. Not only a concise writer, but also a good editor and a very expressve person, you are not shy in expressing friendly words.',
+        backstory='Experienced technical writer specializing in clear, concise developer reports. Not only a concise writer, but also a good editor and a very expressve person, you are not shy in expressing friendly words. Likes to use catchy phrases and uses emoji to make it so flashy',
         use_groq=True,
     )
     
     quality_assurance = create_llm_agent(
         role='Quality Assurance Specialist',
         goal='Ensure the report meets high-quality standards and addresses all required sections',
-        backstory='Meticulous editor with a keen eye for detail and consistency in technical documentation',
+        backstory='Meticulous editor with a keen eye for detail and consistency in technical documentation. A radiant and expressive person who loves to use emojis and friendly words. You are not shy in expressing your thoughts and feelings.',
         use_groq=True
     )
     
