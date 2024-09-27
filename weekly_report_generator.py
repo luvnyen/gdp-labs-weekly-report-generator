@@ -73,6 +73,28 @@ def format_list(items, indent=""):
         return f"{indent}* None"
     return '\n'.join(f"{indent}* {item}" for item in items)
 
+def format_accomplishments(prs, pr_commits):
+    accomplishments = []
+    for pr in prs:
+        pr_number = pr['number']
+        pr_title = pr['title']
+        commits = pr_commits.get(pr_number, [])
+        accomplishments.append(f"* PR #{pr_number} - {pr_title}")
+        for commit in commits:
+            message_lines = commit['message'].split('\n')
+            accomplishments.append(f"   * Commit: {message_lines[0]}")  # First line (commit title)
+            for line in message_lines[1:]:  # Remaining lines (description and bullet points)
+                if line.strip():  # Only include non-empty lines
+                    accomplishments.append(f"      {line.strip()}")
+        accomplishments.append("")  # Add an empty line between PRs
+    return accomplishments
+
+def format_deployments(merged_prs):
+    return [f"{pr['title']} #{pr['number']}" for pr in merged_prs]
+
+def format_reviewed_prs(reviewed_prs):
+    return [f"{pr['title']} [#{pr['number']}](https://github.com/{REPO_OWNER}/{REPO_NAME}/pull/{pr['number']})" for pr in reviewed_prs]
+
 def format_meetings(meetings_and_activities):
     if not meetings_and_activities:
         return "  * None"

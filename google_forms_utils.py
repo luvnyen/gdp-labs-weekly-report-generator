@@ -7,7 +7,7 @@ from date_time_utils import ordinal, format_time
 FORMS_RECEIPT_EMAIL = "forms-receipts-noreply@google.com"
 
 def get_forms_filled_this_week():
-    service = get_google_service('gmail', 'v1', 'token_gmail.json', GMAIL_SCOPES)
+    service = get_google_service('gmail', 'v1', 'token.json', GMAIL_SCOPES)
 
     # Get the start of the week
     today = datetime.now(TIMEZONE)

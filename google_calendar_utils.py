@@ -17,7 +17,7 @@ EXCLUDED_MEETINGS = [
 def get_credentials():
     creds = None
     if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', GOOGLE_CALENDAR_SCOPES)
+        creds = Credentials.from_authorized_user_file('token.json', GOOGLE_CALENDAR_SCOPES + GOOGLE_MAIL_SCOPES)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
@@ -39,7 +39,7 @@ def format_time_range(start, end):
 
 def get_events_for_week():
     try:
-        service = get_google_service('calendar', 'v3', 'token_calendar.json', GOOGLE_CALENDAR_SCOPES)
+        service = get_google_service('calendar', 'v3', 'token.json', GOOGLE_CALENDAR_SCOPES)
         
         today = datetime.datetime.now(TIMEZONE).date()
         start_of_week = today - datetime.timedelta(days=today.weekday())
