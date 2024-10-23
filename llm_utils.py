@@ -57,9 +57,11 @@ Summarize the commit messages for each PR while maintaining the following rules:
 8. Key Changes Implemented should not have a sub-bullet point.
 
 Only provide the formatted output in your response.
-Use the following format for each PR:
+Use the following format for each PR, don't include these example format in your response:
 {example_output_format}
 Ensure that the description, status, and key changes implemented are indented one tab more than the PR title line. The PR title should include the exact title from the original list, followed by the PR number in square brackets, which is also a link to the PR.
+
+Here are the PRs you need to summarize:
     """
     
     return summarize_with_gemini(f"{user_prompt}\n{accomplishments}")

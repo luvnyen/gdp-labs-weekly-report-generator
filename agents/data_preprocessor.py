@@ -1,5 +1,5 @@
 from datetime import datetime
-from weekly_report_generator import format_accomplishments, format_deployments, format_reviewed_prs, format_meetings, format_wfo_days
+from agents.utils import format_accomplishments, format_deployments, format_reviewed_prs, format_meetings, format_wfo_days
 import user_input
 
 def preprocess_data(collected_data):
