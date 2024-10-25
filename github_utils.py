@@ -69,11 +69,13 @@ class GitHubService:
                         return your_prs, pr_commits
                     
                     if pr['user']['login'] == GITHUB_USERNAME:
-                        your_prs.append(pr)
-                        pr_commits[pr['number']] = self._get_pr_commits(
-                            repo.name,
-                            pr['number']
-                        )
+                        # Get commits for this PR
+                        commits = self._get_pr_commits(repo.name, pr['number'])
+                        
+                        # Only add PR if there are commits this week
+                        if commits:
+                            your_prs.append(pr)
+                            pr_commits[pr['number']] = commits
                 
                 url = response.links.get('next', {}).get('url')
                 params = {}
