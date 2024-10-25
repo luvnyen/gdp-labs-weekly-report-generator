@@ -1,10 +1,9 @@
 import datetime
 from github_utils import GitHubService
-from sonarqube_utils import get_test_coverage
+from sonarqube_utils import get_all_components_metrics, format_test_coverage_components
 from google_calendar_utils import get_events_for_week
 from google_forms_utils import get_this_week_filled_forms_formatted
 from llm_utils import summarize_accomplishments_with_llm
-from config import SONARQUBE_COMPONENT_URL
 from date_time_utils import ordinal
 import user_input
 
@@ -25,8 +24,8 @@ def generate_weekly_report():
     api_merged_prs = github_service.get_merged_prs()
     api_reviewed_prs = github_service.get_reviewed_prs()
 
-    # Fetch SonarQube data
-    test_coverage = get_test_coverage()
+    # Fetch SonarQube data for all components
+    sonarqube_metrics_list = get_all_components_metrics()
 
     # Fetch Google Calendar data
     all_meetings_and_activities = get_events_for_week()
@@ -55,8 +54,7 @@ def generate_weekly_report():
         'minor_bugs_current_month': user_input.minor_bugs_current_month,
         'major_bugs_half_year': user_input.major_bugs_half_year,
         'minor_bugs_half_year': user_input.minor_bugs_half_year,
-        'test_coverage': test_coverage,
-        'sonarqube_component_url': SONARQUBE_COMPONENT_URL,
+        'test_coverage_components': format_test_coverage_components(sonarqube_metrics_list),
         'accomplishments': summarized_accomplishments,
         'deployments': format_list(api_merged_prs, indent="  "),
         'prs_reviewed': format_list(api_reviewed_prs, indent="  "),

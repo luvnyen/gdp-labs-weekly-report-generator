@@ -16,7 +16,7 @@
 
 ##### Test Coverage
 
-* Personnel: [{test_coverage}%]({sonarqube_component_url}) (target: 97%)
+{test_coverage_components}
 
 #### Accomplishments
 

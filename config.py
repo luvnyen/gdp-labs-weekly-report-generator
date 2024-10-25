@@ -1,9 +1,34 @@
 import os
+from urllib.parse import unquote
 from dotenv import load_dotenv
 from zoneinfo import ZoneInfo
-from typing import List
+from typing import List, NamedTuple
 
 load_dotenv()
+
+class SonarQubeComponent(NamedTuple):
+    project: str
+    path: str
+    
+    @property
+    def full_key(self) -> str:
+        return f"{self.project}:{self.path}"
+    
+    @property
+    def url(self) -> str:
+        return f"https://sqa.gdplabs.net/code?id={self.project}&selected={self.project}:{self.path}"
+
+def parse_sonarqube_components(components_str: str) -> List[SonarQubeComponent]:
+    if not components_str:
+        return []
+    
+    components = []
+    for component in components_str.split(','):
+        component = unquote(component.strip())  # URL decode the component string
+        if ':' in component:
+            project, path = component.split(':', 1)
+            components.append(SonarQubeComponent(project.strip(), path.strip()))
+    return components
 
 def check_env_variables():
     required_vars = [
@@ -13,7 +38,8 @@ def check_env_variables():
         'GROQ_API_KEY',
         'REPOS',
         'REPO_OWNER',
-        'SONARQUBE_USER_TOKEN'
+        'SONARQUBE_USER_TOKEN',
+        'SONARQUBE_COMPONENTS'
     ]
     
     missing_vars = [var for var in required_vars if not os.getenv(var)]
@@ -36,6 +62,7 @@ GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 REPOS: List[str] = os.getenv('REPOS', '').split(',')
 REPO_OWNER = os.getenv('REPO_OWNER')
 SONARQUBE_USER_TOKEN = os.getenv('SONARQUBE_USER_TOKEN')
+SONARQUBE_COMPONENTS = parse_sonarqube_components(os.getenv('SONARQUBE_COMPONENTS', ''))
 
 TIMEZONE = ZoneInfo("Asia/Jakarta")
 
@@ -45,7 +72,3 @@ GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 SONARQUBE_API_URL = 'https://sqa.gdplabs.net/api/measures/component'
-SONARQUBE_PROJECT = 'catapa-core'
-SONARQUBE_PROJECT_DIRECTORY = 'src/main/java/com/catapa/core/personnel'
-SONARQUBE_COMPONENT = f"{SONARQUBE_PROJECT}:src/main/java/com/catapa/core/personnel"
-SONARQUBE_COMPONENT_URL = f"https://sqa.gdplabs.net/code?id={SONARQUBE_PROJECT}&selected={SONARQUBE_COMPONENT}"
