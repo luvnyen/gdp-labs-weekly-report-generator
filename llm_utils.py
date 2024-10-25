@@ -12,7 +12,7 @@ def summarize_with_groq(content):
                 "content": content,
             }
         ],
-        model="gemma2-9b-it",
+        model="llama-3.2-3b-preview",
     )
     
     return chat_completion.choices[0].message.content
