@@ -1,0 +1,9 @@
+.env
+__pycache__/
+ACCOMPLISHMENTS_RAW.md
+client_secret_*.apps.googleusercontent.com.json
+output/
+TEMPLATE.md
+token_calendar.json
+token_forms.json
+venv/

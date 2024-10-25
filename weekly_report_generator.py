@@ -1,5 +1,5 @@
 import datetime
-from github_utils import get_prs_and_commits, get_merged_prs, get_reviewed_prs, format_prs_and_commits
+from github_utils import GitHubService
 from sonarqube_utils import get_test_coverage
 from google_calendar_utils import get_events_for_week
 from google_forms_utils import get_this_week_filled_forms_formatted
@@ -17,11 +17,13 @@ def generate_weekly_report():
     half_year = "H2" if is_h2 else "H1"
     half_year_year = current_year if is_h2 else current_year
 
-    # Fetch GitHub data
-    api_prs, api_pr_commits = get_prs_and_commits()
-    all_accomplishments = format_prs_and_commits(api_prs, api_pr_commits)
-    api_merged_prs = get_merged_prs()
-    api_reviewed_prs = get_reviewed_prs()
+    # Initialize GitHub service
+    github_service = GitHubService()
+
+    # Fetch GitHub data from all repositories
+    all_accomplishments = github_service.get_prs_and_commits()
+    api_merged_prs = github_service.get_merged_prs()
+    api_reviewed_prs = github_service.get_reviewed_prs()
 
     # Fetch SonarQube data
     test_coverage = get_test_coverage()

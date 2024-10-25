@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from zoneinfo import ZoneInfo
+from typing import List
 
 load_dotenv()
 
@@ -10,7 +11,7 @@ def check_env_variables():
         'GITHUB_USERNAME',
         'GOOGLE_GEMINI_API_KEY',
         'GROQ_API_KEY',
-        'REPO_NAME',
+        'REPOS',
         'REPO_OWNER',
         'SONARQUBE_USER_TOKEN'
     ]
@@ -32,7 +33,7 @@ GITHUB_USERNAME = os.getenv('GITHUB_USERNAME')
 GOOGLE_CLIENT_SECRET_FILE = os.getenv('GOOGLE_CLIENT_SECRET_FILE')
 GOOGLE_GEMINI_API_KEY = os.getenv('GOOGLE_GEMINI_API_KEY')
 GROQ_API_KEY = os.getenv('GROQ_API_KEY')
-REPO_NAME = os.getenv('REPO_NAME')
+REPOS: List[str] = os.getenv('REPOS', '').split(',')
 REPO_OWNER = os.getenv('REPO_OWNER')
 SONARQUBE_USER_TOKEN = os.getenv('SONARQUBE_USER_TOKEN')
 
