@@ -1,3 +1,12 @@
+"""SonarQube Service Module
+
+This module provides functionality to interact with SonarQube API for retrieving
+and formatting test coverage metrics for configured components.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+"""
+
 from dataclasses import dataclass
 from typing import Optional, List, Dict
 from collections import defaultdict

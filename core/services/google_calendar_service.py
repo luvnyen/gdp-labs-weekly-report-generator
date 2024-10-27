@@ -1,3 +1,13 @@
+"""Google Calendar Service Module
+
+This module provides functionality to interact with Google Calendar API
+for retrieving and formatting weekly events while handling event
+acceptance statuses and time ranges.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+"""
+
 import datetime
 from collections import defaultdict
 from googleapiclient.errors import HttpError

@@ -1,3 +1,12 @@
+"""Progress Display Utility Module
+
+This module provides a spinner-based progress display for console applications,
+supporting animated task status updates with completion indicators.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+"""
+
 import sys
 import time
 import threading

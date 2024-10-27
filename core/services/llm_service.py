@@ -1,3 +1,12 @@
+"""LLM Service Module
+
+This module provides functionality to interact with various Language Models
+(Groq and Google Gemini) for summarizing pull requests and commit messages.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+"""
+
 from groq import Groq
 import google.generativeai as genai
 from config.config import GROQ_API_KEY, GOOGLE_GEMINI_API_KEY

@@ -1,4 +1,11 @@
 #!/bin/bash
+# Run Script for Weekly Report Generator
+#
+# This script manages the Python virtual environment activation and deactivation,
+# and executes the main application script for generating weekly reports.
+#
+# Authors:
+#     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
 
 # Check if virtual environment is already activated
 if [[ "$VIRTUAL_ENV" == "" ]]; then

@@ -1,4 +1,12 @@
-# File: core/weekly_report_generator.py
+"""Weekly Report Generator Module
+
+This module orchestrates the generation of weekly reports by collecting data from
+various services including GitHub, SonarQube, Google Calendar, and Google Forms.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Glenn Steven Santoso (glenn.s.santoso@gdplabs.id)
+"""
 
 import datetime
 import os

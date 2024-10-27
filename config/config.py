@@ -1,3 +1,13 @@
+"""Configuration Module
+
+This module handles environment variables, configuration settings, and data structures
+for various services including GitHub, Google APIs, SonarQube, and LLM services.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Glenn Steven Santoso (glenn.s.santoso@gdplabs.id)
+"""
+
 import os
 from urllib.parse import unquote
 from dotenv import load_dotenv

@@ -1,3 +1,12 @@
+"""Google Service Module
+
+This module provides core functionality for Google API authentication
+and service initialization using OAuth 2.0 credentials.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+"""
+
 import os
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request

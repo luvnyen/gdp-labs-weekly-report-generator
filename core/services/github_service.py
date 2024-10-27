@@ -1,3 +1,12 @@
+"""GitHub Service Module
+
+This module provides functionality to interact with GitHub API for retrieving
+and managing pull requests, commits, and reviewing activities.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+"""
+
 import requests
 from datetime import datetime, timedelta, timezone
 from collections import defaultdict
@@ -16,11 +25,9 @@ class GitHubRepo:
     def get_commit_url(self, commit_sha: str) -> str:
         return f"{self.commit_base_url}/{commit_sha}"
 
-
 def _get_start_of_week():
     today = datetime.now(timezone.utc).date()
     return today - timedelta(days=today.weekday())
-
 
 def _format_prs_and_commits(repo: GitHubRepo, prs: List[Any], pr_commits: Dict[int, List[Any]]) -> str:
     formatted_output = []
@@ -52,13 +59,11 @@ def _format_prs_and_commits(repo: GitHubRepo, prs: List[Any], pr_commits: Dict[i
 
     return '\n'.join(formatted_output) if formatted_output else ""
 
-
 def _format_prs(repo: GitHubRepo, prs: List[Dict]) -> List[str]:
     return [
         f"{pr['title']} [{repo.name}#{pr['number']}]({repo.get_pr_url(pr['number'])})"
         for pr in prs
     ]
-
 
 def _format_merged_prs(repo: GitHubRepo, prs: List[Dict]) -> List[str]:
     return [
@@ -66,7 +71,6 @@ def _format_merged_prs(repo: GitHubRepo, prs: List[Dict]) -> List[str]:
         f"(merged into {pr['base']['ref']})"
         for pr in prs
     ]
-
 
 class GitHubService:
     def __init__(self):

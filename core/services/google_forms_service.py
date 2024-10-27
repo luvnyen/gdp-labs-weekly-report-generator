@@ -1,3 +1,12 @@
+"""Google Forms Service Module
+
+This module provides functionality to interact with Gmail API for retrieving
+and formatting Google Forms submissions within the current week.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+"""
+
 from datetime import datetime, timedelta
 from core.services.google_service import get_google_service
 from config.config import GMAIL_SCOPES, TIMEZONE

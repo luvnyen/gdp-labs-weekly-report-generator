@@ -1,3 +1,12 @@
+"""Weekly Report Generator Main Module
+
+This module serves as the entry point for the weekly report generator application,
+handling command line interface and orchestrating the report generation process.
+
+Authors:
+    - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+"""
+
 import os
 from datetime import datetime, timedelta
 

@@ -1,4 +1,11 @@
 #!/bin/bash
+# Setup Script for Weekly Report Generator
+#
+# This script automates the initial setup process including Python installation,
+# virtual environment creation, dependency installation, and configuration file setup.
+#
+# Authors:
+#     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
 
 # Exit immediately if a command exits with a non-zero status
 set -e
