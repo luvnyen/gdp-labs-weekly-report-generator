@@ -50,7 +50,9 @@ def check_env_variables():
         missing_vars.append('GOOGLE_CLIENT_SECRET_FILE (file not found)')
     
     if missing_vars:
-        raise EnvironmentError(f"The following required environment variables are missing, empty, or invalid: {', '.join(missing_vars)}")
+        raise EnvironmentError(
+            f"The following required environment variables are missing, empty, or invalid: {', '.join(missing_vars)}"
+        )
 
 check_env_variables()
 

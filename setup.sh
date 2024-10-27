@@ -32,13 +32,17 @@ else
     echo "Warning: .env.example file not found. Please create .env file manually."
 fi
 
-# 7. Copy TEMPLATE.example.md to TEMPLATE.md
-echo "Copying TEMPLATE.example.md to TEMPLATE.md..."
-if [ -f TEMPLATE.example.md ]; then
-    cp TEMPLATE.example.md TEMPLATE.md
-    echo "TEMPLATE.md file created successfully."
+# 7. Create templates directory if it doesn't exist
+echo "Setting up templates directory..."
+mkdir -p templates
+
+# 8. Copy template.example.md to templates/template.md
+echo "Copying template.example.md to templates/template.md..."
+if [ -f templates/template.example.md ]; then
+    cp templates/template.example.md templates/template.md
+    echo "template.md file created successfully."
 else
-    echo "Warning: TEMPLATE.example.md file not found. Please create TEMPLATE.md file manually."
+    echo "Warning: templates/template.example.md file not found. Please create templates/template.md file manually."
 fi
 
 echo "Setup complete! Don't forget to configure your credentials in the .env file before running the application."

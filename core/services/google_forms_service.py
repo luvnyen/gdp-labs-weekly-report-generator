@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
-from google_api_utils import get_google_service
-from config import GMAIL_SCOPES, TIMEZONE
+from core.services.google_service import get_google_service
+from config.config import GMAIL_SCOPES, TIMEZONE
 from email.utils import parsedate_to_datetime
-from date_time_utils import ordinal, format_time
+from util.date_time_utils import ordinal, format_time
 
 FORMS_RECEIPT_EMAIL = "forms-receipts-noreply@google.com"
 
@@ -32,7 +32,7 @@ def get_forms_filled_this_week():
         # Parse the date, convert to Jakarta time, and remove seconds
         timestamp = parsedate_to_datetime(date_str).astimezone(TIMEZONE).replace(second=0, microsecond=0)
 
-        # Extract form title from subject
+        # Extract form title from a subject
         form_title = subject.replace("Response submitted:", "").strip()
 
         filled_forms.append({

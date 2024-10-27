@@ -46,7 +46,7 @@
 {learning}
 
 <p style="font-size: 0.8em; color: #888; font-style: italic;">
-    All times are in UTC+07:00.</br>
-    This weekly report is generated using GitHub, Google, and SonarQube APIs.</br>
+    All times are in UTC+07:00.<br>
+    This weekly report is generated using GitHub, Google, and SonarQube APIs.<br>
     Accomplishments are summarized using the Gemini API LLM.
 </p>

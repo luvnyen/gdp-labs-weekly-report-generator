@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, List, Dict
 from collections import defaultdict
 import requests
-from config import SONARQUBE_USER_TOKEN, SONARQUBE_API_URL, SONARQUBE_COMPONENTS, SonarQubeComponent
+from config.config import SONARQUBE_USER_TOKEN, SONARQUBE_API_URL, SONARQUBE_COMPONENTS, SonarQubeComponent
 
 TARGET_COVERAGE_PERCENTAGE = 97
 
@@ -11,7 +11,7 @@ class ComponentMetrics:
     coverage: Optional[str] = None
     component_name: Optional[str] = None
     url: Optional[str] = None
-    project: Optional[str] = None  # Added project field
+    project: Optional[str] = None
 
 def get_component_metrics(component: SonarQubeComponent) -> ComponentMetrics:
     params = {
@@ -28,7 +28,7 @@ def get_component_metrics(component: SonarQubeComponent) -> ComponentMetrics:
 
     metrics = ComponentMetrics()
     metrics.url = component.url
-    metrics.project = component.project  # Store project name
+    metrics.project = component.project
 
     response = requests.get(SONARQUBE_API_URL, params=params, headers=headers, auth=auth)
 

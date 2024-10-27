@@ -1,6 +1,6 @@
 from groq import Groq
 import google.generativeai as genai
-from config import GROQ_API_KEY, GOOGLE_GEMINI_API_KEY
+from config.config import GROQ_API_KEY, GOOGLE_GEMINI_API_KEY
 
 # Prompt templates for different models
 GROQ_SYSTEM_PROMPT = """<|start_header_id|>system<|end_header_id|>

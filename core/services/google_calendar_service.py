@@ -1,9 +1,9 @@
 import datetime
 from collections import defaultdict
 from googleapiclient.errors import HttpError
-from config import GOOGLE_CALENDAR_SCOPES, TIMEZONE
-from google_api_utils import get_google_service
-from date_time_utils import ordinal, format_time
+from config.config import GOOGLE_CALENDAR_SCOPES, TIMEZONE
+from core.services.google_service import get_google_service
+from util.date_time_utils import ordinal, format_time
 
 EXCLUDED_MEETINGS = [
     'Isi Data Kehadiran CATAPA',
@@ -14,23 +14,28 @@ def format_time_range(start, end):
 
 def is_event_accepted_or_needs_action(event):
     """Check if the event is either accepted or has no response (needs action)"""
-    # Get the list of attendees, defaulting to empty list if not present
+    # Get the list of attendees, defaulting to an empty list if not present
     attendees = event.get('attendees', [])
     
-    # Find the current user in the attendees list
+    # Find the current user in the attendee list
     for attendee in attendees:
         # Check if this attendee is the current user (has 'self' field set to True)
         if attendee.get('self', False):
             # Return True if the response status is 'accepted' or 'needsAction'
             return attendee.get('responseStatus', 'needsAction') in ['accepted', 'needsAction']
     
-    # If the event has no attendees or current user is not in attendees list
+    # If the event has no attendees or current user is not in an attendees list
     # (e.g., events created by the user), consider it as accepted
     return True
 
 def get_events_for_week():
     try:
-        service = get_google_service('calendar', 'v3', 'token_calendar.json', GOOGLE_CALENDAR_SCOPES)
+        service = get_google_service(
+            'calendar',
+            'v3',
+            'token_calendar.json',
+            GOOGLE_CALENDAR_SCOPES
+        )
         
         today = datetime.datetime.now(TIMEZONE).date()
         start_of_week = today - datetime.timedelta(days=today.weekday())

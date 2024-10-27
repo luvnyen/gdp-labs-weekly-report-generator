@@ -2,7 +2,7 @@ import requests
 from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 from typing import List, Dict, Tuple, Any
-from config import GITHUB_PERSONAL_ACCESS_TOKEN, REPO_OWNER, REPOS, GITHUB_USERNAME, GITHUB_API_BASE_URL
+from config.config import GITHUB_PERSONAL_ACCESS_TOKEN, REPO_OWNER, REPOS, GITHUB_USERNAME, GITHUB_API_BASE_URL
 
 class GitHubRepo:
     def __init__(self, name: str):
@@ -16,21 +16,69 @@ class GitHubRepo:
     def get_commit_url(self, commit_sha: str) -> str:
         return f"{self.commit_base_url}/{commit_sha}"
 
+
+def _get_start_of_week():
+    today = datetime.now(timezone.utc).date()
+    return today - timedelta(days=today.weekday())
+
+
+def _format_prs_and_commits(repo: GitHubRepo, prs: List[Any], pr_commits: Dict[int, List[Any]]) -> str:
+    formatted_output = []
+
+    for pr in prs:
+        pr_title = pr['title']
+        pr_number = pr['number']
+        pr_link = repo.get_pr_url(pr_number)
+
+        formatted_pr = f"* {pr_title} [{repo.name}#{pr_number}]({pr_link})"
+        formatted_output.append(formatted_pr)
+
+        for commit in pr_commits[pr_number]:
+            commit_sha = commit['sha'][:7]
+            commit_link = repo.get_commit_url(commit['sha'])
+            commit_message_lines = commit['message'].split('\n')
+            commit_title = commit_message_lines[0]
+
+            formatted_commit = f"   * [{commit_sha}]({commit_link}): {commit_title}"
+            formatted_output.append(formatted_commit)
+
+            # Add commit description bullets
+            for line in commit_message_lines[1:]:
+                stripped_line = line.strip()
+                if stripped_line and (stripped_line.startswith('-') or stripped_line.startswith('*')):
+                    formatted_output.append(f"      {stripped_line}")
+
+        formatted_output.append("")  # Add empty line between PRs
+
+    return '\n'.join(formatted_output) if formatted_output else ""
+
+
+def _format_prs(repo: GitHubRepo, prs: List[Dict]) -> List[str]:
+    return [
+        f"{pr['title']} [{repo.name}#{pr['number']}]({repo.get_pr_url(pr['number'])})"
+        for pr in prs
+    ]
+
+
+def _format_merged_prs(repo: GitHubRepo, prs: List[Dict]) -> List[str]:
+    return [
+        f"{pr['title']} [{repo.name}#{pr['number']}]({repo.get_pr_url(pr['number'])}) "
+        f"(merged into {pr['base']['ref']})"
+        for pr in prs
+    ]
+
+
 class GitHubService:
     def __init__(self):
         self.headers = {
             "Authorization": f"token {GITHUB_PERSONAL_ACCESS_TOKEN}",
             "Accept": "application/vnd.github.v3+json"
         }
-        self.start_of_week = self._get_start_of_week()
+        self.start_of_week = _get_start_of_week()
         self.start_of_week_datetime = datetime.combine(
             self.start_of_week, 
             datetime.min.time()
         ).replace(tzinfo=timezone.utc)
-
-    def _get_start_of_week(self):
-        today = datetime.now(timezone.utc).date()
-        return today - timedelta(days=today.weekday())
 
     def get_prs_and_commits(self) -> str:
         all_formatted_outputs = []
@@ -38,7 +86,7 @@ class GitHubService:
         for repo_name in REPOS:
             repo = GitHubRepo(repo_name)
             prs, pr_commits = self._fetch_repo_prs_and_commits(repo)
-            formatted_output = self._format_prs_and_commits(repo, prs, pr_commits)
+            formatted_output = _format_prs_and_commits(repo, prs, pr_commits)
             if formatted_output:
                 all_formatted_outputs.append(formatted_output)
         
@@ -115,36 +163,6 @@ class GitHubService:
 
         return commits
 
-    def _format_prs_and_commits(self, repo: GitHubRepo, prs: List[Any], pr_commits: Dict[int, List[Any]]) -> str:
-        formatted_output = []
-        
-        for pr in prs:
-            pr_title = pr['title']
-            pr_number = pr['number']
-            pr_link = repo.get_pr_url(pr_number)
-            
-            formatted_pr = f"* {pr_title} [{repo.name}#{pr_number}]({pr_link})"
-            formatted_output.append(formatted_pr)
-            
-            for commit in pr_commits[pr_number]:
-                commit_sha = commit['sha'][:7]
-                commit_link = repo.get_commit_url(commit['sha'])
-                commit_message_lines = commit['message'].split('\n')
-                commit_title = commit_message_lines[0]
-                
-                formatted_commit = f"   * [{commit_sha}]({commit_link}): {commit_title}"
-                formatted_output.append(formatted_commit)
-                
-                # Add commit description bullets
-                for line in commit_message_lines[1:]:
-                    stripped_line = line.strip()
-                    if stripped_line and (stripped_line.startswith('-') or stripped_line.startswith('*')):
-                        formatted_output.append(f"      {stripped_line}")
-            
-            formatted_output.append("")  # Add empty line between PRs
-        
-        return '\n'.join(formatted_output) if formatted_output else ""
-
     def get_merged_prs(self) -> List[str]:
         all_merged_prs = []
         
@@ -187,13 +205,13 @@ class GitHubService:
                     )
                     all_prs.extend(nested_prs)
             
-            return self._format_merged_prs(repo, all_prs)
+            return _format_merged_prs(repo, all_prs)
         else:
             print(f"Error fetching merged PRs for {repo.name}: {response.status_code}")
             print(response.text)
             return []
 
-    def _get_pr_details(self, repo_name: str, pr_number: int) -> Dict:
+    def _get_pr_details(self, repo_name: str, pr_number: int) -> Any | None:
         url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo_name}/pulls/{pr_number}"
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
@@ -214,13 +232,6 @@ class GitHubService:
         else:
             print(f"Error fetching PRs for commit {commit_sha} in {repo_name}: {response.status_code}")
             return []
-
-    def _format_merged_prs(self, repo: GitHubRepo, prs: List[Dict]) -> List[str]:
-        return [
-            f"{pr['title']} [{repo.name}#{pr['number']}]({repo.get_pr_url(pr['number'])}) "
-            f"(merged into {pr['base']['ref']})"
-            for pr in prs
-        ]
 
     def get_reviewed_prs(self) -> List[str]:
         all_reviewed_prs = []
@@ -251,14 +262,9 @@ class GitHubService:
         response = requests.get(url, params=params, headers=self.headers)
         if response.status_code == 200:
             reviewed_prs = response.json()['items']
-            return self._format_prs(repo, reviewed_prs)
+            return _format_prs(repo, reviewed_prs)
         else:
             print(f"Error fetching reviewed PRs for {repo.name}: {response.status_code}")
             print(response.text)
             return []
 
-    def _format_prs(self, repo: GitHubRepo, prs: List[Dict]) -> List[str]:
-        return [
-            f"{pr['title']} [{repo.name}#{pr['number']}]({repo.get_pr_url(pr['number'])})"
-            for pr in prs
-        ]

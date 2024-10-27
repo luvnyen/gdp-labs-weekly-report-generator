@@ -3,7 +3,6 @@ __pycache__/
 ACCOMPLISHMENTS_RAW.md
 client_secret_*.apps.googleusercontent.com.json
 output/
-TEMPLATE.md
-token_calendar.json
-token_gmail.json
+templates/template.md
+tokens/
 venv/
