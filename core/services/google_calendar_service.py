@@ -3,7 +3,7 @@ from collections import defaultdict
 from googleapiclient.errors import HttpError
 from config.config import GOOGLE_CALENDAR_SCOPES, TIMEZONE
 from core.services.google_service import get_google_service
-from util.date_time_utils import ordinal, format_time
+from utils.date_time_util import ordinal, format_time
 
 EXCLUDED_MEETINGS = [
     'Isi Data Kehadiran CATAPA',

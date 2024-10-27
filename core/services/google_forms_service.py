@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from core.services.google_service import get_google_service
 from config.config import GMAIL_SCOPES, TIMEZONE
 from email.utils import parsedate_to_datetime
-from util.date_time_utils import ordinal, format_time
+from utils.date_time_util import ordinal, format_time
 
 FORMS_RECEIPT_EMAIL = "forms-receipts-noreply@google.com"
 

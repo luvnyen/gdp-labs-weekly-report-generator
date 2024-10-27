@@ -8,7 +8,7 @@ from core.services.sonarqube_service import get_all_components_metrics, format_t
 from core.services.google_calendar_service import get_events_for_week
 from core.services.google_forms_service import get_this_week_filled_forms_formatted
 from core.services.llm_service import summarize_accomplishments_with_llm
-from util.date_time_utils import ordinal
+from utils.date_time_util import ordinal
 
 # Get the project root directory (one level up from core)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

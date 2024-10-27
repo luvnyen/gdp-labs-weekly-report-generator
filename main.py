@@ -2,8 +2,8 @@ import os
 from datetime import datetime, timedelta
 
 from core.weekly_report_generator import generate_weekly_report
-from util.date_time_utils import format_duration
-from util.progress_display_utils import ProgressDisplay
+from utils.date_time_util import format_duration
+from utils.progress_display_util import ProgressDisplay
 
 def get_week_dates():
     today = datetime.now()
