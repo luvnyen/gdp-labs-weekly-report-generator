@@ -1,7 +1,7 @@
 """Weekly Report Generator Module
 
 This module orchestrates the generation of weekly reports by collecting data from
-various services including GitHub, SonarQube, Google Calendar, and Google Forms.
+various services including GitHub, SonarQube, Google Calendar, Google Forms, and Gmail.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
@@ -11,37 +11,29 @@ Authors:
 import datetime
 import os
 import time
+
+from config.config import GMAIL_SEND_TO, GMAIL_SEND_CC
 from core.services.github_service import GitHubService
-from core.services.sonarqube_service import get_all_components_metrics, format_test_coverage_components
+from core.services.gmail_service import create_gmail_draft
 from core.services.google_calendar_service import get_events_for_week
 from core.services.google_forms_service import get_this_week_filled_forms_formatted
 from core.services.llm_service import summarize_accomplishments_with_llm
+from core.services.sonarqube_service import get_all_components_metrics, format_test_coverage_components
 from utils.date_time_util import ordinal
+from .user_data import (
+    ISSUES,
+    MAJOR_BUGS_CURRENT_MONTH,
+    MINOR_BUGS_CURRENT_MONTH,
+    MAJOR_BUGS_HALF_YEAR,
+    MINOR_BUGS_HALF_YEAR,
+    WFO_DAYS,
+    NEXT_STEPS,
+    LEARNING,
+    GMAIL_TEMPLATE
+)
 
 # Get the project root directory (one level up from core)
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Constants
-ISSUES = []
-
-MAJOR_BUGS_CURRENT_MONTH = 0
-MINOR_BUGS_CURRENT_MONTH = 0
-
-MAJOR_BUGS_HALF_YEAR = 0
-MINOR_BUGS_HALF_YEAR = 0
-
-WFO_DAYS = [1, 4, 5]
-
-NEXT_STEPS = [
-    "Adjust services for new employee and employee details (contact data, job experience, BPJS healthcare membership, employment data, identity card, family, and repository)",
-]
-
-LEARNING = [
-    "[Head First Design Patterns, 2nd Edition](https://learning.oreilly.com/library/view/head-first-design/9781492077992/) by Eric Freeman & Elisabeth Robson (Chapter 3/13)",
-    "[Introducing computer use, a new Claude 3.5 Sonnet, and Claude 3.5 Haiku](https://www.anthropic.com/news/3-5-models-and-computer-use)",
-    "[Claude | Computer use for coding](https://youtu.be/vH2f7cjXjKI?si=eMYo2V0jXZLNkP9_)",
-    "[Claude | Computer use for automating operations](https://youtu.be/ODaHJzOyVCQ?si=NGpUtA_dCTofYvU-)"
-]
 
 # Helper functions
 def format_duration(seconds):
@@ -80,7 +72,7 @@ def format_wfo_days(days):
 
     return format_list(formatted_days, indent="  ")
 
-def generate_weekly_report(progress_callback=None):
+def generate_weekly_report(progress_callback=None, create_draft=True):
     """Generate the weekly report with progress tracking"""
     overall_start_time = time.time()
 
@@ -159,6 +151,10 @@ def generate_weekly_report(progress_callback=None):
     }
 
     report = template.format(**report_data)
+
+    if create_draft:
+        update_progress("Creating Gmail draft")
+        create_gmail_draft(report, GMAIL_SEND_TO, GMAIL_SEND_CC, GMAIL_TEMPLATE)
 
     # Update final progress
     update_progress(None)

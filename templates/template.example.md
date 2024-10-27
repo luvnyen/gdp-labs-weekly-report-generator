@@ -23,18 +23,23 @@
 {accomplishments}
 
 * **Deployment:**
+
 {deployments}
 
 * **PRs Reviewed:**
+
 {prs_reviewed}
 
 * **Meetings and Other Activities:**
+
 {meetings_and_activities}
 
 * **Google Forms Filled:**
+
 {google_forms_filled}
 
 * **Worked from Office (WFO) on:**
+
 {wfo_days}
 
 #### Next Steps

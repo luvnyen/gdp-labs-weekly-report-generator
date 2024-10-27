@@ -42,6 +42,7 @@ def parse_sonarqube_components(components_str: str) -> List[SonarQubeComponent]:
 
 def check_env_variables():
     required_vars = [
+        'AUTHOR_FULL_NAME',
         'GITHUB_PERSONAL_ACCESS_TOKEN',
         'GITHUB_USERNAME',
         'GOOGLE_GEMINI_API_KEY',
@@ -49,7 +50,8 @@ def check_env_variables():
         'REPOS',
         'REPO_OWNER',
         'SONARQUBE_USER_TOKEN',
-        'SONARQUBE_COMPONENTS'
+        'SONARQUBE_COMPONENTS',
+        'GMAIL_SEND_TO',
     ]
     
     missing_vars = [var for var in required_vars if not os.getenv(var)]
@@ -66,6 +68,7 @@ def check_env_variables():
 
 check_env_variables()
 
+AUTHOR_FULL_NAME = os.getenv('AUTHOR_FULL_NAME')
 GITHUB_PERSONAL_ACCESS_TOKEN = os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN')
 GITHUB_USERNAME = os.getenv('GITHUB_USERNAME')
 GOOGLE_CLIENT_SECRET_FILE = os.getenv('GOOGLE_CLIENT_SECRET_FILE')
@@ -75,12 +78,17 @@ REPOS: List[str] = os.getenv('REPOS', '').split(',')
 REPO_OWNER = os.getenv('REPO_OWNER')
 SONARQUBE_USER_TOKEN = os.getenv('SONARQUBE_USER_TOKEN')
 SONARQUBE_COMPONENTS = parse_sonarqube_components(os.getenv('SONARQUBE_COMPONENTS', ''))
+GMAIL_SEND_TO: List[str] = os.getenv('GMAIL_SEND_TO', '').split(',')
+GMAIL_SEND_CC: List[str] = os.getenv('GMAIL_SEND_CC', '').split(',')
 
 TIMEZONE = ZoneInfo("Asia/Jakarta")
 
 GITHUB_API_BASE_URL = "https://api.github.com"
 
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+GMAIL_SCOPES = [
+    'https://www.googleapis.com/auth/gmail.readonly',
+    'https://www.googleapis.com/auth/gmail.compose'
+]
 
 SONARQUBE_API_URL = 'https://sqa.gdplabs.net/api/measures/component'

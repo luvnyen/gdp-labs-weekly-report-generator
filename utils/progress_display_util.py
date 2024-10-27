@@ -12,6 +12,13 @@ import time
 import threading
 
 class ProgressDisplay:
+    VERB_MAPPING = {
+        "Fetching": "Fetched",
+        "Summarizing": "Summarized",
+        "Generating": "Generated",
+        "Creating": "Created"
+    }
+
     def __init__(self):
         self.animation = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
         self.idx = 0
@@ -26,12 +33,10 @@ class ProgressDisplay:
             sys.stdout.write('\r' + ' ' * 80 + '\r')
             # Print completed task with proper past tense conversion
             completed_task = self.last_task
-            if completed_task.startswith("Fetching"):
-                completed_task = completed_task.replace("Fetching", "Fetched")
-            elif completed_task.startswith("Summarizing"):
-                completed_task = completed_task.replace("Summarizing", "Summarized")
-            elif completed_task.startswith("Generating"):
-                completed_task = completed_task.replace("Generating", "Generated")
+            for present, past in self.VERB_MAPPING.items():
+                if completed_task.startswith(present):
+                    completed_task = completed_task.replace(present, past)
+                    break
             print(f"✓ {completed_task}")
 
         if task:
