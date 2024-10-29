@@ -1,9 +1,12 @@
+crewai
 google-api-python-client~=2.145.0
 google-auth
 google-auth-httplib2
 google-auth-oauthlib~=1.2.1
 google-generativeai
 groq~=0.11.0
+langchain_google_genai
+langchain_groq
 markdown~=3.7
 protobuf~=5.28.1
 python-dotenv~=1.0.1
