@@ -7,17 +7,17 @@ Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
 """
 
-ISSUES = []
+ISSUES: list = []
 
-MAJOR_BUGS_CURRENT_MONTH = 0
-MINOR_BUGS_CURRENT_MONTH = 0
+MAJOR_BUGS_CURRENT_MONTH: int = 0
+MINOR_BUGS_CURRENT_MONTH: int = 0
 
-MAJOR_BUGS_HALF_YEAR = 0
-MINOR_BUGS_HALF_YEAR = 0
+MAJOR_BUGS_HALF_YEAR: int = 0
+MINOR_BUGS_HALF_YEAR: int = 0
 
 """Work from office days, using numbers 1-5 representing Monday to Friday.
 Example: [1, 2, 5] means WFO on Monday, Tuesday, and Friday"""
-WFO_DAYS = [1, 2, 5]
+WFO_DAYS: list[int] = [1, 2, 5]
 
 NEXT_STEPS = [
     "Next step 1",
@@ -32,7 +32,7 @@ Examples:
 - [Video Title](https://youtube.com/watch?v=123)
 """
 LEARNING = [
-    "[Article Title](https://example.com)",
+    "[Introducing computer use, a new Claude 3.5 Sonnet, and Claude 3.5 Haiku](https://www.anthropic.com/news/3-5-models-and-computer-use)",
 ]
 
 """Gmail template for the weekly report email.
@@ -73,6 +73,6 @@ Example template:
     a.   Jl. Kedung Doro No. 32, Surabaya, Jawa Timur 60251
 """
 GMAIL_TEMPLATE = """
-Insert your Gmail template here.
+Insert Gmail template here.
 {report}
 """

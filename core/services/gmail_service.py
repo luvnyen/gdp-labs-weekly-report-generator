@@ -11,36 +11,47 @@ Authors:
 import base64
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
+from typing import Union, List, Dict, Any
 
 import markdown
+from googleapiclient.discovery import Resource
 
 from config.config import GMAIL_SCOPES
 from core.services.google_service import get_google_service
 
 
-def get_user_full_name(service=None):
+def get_user_full_name(service: Resource | None = None) -> str:
+    """Retrieve user's full name from Gmail profile.
+
+    Formats the email address username into a proper name format.
+    Single characters are treated as initials with periods.
+
+    Args:
+        service (Resource | None): Gmail API service instance.
+        If None, create a new instance.
+
+    Returns:
+        str: Formatted full name or email address if formatting fails.
+
+    Raises:
+        Exception: If unable to retrieve user profile from Gmail.
+    """
     try:
         if service is None:
             service = get_google_service('gmail', 'v1', 'token_gmail.json', GMAIL_SCOPES)
 
-        # Get the profile information
         profile = service.users().getProfile(userId='me').execute()
         email = profile.get('emailAddress', '')
 
         if not email:
             return 'Unknown User'
 
-        # Get the part before @ and split by dots
         name_parts = email.split('@')[0].split('.')
-
-        # Capitalize the first letter of each part
         formatted_parts = []
         for part in name_parts:
             if len(part) == 1:
-                # If it's a single character (middle initial), make it uppercase and add a period
                 formatted_parts.append(f"{part.upper()}.")
             else:
-                # Otherwise capitalize the word
                 formatted_parts.append(part.capitalize())
 
         return ' '.join(formatted_parts)
@@ -48,7 +59,14 @@ def get_user_full_name(service=None):
     except Exception as e:
         raise Exception(f"Failed to retrieve user's full name from Gmail: {str(e)}")
 
-def get_date_range():
+
+def get_date_range() -> str:
+    """Generate a formatted date range string for the current work week.
+
+    Returns:
+        str: Formatted date range (e.g., "October 1-5, 2024" or
+             "September 30 - October 4, 2024")
+    """
     today = datetime.now()
     start_of_week = today - timedelta(days=today.weekday())
     end_of_week = start_of_week + timedelta(days=4)
@@ -56,36 +74,49 @@ def get_date_range():
     start_day = str(start_of_week.day)
     end_day = str(end_of_week.day)
 
-    # Check if start and end dates are in the same month
     if start_of_week.month == end_of_week.month:
         return f"{start_of_week.strftime('%B')} {start_day}-{end_day}, {end_of_week.year}"
     else:
-        # Different months
         return f"{start_of_week.strftime('%B')} {start_day} - {end_of_week.strftime('%B')} {end_day}, {end_of_week.year}"
 
-def create_gmail_draft(report, to, cc, template):
+
+def create_gmail_draft(
+    report: str,
+    to: Union[str, List[str]],
+    cc: Union[str, List[str]],
+    template: str
+) -> Dict[str, Any]:
+    """Create a Gmail draft with weekly report content.
+
+    Args:
+        report (str): Report content in Markdown format
+        to (Union[str, List[str]]): Recipient email(s)
+        cc (Union[str, List[str]]): CC recipient email(s)
+        template (str): Email template with {date_range} and {report} placeholders
+
+    Returns:
+        Dict[str, Any]: Created draft object from Gmail API
+
+    Raises:
+        Exception: If draft creation fails
+    """
     try:
         service = get_google_service('gmail', 'v1', 'token_gmail.json', GMAIL_SCOPES)
 
-        # Get user's full name from Gmail
         try:
             author_full_name = get_user_full_name(service)
         except Exception:
-            # Fallback to email address if name retrieval fails
             profile = service.users().getProfile(userId='me').execute()
             author_full_name = profile.get('emailAddress', 'Unknown User')
 
         date_range = get_date_range()
 
-        # Convert lists to comma-separated strings
         to_str = ', '.join(to) if isinstance(to, list) else to
         cc_str = ', '.join(cc) if isinstance(cc, list) else cc
 
-        # Convert Markdown to HTML
         content = template.format(date_range=date_range, report=report)
         html_content = markdown.markdown(content, extensions=['extra'])
 
-        # Add some basic styling
         styled_html = f"""
             <html>
                 <head>

@@ -7,8 +7,9 @@ Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
 """
 
-from groq import Groq
 import google.generativeai as genai
+from groq import Groq
+
 from config.config import GROQ_API_KEY, GOOGLE_GEMINI_API_KEY
 
 # Prompt templates for different models
@@ -66,16 +67,22 @@ Use the following format for each PR:
         * Simplified notification config services using `map()`
         * Updated tests for better null handling and mocking
 
-Ensure that the description, status, and key changes implemented are indented one tab more than the PR title line. The PR title should include the exact title from the original list, followed by the PR number in square brackets, which is also a link to the PR.
-
 Here are the PRs you need to summarize:
 {content}"""
 
-def summarize_with_groq(content):
+
+def summarize_with_groq(content: str) -> str:
+    """Summarize pull requests using Meta's Llama model via Groq.
+
+    Args:
+        content (str): Raw PR and commit content to summarize
+
+    Returns:
+        str: Formatted markdown summary from Groq
+    """
     client = Groq(api_key=GROQ_API_KEY)
-    
     formatted_user_prompt = GROQ_USER_PROMPT.format(content=content)
-    
+
     chat_completion = client.chat.completions.create(
         messages=[
             {
@@ -89,20 +96,37 @@ def summarize_with_groq(content):
         ],
         model="llama-3.2-3b-preview",
     )
-    
+
     return chat_completion.choices[0].message.content
 
-def summarize_with_gemini(content):
+
+def summarize_with_gemini(content: str) -> str:
+    """Summarize pull requests using Google's Gemini model.
+
+    Args:
+        content (str): Raw PR and commit content to summarize
+
+    Returns:
+        str: Formatted markdown summary from Gemini
+    """
     genai.configure(api_key=GOOGLE_GEMINI_API_KEY)
     model = genai.GenerativeModel("gemini-1.5-flash")
-    
+
     formatted_prompt = GEMINI_PROMPT_TEMPLATE.format(content=content)
     response = model.generate_content(formatted_prompt)
-    
+
     return response.text
 
-def summarize_accomplishments_with_llm(accomplishments):
-    # Default to using Gemini
+
+def summarize_accomplishments_with_llm(accomplishments: str) -> str:
+    """Summarize accomplishments using the default LLM.
+
+    Args:
+        accomplishments (str): Raw accomplishments content to summarize
+
+    Returns:
+        str: Formatted markdown summary
+    """
     return summarize_with_gemini(accomplishments)
     
     # Uncomment the line below and comment out the line above to use Groq instead
