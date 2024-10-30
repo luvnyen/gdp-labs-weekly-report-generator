@@ -9,10 +9,11 @@ Authors:
 """
 
 import os
-from urllib.parse import unquote
-from dotenv import load_dotenv
-from zoneinfo import ZoneInfo
 from typing import List, NamedTuple
+from urllib.parse import unquote
+from zoneinfo import ZoneInfo
+
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -42,7 +43,6 @@ def parse_sonarqube_components(components_str: str) -> List[SonarQubeComponent]:
 
 def check_env_variables():
     required_vars = [
-        'AUTHOR_FULL_NAME',
         'GITHUB_PERSONAL_ACCESS_TOKEN',
         'GITHUB_USERNAME',
         'GOOGLE_GEMINI_API_KEY',
@@ -53,14 +53,14 @@ def check_env_variables():
         'SONARQUBE_COMPONENTS',
         'GMAIL_SEND_TO',
     ]
-    
+
     missing_vars = [var for var in required_vars if not os.getenv(var)]
-    
+
     # Check if GOOGLE_CLIENT_SECRET_FILE exists
     google_secret_file = os.getenv('GOOGLE_CLIENT_SECRET_FILE')
     if not google_secret_file or not os.path.isfile(google_secret_file):
         missing_vars.append('GOOGLE_CLIENT_SECRET_FILE (file not found)')
-    
+
     if missing_vars:
         raise EnvironmentError(
             f"The following required environment variables are missing, empty, or invalid: {', '.join(missing_vars)}"
@@ -68,7 +68,6 @@ def check_env_variables():
 
 check_env_variables()
 
-AUTHOR_FULL_NAME = os.getenv('AUTHOR_FULL_NAME')
 GITHUB_PERSONAL_ACCESS_TOKEN = os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN')
 GITHUB_USERNAME = os.getenv('GITHUB_USERNAME')
 GOOGLE_CLIENT_SECRET_FILE = os.getenv('GOOGLE_CLIENT_SECRET_FILE')
@@ -88,7 +87,7 @@ GITHUB_API_BASE_URL = "https://api.github.com"
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 GMAIL_SCOPES = [
     'https://www.googleapis.com/auth/gmail.readonly',
-    'https://www.googleapis.com/auth/gmail.compose'
+    'https://www.googleapis.com/auth/gmail.compose',
 ]
 
 SONARQUBE_API_URL = 'https://sqa.gdplabs.net/api/measures/component'
