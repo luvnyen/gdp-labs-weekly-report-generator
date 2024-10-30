@@ -103,8 +103,7 @@ class ConfigManager:
             'GMAIL_SEND_TO'
         }),
         ServiceType.LLM: ServiceRequirements({
-            'GOOGLE_GEMINI_API_KEY',
-            'GROQ_API_KEY'
+            'GOOGLE_GEMINI_API_KEY'
         })
     }
 
@@ -126,7 +125,6 @@ class ConfigManager:
             'GITHUB_USERNAME': os.getenv('GITHUB_USERNAME'),
             'GOOGLE_CLIENT_SECRET_FILE': os.getenv('GOOGLE_CLIENT_SECRET_FILE'),
             'GOOGLE_GEMINI_API_KEY': os.getenv('GOOGLE_GEMINI_API_KEY'),
-            'GROQ_API_KEY': os.getenv('GROQ_API_KEY'),
             'REPOS': os.getenv('REPOS'),
             'REPO_OWNER': os.getenv('REPO_OWNER'),
             'SONARQUBE_USER_TOKEN': os.getenv('SONARQUBE_USER_TOKEN'),
@@ -259,15 +257,6 @@ class ConfigManager:
         return self.env_vars.get('GOOGLE_CLIENT_SECRET_FILE')
 
     @property
-    def groq_api_key(self) -> Optional[str]:
-        """Get Groq API key.
-
-        Returns:
-            Optional[str]: Groq API key if available, None otherwise
-        """
-        return self.env_vars.get('GROQ_API_KEY')
-
-    @property
     def gemini_api_key(self) -> Optional[str]:
         """Get Google Gemini API key.
 
@@ -332,7 +321,6 @@ REPO_OWNER = config_manager.github_repo_owner
 SONARQUBE_USER_TOKEN = config_manager.sonarqube_token
 GOOGLE_CLIENT_SECRET_FILE = config_manager.google_client_secret_file
 SONARQUBE_COMPONENTS = parse_sonarqube_components(config_manager.env_vars.get('SONARQUBE_COMPONENTS', ''))
-GROQ_API_KEY = config_manager.groq_api_key
 GOOGLE_GEMINI_API_KEY = config_manager.gemini_api_key
 GMAIL_SEND_TO = config_manager.gmail_send_to
 GMAIL_SEND_CC = config_manager.gmail_send_cc
