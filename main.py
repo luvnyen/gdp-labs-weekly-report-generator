@@ -11,6 +11,7 @@ Authors:
 import os
 import time
 from datetime import datetime, timedelta
+from typing import Tuple
 
 from core.weekly_report_generator import generate_weekly_report
 from core.services.ai_agent_service import AIAgentReportService
@@ -19,13 +20,34 @@ from utils.date_time_util import format_duration
 from utils.progress_display_util import ProgressDisplay
 from config.config import GMAIL_SEND_TO, GMAIL_SEND_CC
 
-def get_week_dates():
+
+def get_week_dates() -> Tuple[datetime.date, datetime.date]:
+    """Get the date range for the current work week (Monday to Friday).
+
+    Returns:
+        Tuple[datetime.date, datetime.date]: Start date (Monday) and end date (Friday)
+        of the current week
+    """
     today = datetime.now()
     start_of_week = today - timedelta(days=today.weekday())  # Monday
     end_of_week = start_of_week + timedelta(days=4)  # Friday
     return start_of_week.date(), end_of_week.date()
 
-def main():
+
+def main() -> None:
+    """Main entry point for the weekly report generator.
+
+    - Determines the report date range (current week)
+    - Initializes progress display
+    - Generates the report with progress updates
+    - Saves a report to Markdown file in 'output' directory
+    - Handles errors and resource cleanup
+
+    File naming format: Weekly_Report_YYYY-MM-DD_to_YYYY-MM-DD.md
+
+    Raises:
+        Exception: Re-raises any exceptions from report generation after cleanup
+    """
     start_date, end_date = get_week_dates()
     start_time = time.time()
 
@@ -36,7 +58,7 @@ def main():
     progress.start()
 
     try:
-        def progress_callback(task):
+        def progress_callback(task: str) -> None:
             progress.update_task(task)
 
         # Generate an initial report with progress updates
@@ -83,6 +105,7 @@ def main():
         progress.stop_and_join()
         print(f"\n❌ Error: {str(e)}")
         raise
+
 
 if __name__ == "__main__":
     main()
