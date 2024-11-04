@@ -17,28 +17,58 @@ from config.config import GITHUB_PERSONAL_ACCESS_TOKEN, REPO_OWNER, REPOS, GITHU
 
 
 class GitHubRepo:
-    """A class representing a GitHub repository with URL generation capabilities."""
+    """A class representing a GitHub repository with URL generation capabilities.
 
-    def __init__(self, name: str):
-        """Initialize GitHubRepo with repository name."""
+    This class provides methods to generate URLs for pull requests and commits
+    within a specific GitHub repository.
+    """
+
+    def __init__(self, name: str) -> None:
+        """Initialize GitHubRepo with repository name.
+
+        Args:
+            name (str): The name of the GitHub repository.
+        """
         self.name = name
         self.pr_base_url = f"https://github.com/{REPO_OWNER}/{name}/pull"
         self.commit_base_url = f"https://github.com/{REPO_OWNER}/{name}/commit"
 
     def get_pr_url(self, pr_number: int) -> str:
-        """Generate URL for a specific pull request."""
+        """Generate URL for a specific pull request.
+
+        Args:
+            pr_number (int): The pull request number.
+
+        Returns:
+            str: The complete URL to the pull request.
+        """
         return f"{self.pr_base_url}/{pr_number}"
 
     def get_commit_url(self, commit_sha: str) -> str:
-        """Generate URL for a specific commit."""
+        """Generate URL for a specific commit.
+
+        Args:
+            commit_sha (str): The SHA hash of the commit.
+
+        Returns:
+            str: The complete URL to the commit.
+        """
         return f"{self.commit_base_url}/{commit_sha}"
 
 
 class GitHubService:
-    """Service for interacting with GitHub API."""
+    """Service for interacting with GitHub API.
 
-    def __init__(self):
-        """Initialize GitHubService with authentication headers and time settings."""
+    This class provides methods to fetch and process information about pull requests,
+    commits, and reviewing activities from GitHub repositories.
+    """
+
+    def __init__(self) -> None:
+        """Initialize GitHubService with authentication headers and time settings.
+
+        Sets up authentication headers using personal access token and initializes
+        time-related variables for filtering weekly data.
+        """
         self.headers = {
             "Authorization": f"token {GITHUB_PERSONAL_ACCESS_TOKEN}",
             "Accept": "application/vnd.github.v3+json"
@@ -52,12 +82,28 @@ class GitHubService:
 
     @staticmethod
     def _get_start_of_week() -> datetime.date:
-        """Get the date of the start of the current week (Monday)."""
+        """Get the date of the start of the current week (Monday).
+
+        Returns:
+            datetime.date: The date representing the start (Monday) of the current week.
+        """
         today = datetime.now(timezone.utc).date()
         return today - timedelta(days=today.weekday())
 
     def _get_pr_details(self, repo_name: str, pr_number: int) -> Optional[Dict]:
-        """Get detailed information about a specific pull request."""
+        """Get detailed information about a specific pull request.
+
+        Args:
+            repo_name (str): The name of the repository.
+            pr_number (int): The pull request number.
+
+        Returns:
+            Optional[Dict]: Dictionary containing pull request details if successful,
+                          None if the request fails.
+
+        Note:
+            Prints an error message to console if the request fails.
+        """
         url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo_name}/pulls/{pr_number}"
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
@@ -66,7 +112,24 @@ class GitHubService:
         return None
 
     def _get_pr_commits(self, repo_name: str, pr_number: int) -> List[Dict]:
-        """Get commits from a specific pull request."""
+        """Get commits from a specific pull request.
+
+        Retrieves all commit from the specified pull request that was made by the
+        authenticated user during the current week.
+
+        Args:
+            repo_name (str): The name of the repository.
+            pr_number (int): The pull request number.
+
+        Returns:
+            List[Dict]: List of dictionaries containing commit information with keys:
+                       - sha: commit hash
+                       - message: commit message
+                       - date: commit date
+
+        Note:
+            Prints an error message to console if the request fails.
+        """
         url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo_name}/pulls/{pr_number}/commits"
         commits = []
 
@@ -95,7 +158,20 @@ class GitHubService:
         return commits
 
     def _fetch_merged_prs(self, repo: GitHubRepo) -> List[str]:
-        """Fetch merged pull requests from a repository."""
+        """Fetch merged pull requests from a repository.
+
+        Retrieves all merged pull requests authored by the authenticated user
+        since the start of the current week.
+
+        Args:
+            repo (GitHubRepo): Repository object containing repository information.
+
+        Returns:
+            List[str]: List of formatted strings representing merged pull requests.
+
+        Note:
+            Prints an error message to console if the request fails.
+        """
         query = (
             f"repo:{REPO_OWNER}/{repo.name} is:pr is:merged "
             f"author:{GITHUB_USERNAME} merged:>={self.start_of_week_str}"
@@ -125,6 +201,13 @@ class GitHubService:
     def _format_merged_prs(repo: GitHubRepo, prs: List[Dict]) -> List[str]:
         """Format merged pull requests into strings.
 
+        Args:
+            repo (GitHubRepo): Repository object containing repository information.
+            prs (List[Dict]): List of pull request dictionaries to format.
+
+        Returns:
+            List[str]: List of formatted strings representing pull requests.
+
         Format examples:
             feat(core): title CATAPA-API#123
             refactor(core): impl auto-approve for `ClassType` CATAPA-API#789
@@ -141,7 +224,24 @@ class GitHubService:
         return formatted_prs
 
     def _fetch_repo_prs_and_commits(self, repo: GitHubRepo) -> Tuple[List[Any], Dict[int, List[Any]]]:
-        """Fetch PRs and their commits from a repository."""
+        """Fetch PRs and their commits from a repository.
+
+        Retrieves all pull requests authored by the authenticated user and their
+        associated commits from the specified repository.
+
+        Args:
+            repo (GitHubRepo): Repository object containing repository information.
+
+        Returns:
+            Tuple[List[Any], Dict[int, List[Any]]]: A tuple containing:
+                - List of pull request details
+                - Dictionary mapping PR numbers to lists of commit information
+
+        Note:
+            - Only returns PRs updated since the start of the current week
+            - Prints error message to console if request fails
+            - Prints progress information about the number of PRs found
+        """
         url = f"{GITHUB_API_BASE_URL}/search/issues"
         query = f"repo:{REPO_OWNER}/{repo.name} is:pr author:{GITHUB_USERNAME} sort:updated-desc"
 
@@ -184,7 +284,20 @@ class GitHubService:
         return your_prs, pr_commits
 
     def _fetch_reviewed_prs(self, repo: GitHubRepo) -> List[str]:
-        """Fetch reviewed pull requests from a repository."""
+        """Fetch reviewed pull requests from a repository.
+
+        Retrieves all pull requests reviewed by the authenticated user (excluding
+        their own PRs) that were updated since the start of the current week.
+
+        Args:
+            repo (GitHubRepo): Repository object containing repository information.
+
+        Returns:
+            List[str]: List of formatted strings representing reviewed pull requests.
+
+        Note:
+            Prints an error message to console if the request fails.
+        """
         query = (
             f"repo:{REPO_OWNER}/{repo.name} is:pr "
             f"reviewed-by:{GITHUB_USERNAME} -author:{GITHUB_USERNAME} "
@@ -211,7 +324,22 @@ class GitHubService:
         return []
 
     def get_prs_and_commits(self) -> str:
-        """Get formatted string of PRs and commits for all repositories."""
+        """Get formatted string of PRs and commits for all repositories.
+
+        Retrieves and formats all pull requests and their associated commits
+        across all configured repositories.
+
+        Returns:
+            str: A formatted string containing all PRs and commits, with the following structure:
+                * PR Title [RepoName#PRNumber](PR URL)
+                   * [CommitHash](Commit URL): Commit title
+                      * Additional commit message details (if any)
+
+        Note:
+            - Only includes PRs and commits from the current week
+            - Indents commit information under each PR
+            - Adds additional indentation for commit message details
+        """
         all_formatted_outputs = []
 
         for repo_name in REPOS:
@@ -247,7 +375,15 @@ class GitHubService:
         return '\n'.join(all_formatted_outputs)
 
     def get_merged_prs(self) -> List[str]:
-        """Get a list of merged pull requests from all repositories."""
+        """Get a list of merged pull requests from all repositories.
+
+        Retrieves all merged pull requests authored by the authenticated user
+        across all configured repositories since the start of the current week.
+
+        Returns:
+            List[str]: List of formatted strings representing merged pull requests
+                      from all repositories.
+        """
         all_merged_prs = []
         for repo_name in REPOS:
             repo = GitHubRepo(repo_name)
@@ -256,7 +392,16 @@ class GitHubService:
         return all_merged_prs
 
     def get_reviewed_prs(self) -> List[str]:
-        """Get a list of pull requests reviewed across all repositories."""
+        """Get a list of pull requests reviewed across all repositories.
+
+        Retrieves all pull requests reviewed by the authenticated user (excluding
+        their own PRs) across all configured repositories that were updated since
+        the start of the current week.
+
+        Returns:
+            List[str]: List of formatted strings representing reviewed pull requests
+                      from all repositories.
+        """
         all_reviewed_prs = []
         for repo_name in REPOS:
             repo = GitHubRepo(repo_name)
