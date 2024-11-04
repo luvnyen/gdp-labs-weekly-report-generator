@@ -264,6 +264,15 @@ class ConfigManager:
             Optional[str]: Gemini API key if available, None otherwise
         """
         return self.env_vars.get('GOOGLE_GEMINI_API_KEY')
+    
+    @property
+    def groq_api_key(self) -> Optional[str]:
+        """Get GROQ API key.
+
+        Returns:
+            Optional[str]: GROQ API key if available, None otherwise
+        """
+        return self.env_vars.get('GROQ_API_KEY')
 
     @property
     def gmail_send_to(self) -> Optional[str]:
@@ -322,5 +331,6 @@ SONARQUBE_USER_TOKEN = config_manager.sonarqube_token
 GOOGLE_CLIENT_SECRET_FILE = config_manager.google_client_secret_file
 SONARQUBE_COMPONENTS = parse_sonarqube_components(config_manager.env_vars.get('SONARQUBE_COMPONENTS', ''))
 GOOGLE_GEMINI_API_KEY = config_manager.gemini_api_key
+GROQ_API_KEY = config_manager.groq_api_key
 GMAIL_SEND_TO = config_manager.gmail_send_to
 GMAIL_SEND_CC = config_manager.gmail_send_cc

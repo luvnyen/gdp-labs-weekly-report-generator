@@ -1,0 +1,52 @@
+# tasks.yaml
+analyze_content_task:
+  description: >
+    Analyze the provided weekly report content: {raw_report}
+    
+    Focus on:
+    1. Structure and organization
+    2. Technical accuracy
+    3. Clarity and readability
+    4. Professional tone
+    5. Potential areas for improvement
+    
+    If iteration feedback exists, incorporate it: {iteration_feedback}
+  expected_output: >
+    A detailed analysis of the report's current state and specific recommendations
+    for improvements while maintaining technical accuracy.
+
+enhance_report_task:
+  description: >
+    Using the analysis provided, enhance the weekly report while maintaining
+    all technical information and professional standards.
+    
+    Original report: {raw_report}
+    
+    Focus on implementing identified improvements while ensuring:
+    1. All technical content remains accurate
+    2. Professional tone is maintained
+    3. Structure is improved for clarity
+    4. Original data points are preserved
+    
+    If iteration feedback exists, address it: {iteration_feedback}
+  expected_output: >
+    An enhanced version of the report with improved clarity and structure while
+    maintaining technical accuracy and professional tone.
+
+quality_check_task:
+  description: >
+    Review the enhanced report against the original content and quality standards.
+    
+    Original report: {raw_report}
+    Enhanced version from previous task
+    
+    Verify:
+    1. All technical information is preserved and accurate
+    2. Improvements maintain document integrity
+    3. Professional tone is consistent
+    4. Structure enhances readability
+    
+    If iteration feedback exists, ensure it's addressed: {iteration_feedback}
+  expected_output: >
+    A final verified report with confirmation of technical accuracy and successful
+    implementation of improvements, formatted in markdown.

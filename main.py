@@ -14,11 +14,12 @@ from datetime import datetime, timedelta
 from typing import Tuple
 
 from core.weekly_report_generator import generate_weekly_report
-from core.services.ai_agent_service import AIAgentReportService
+from core.services.ai_agent_service import enhance_report_with_ai_agents
 from core.services.gmail_service import create_gmail_draft
 from utils.date_time_util import format_duration
 from utils.progress_display_util import ProgressDisplay
 from config.config import GMAIL_SEND_TO, GMAIL_SEND_CC
+from core.user_data import GMAIL_TEMPLATE
 
 
 def get_week_dates() -> Tuple[datetime.date, datetime.date]:
@@ -64,13 +65,11 @@ def main() -> None:
         # Generate an initial report with progress updates
         initial_report, initial_duration = generate_weekly_report(
             progress_callback=progress_callback,
-            create_draft=False  # Don't create draft yet, wait for AI-enhanced version
         )
 
         # Enhance report using AI agents
         progress.update_task("Enhancing report with AI agent crew")
-        ai_service = AIAgentReportService()
-        enhanced_report = ai_service.process_report(initial_report)
+        enhanced_report = enhance_report_with_ai_agents(initial_report)
 
         # Stop the animation
         progress.stop_and_join()
@@ -92,8 +91,15 @@ def main() -> None:
             f.write(enhanced_report)
 
         # Create Gmail draft with enhanced version
-        # progress.update_task("Creating Gmail draft")
+        progress.update_task("Creating Gmail draft")
         # create_gmail_draft(enhanced_report, GMAIL_SEND_TO, GMAIL_SEND_CC)
+
+        create_gmail_draft(
+            enhanced_report,
+            GMAIL_SEND_TO,
+            GMAIL_SEND_CC,
+            GMAIL_TEMPLATE
+        )
 
         total_duration = time.time() - start_time
         print(f"\n✨ Report generation and AI enhancement completed in {format_duration(total_duration)}")
