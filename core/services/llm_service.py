@@ -14,7 +14,7 @@ from config.config import GOOGLE_GEMINI_API_KEY
 GEMINI_PROMPT_TEMPLATE = """
 Summarize the commit messages for each PR while maintaining the following rules:
 1. Format the PR title exactly as shown in the example, including the PR number and link.
-2. Extract and summarize key points from commit messages and its details into maximum 5 bullet points for Key Changes Implemented
+2. Extract and summarize key points from commit messages and its details into several bullet points for Key Changes Implemented
 3. Description must be a single sentence summary of the Key Changes Implemented
 4. Format code-related terms with backticks
 5. Maintain the exact structure of the example format (PR name, PR number with GitHub link, Description, Status, and Key Changes Implemented)
