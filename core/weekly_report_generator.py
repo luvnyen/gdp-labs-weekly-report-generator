@@ -63,7 +63,7 @@ def get_github_data(progress_callback: Optional[Callable[[str], None]]) -> Dict[
     update_progress(progress_callback, "Fetching PRs and commits")
     accomplishments = github_service.get_prs_and_commits()
 
-    if config_manager.is_service_available(ServiceType.LLM):
+    if accomplishments and config_manager.is_service_available(ServiceType.LLM):
         update_progress(progress_callback, "Summarizing accomplishments with LLM")
         accomplishments = summarize_with_gemini(accomplishments)
 

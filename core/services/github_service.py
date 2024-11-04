@@ -50,7 +50,8 @@ class GitHubService:
             datetime.min.time()
         ).replace(tzinfo=timezone.utc)
 
-    def _get_start_of_week(self) -> datetime.date:
+    @staticmethod
+    def _get_start_of_week() -> datetime.date:
         """Get the date of the start of the current week (Monday)."""
         today = datetime.now(timezone.utc).date()
         return today - timedelta(days=today.weekday())
@@ -120,7 +121,8 @@ class GitHubService:
         print(f"Error fetching merged PRs for {repo.name}: {response.status_code}")
         return []
 
-    def _format_merged_prs(self, repo: GitHubRepo, prs: List[Dict]) -> List[str]:
+    @staticmethod
+    def _format_merged_prs(repo: GitHubRepo, prs: List[Dict]) -> List[str]:
         """Format merged pull requests into strings.
 
         Format examples:
@@ -133,7 +135,6 @@ class GitHubService:
             pr_number = pr['number']
             pr_link = repo.get_pr_url(pr_number)
 
-            # Format without bullet point and without merged info
             formatted_pr = f"{title} [{repo.name}#{pr_number}]({pr_link})"
             formatted_prs.append(formatted_pr)
 
@@ -141,11 +142,11 @@ class GitHubService:
 
     def _fetch_repo_prs_and_commits(self, repo: GitHubRepo) -> Tuple[List[Any], Dict[int, List[Any]]]:
         """Fetch PRs and their commits from a repository."""
-        url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo.name}/pulls"
+        url = f"{GITHUB_API_BASE_URL}/search/issues"
+        query = f"repo:{REPO_OWNER}/{repo.name} is:pr author:{GITHUB_USERNAME} sort:updated-desc"
+
         params = {
-            "state": "all",
-            "sort": "updated",
-            "direction": "desc",
+            "q": query,
             "per_page": 100
         }
 
@@ -155,23 +156,27 @@ class GitHubService:
         while url:
             response = requests.get(url, params=params, headers=self.headers)
             if response.status_code == 200:
-                for pr in response.json():
+                for issue in response.json()['items']:
+                    pr_details = self._get_pr_details(repo.name, issue['number'])
+                    if not pr_details:
+                        continue
+
                     pr_date = datetime.strptime(
-                        pr['updated_at'],
+                        pr_details['updated_at'],
                         "%Y-%m-%dT%H:%M:%SZ"
                     ).replace(tzinfo=timezone.utc)
 
                     if pr_date < self.start_of_week_datetime:
                         return your_prs, pr_commits
 
-                    if pr['user']['login'] == GITHUB_USERNAME:
-                        commits = self._get_pr_commits(repo.name, pr['number'])
-                        if commits:
-                            your_prs.append(pr)
-                            pr_commits[pr['number']] = commits
+                    commits = self._get_pr_commits(repo.name, issue['number'])
+                    if commits:
+                        your_prs.append(pr_details)
+                        print(f"Your PRs: {len(your_prs)}")
+                        pr_commits[issue['number']] = commits
 
                 url = response.links.get('next', {}).get('url')
-                params = {}
+                params = {} if url else None
             else:
                 print(f"Error fetching PRs for {repo.name}: {response.status_code}")
                 break
