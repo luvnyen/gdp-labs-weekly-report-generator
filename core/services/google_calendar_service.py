@@ -14,7 +14,7 @@ from typing import List, Dict, Any
 
 from googleapiclient.errors import HttpError
 
-from config.config import GOOGLE_CALENDAR_SCOPES, TIMEZONE
+from config.config import TIMEZONE
 from core.services.google_service import get_google_service
 from utils.date_time_util import ordinal, format_time
 
@@ -83,12 +83,7 @@ def get_events_for_week() -> List[str]:
         ]
     """
     try:
-        service = get_google_service(
-            'calendar',
-            'v3',
-            'token_calendar.json',
-            GOOGLE_CALENDAR_SCOPES
-        )
+        service = get_google_service('calendar', 'v3')
 
         today = datetime.datetime.now(TIMEZONE).date()
         start_of_week = today - datetime.timedelta(days=today.weekday())

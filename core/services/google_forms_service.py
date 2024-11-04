@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from email.utils import parsedate_to_datetime
 from typing import cast, List, Dict, Any
 
-from config.config import GMAIL_SCOPES, TIMEZONE
+from config.config import TIMEZONE
 from core.services.google_service import get_google_service
 from utils.date_time_util import ordinal, format_time
 
@@ -31,7 +31,7 @@ def get_forms_filled_this_week() -> List[Dict[str, Any]]:
                 'timestamp': datetime (submission time in configured timezone)
             }
     """
-    service = get_google_service('gmail', 'v1', 'token_gmail.json', GMAIL_SCOPES)
+    service = get_google_service('gmail', 'v1')
 
     today = datetime.now(TIMEZONE)
     start_of_week = today - timedelta(days=today.weekday())
