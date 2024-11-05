@@ -64,7 +64,7 @@ class ProgressDisplay:
                 if completed_task.startswith(present):
                     completed_task = completed_task.replace(present, past)
                     break
-            print(f"✓ {completed_task}")
+            print(f"✅ {completed_task}")
 
         if task:
             self.current_task = task
