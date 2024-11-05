@@ -38,7 +38,7 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
 
 3. Configure your environment variables
 
-4. Configure your user data in user_data.py:
+4. Configure your user data in [`user_data.py`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/core/user_data.py):
    - Set your WFO (Work From Office) days using numbers 1-5 for Monday to Friday
    - Update your learning activities with relevant URLs and progress
    - Add any ongoing issues or bugs you're tracking
@@ -244,9 +244,9 @@ weekly-report-generator/
 ### Adding New Features
 
 1. Service Integration:
-   - Add new service configuration in `config/config.py`
-   - Create service module in `core/services`
-   - Update `weekly_report_generator.py` to include new data
+   - Add new service configuration in [`config/config.py`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/config/config.py)
+   - Create service module in [`core/services`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/tree/main/core/services)
+   - Update [`weekly_report_generator.py`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/core/weekly_report_generator.py) to include new data
 
 2. Template Customization:
    - Modify `templates/template.md`
