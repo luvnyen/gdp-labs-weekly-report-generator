@@ -38,7 +38,14 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
 
 3. Configure your environment variables
 
-4. Generate a report:
+4. Configure your user data in user_data.py:
+   - Set your WFO (Work From Office) days using numbers 1-5 for Monday to Friday
+   - Update your learning activities with relevant URLs and progress
+   - Add any ongoing issues or bugs you're tracking
+   - Customize your next steps
+   - Modify the Gmail template if needed
+
+5. Generate a report:
 ```bash
 ./run.sh
 ```
