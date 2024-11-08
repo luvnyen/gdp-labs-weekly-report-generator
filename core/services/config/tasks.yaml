@@ -1,52 +1,93 @@
-# tasks.yaml
 analyze_content_task:
   description: >
-    Analyze the provided weekly report content: {raw_report}
+    ANALYZE ONLY - DO NOT GENERATE ANY REPORT YET
+    Report to analyze: {raw_report}
+    Selected style: {style_preference}
+
+    Key analysis points:
+    1. Identify sections to enhance based on chosen style:
+       - Style 1 (Cheerful): Note where emojis and friendly tone should be added
+       - Style 2 (Professional): Check for areas needing formal refinement
+       - Style 3 (No Changes): Verify content accuracy only
+    2. Mark any incomplete sections or formatting issues
+    3. Note any technical inaccuracies
+    4. Identify structural improvements needed
     
-    Focus on:
-    1. Structure and organization
-    2. Technical accuracy
-    3. Clarity and readability
-    4. Professional tone
-    5. Potential areas for improvement
-    
-    If iteration feedback exists, incorporate it: {iteration_feedback}
+    Previous feedback (if any): {iteration_feedback}
+  goal: >
+    Analyze the report's content, structure, and style to identify specific areas 
+    for enhancement while ensuring all technical content remains accurate and no
+    actual modifications are made during this phase.
   expected_output: >
-    A detailed analysis of the report's current state and specific recommendations
-    for improvements while maintaining technical accuracy.
+    Analysis report identifying enhancement points based on chosen style.
+    NO REPORT GENERATION IN THIS PHASE.
 
 enhance_report_task:
   description: >
-    Using the analysis provided, enhance the weekly report while maintaining
-    all technical information and professional standards.
-    
+    IMPORTANT: START YOUR RESPONSE DIRECTLY WITH #### Issues
+
+    Enhance this report according to style: {style_preference}
     Original report: {raw_report}
+
+    Enhancement rules:
+    1. For Style 1 (Cheerful and Emoji-Enhanced):
+       - Add relevant emojis and catchy phrases to section headers and key achievements
+       - Use friendly, enthusiastic tone
+       - You can add some casual tone
+       - Keep all technical details accurate
+       
+    2. For Style 2 (Professional and Formal):
+       - Remove any emojis or informal language
+       - Use clear, concise professional tone
+       - Maintain structured, formal presentation
+       
+    3. For Style 3 (No Changes):
+       - Return exact original content
+       - Fix only critical formatting issues if any
     
-    Focus on implementing identified improvements while ensuring:
-    1. All technical content remains accurate
-    2. Professional tone is maintained
-    3. Structure is improved for clarity
-    4. Original data points are preserved
-    
-    If iteration feedback exists, address it: {iteration_feedback}
+    Previous feedback (if any): {iteration_feedback}
+  goal: >
+    Transform the report according to the chosen style preference while maintaining 
+    perfect technical accuracy, proper markdown formatting, and ensuring the response
+    starts directly with the report content.
   expected_output: >
-    An enhanced version of the report with improved clarity and structure while
-    maintaining technical accuracy and professional tone.
+    ENHANCED REPORT ONLY - START WITH #### Issues
+    NO EXPLANATORY TEXT OR META COMMENTARY
 
 quality_check_task:
   description: >
-    Review the enhanced report against the original content and quality standards.
+    IMPORTANT: START YOUR RESPONSE DIRECTLY WITH #### Issues
     
-    Original report: {raw_report}
-    Enhanced version from previous task
+    Final quality check based on style: {style_preference}
+
+    Enhancement rules:
+    1. For Style 1 (Cheerful and Emoji-Enhanced):
+       - Add relevant emojis to section headers and key achievements
+       - Use friendly, enthusiastic tone while maintaining professionalism
+       - You can add some casual tone
+       - Keep all technical details accurate
+       
+    2. For Style 2 (Professional and Formal):
+       - Remove any emojis or informal language
+       - Use clear, concise professional tone
+       - Maintain structured, formal presentation
+       
+    3. For Style 3 (No Changes):
+       - Return exact original content
+       - Fix only critical formatting issues if any
     
-    Verify:
-    1. All technical information is preserved and accurate
-    2. Improvements maintain document integrity
-    3. Professional tone is consistent
-    4. Structure enhances readability
+    Verification checklist:
+    1. Style consistency throughout report
+    2. Technical accuracy maintained
+    3. Proper formatting and structure
+    4. All sections present and complete
+    5. Links and references intact
     
-    If iteration feedback exists, ensure it's addressed: {iteration_feedback}
+    Previous feedback (if any): {iteration_feedback}
+  goal: >
+    Perform final verification of the enhanced report to ensure perfect style 
+    implementation, technical accuracy, and structural integrity while returning 
+    only the verified report content without any additional commentary.
   expected_output: >
-    A final verified report with confirmation of technical accuracy and successful
-    implementation of improvements, formatted in markdown.
+    FINAL REPORT ONLY - START WITH #### Issues
+    NO EXPLANATORY TEXT OR META COMMENTARY

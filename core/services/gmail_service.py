@@ -122,25 +122,67 @@ def create_gmail_draft(
                 <head>
                     <style>
                         body {{
-                            font-family: Arial, sans-serif;
+                            font-family: trebuchet ms, sans-serif;
                             line-height: 1.6;
-                            color: #333;
+                            color: #333333;
+                            max-width: 900px;
+                            margin: 0 auto;
+                            padding: 20px;
+                            }}
+
+                        h1, h2, h3, h4, h5, h6, a {{
+                            color: #38761d;
+                            font-weight: 700;
+                            margin-top: 1.5em;
+                            margin-bottom: 0.5em;
                         }}
+
+                        a {{
+                            text-decoration: none;
+                        }}
+
+                        a:hover {{
+                            text-decoration: underline;
+                        }}
+
                         hr {{
                             border: 0;
                             height: 1px;
                             background-color: #ddd;
                             margin: 20px 0;
-                        }}
+                            }}
+
                         pre {{
                             background-color: #f5f5f5;
                             padding: 10px;
                             border-radius: 4px;
+                            overflow-x: auto;
+                            margin: 16px 0;
                         }}
+
                         code {{
                             background-color: #f5f5f5;
                             padding: 2px 4px;
                             border-radius: 4px;
+                            font-family: monospace;
+                        }}
+
+                        p {{
+                            margin: 16px 0;
+                        }}
+
+                        ul, ol {{
+                            padding-left: 20px;
+                            margin: 16px 0;
+                        }}
+
+                        li {{
+                            margin: 8px 0;
+                        }}
+
+                        img {{
+                            max-width: 100%;
+                            height: auto;
                         }}
                     </style>
                 </head>

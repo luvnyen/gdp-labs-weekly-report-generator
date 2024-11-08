@@ -182,15 +182,16 @@ def generate_weekly_report(
 
     report = template.format(**report_data)
 
-    if config_manager.is_service_available(ServiceType.GMAIL):
-        update_progress(progress_callback, "Creating Gmail draft")
-        gmail_config = config_manager.get_service_vars(ServiceType.GMAIL)
-        create_gmail_draft(
-            report,
-            gmail_config['GMAIL_SEND_TO'].split(','),
-            gmail_config.get('GMAIL_SEND_CC', '').split(','),
-            GMAIL_TEMPLATE
-        )
+    # TODO: Uncomment this block to enable original Gmail draft creation 
+    # if config_manager.is_service_available(ServiceType.GMAIL):
+    #     update_progress(progress_callback, "Creating Gmail draft")
+    #     gmail_config = config_manager.get_service_vars(ServiceType.GMAIL)
+    #     create_gmail_draft(
+    #         report,
+    #         gmail_config['GMAIL_SEND_TO'].split(','),
+    #         gmail_config.get('GMAIL_SEND_CC', '').split(','),
+    #         GMAIL_TEMPLATE
+    #     )
 
     update_progress(progress_callback, None)
     return report, time.time() - start_time

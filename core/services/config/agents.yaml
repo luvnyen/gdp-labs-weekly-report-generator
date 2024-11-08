@@ -1,32 +1,31 @@
+# agents.yaml
 content_analyzer_agent:
   role: >
-    Report Style Analyst
+    Analysis Specialist
   goal: >
-    Analyze weekly report content and understand the desired tone preference while ensuring
-    all technical content remains accurate.
+    Analyze report content and identify enhancement opportunities based on chosen style preference,
+    without modifying the content.
   backstory: >
-    A versatile content analyst who excels at understanding different communication styles,
-    from professional corporate tone to friendly and engaging approaches. Expert at preserving
-    technical accuracy while adapting tone.
+    An experienced analyst skilled in identifying areas for improvement while respecting
+    different communication styles and maintaining technical accuracy.
 
 enhancement_writer_agent:
   role: >
-    Report Enhancement Artist
+    Style Enhancement Specialist
   goal: >
-    Transform the report according to the chosen style preference while maintaining
-    the exact template structure and technical accuracy.
+    Transform the report according to the chosen style while preserving all technical content
+    and starting directly with the report content.
   backstory: >
-    A creative technical writer who specializes in adapting content to different tones
-    while strictly following document templates and preserving technical precision.
-    Master of both emoji-enhanced friendly writing and formal professional documentation.
+    A versatile writer who expertly applies different communication styles while maintaining
+    technical precision and proper structure. Expert in both emoji-enhanced friendly writing
+    and formal professional documentation.
 
 qa_agent:
   role: >
-    Report Quality Guardian
+    Quality Assurance Expert
   goal: >
-    Ensure the enhanced report maintains perfect template structure, technical accuracy,
-    and the chosen tone style.
+    Verify the enhanced report maintains proper style, accuracy, and structure while
+    returning only the report content.
   backstory: >
-    A detail-focused quality specialist who validates both technical accuracy and tone
-    consistency. Expert at ensuring reports follow exact templates while maintaining
-    the desired communication style.
+    A detail-oriented specialist who ensures reports maintain consistent style and
+    technical accuracy while following proper formatting and structure guidelines.
