@@ -45,7 +45,12 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
    - Customize your next steps
    - Modify the Gmail template if needed
 
-5. Generate a report:
+5. Customize your report structure in [template/](https://github.com/luvnyen/gdp-labs-weekly-report-generator/tree/main/templates)template.md:
+   - Add or remove sections as needed
+   - Adjust formatting and styling
+   - Use template variables defined in [`weekly_report_generator.py`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/core/weekly_report_generator.py) such as `{issues}`, `{accomplishments}`, `{deployments}`, etc.
+
+6. Generate a report:
 ```bash
 ./run.sh
 ```
@@ -54,47 +59,65 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
 
 The application uses various service tokens and configurations stored in a `.env` file. Here's how to obtain each required token:
 
-### GitHub Configuration
+### GitHub Personal Access Token Configuration
 
-- **Personal Access Token**: Generate at [GitHub Token Settings](https://github.com/settings/tokens/new)
-  - Required scopes: `repo` (full repository access)
-  - Set expiration as needed
-- **Username**: Your GitHub username
-- **Repository Configuration**: 
-  - `REPO_OWNER`: Your organization name (e.g., `GDP-ADMIN`)
-  - `REPOS`: Comma-separated list of repository names to track
+ - Generate at [GitHub Token Settings](https://github.com/settings/tokens/new)
+  - Required scopes: `repo` (full repository access)<br>
+    ![github_full_control_of_private_repo.png](assets/github_full_control_of_private_repo.png)
+  - Set expiration as needed (can be set to no expiration)
 
-### SonarQube Configuration
+### SonarQube User Token Configuration
 
-- **User Token**: Generate at [SonarQube Security Settings](https://sqa.gdplabs.net/account/security)
+  - Generate at [SonarQube Security Settings](https://sqa.gdplabs.net/account/security)
   - Type: `User Token`
   - Set expiration as needed (can be set to no expiration)
-- **Components**: Specify the components you want to track
-  - Format: `project:path` pairs
-  - Can be URL-encoded for paths with special characters
 
-### Google Configuration
+### Google Client Secret File Configuration
 
-1. **Client Secret File**:
-   Setup steps:
-   1. Go to [Google Cloud Console](https://console.cloud.google.com)
-   2. Select your project
-   3. Navigate to "APIs & Services > Library"
-   4. Enable required APIs:
-      - Google Calendar API
-      - Google Forms API
-      - Gmail API
-   5. Create credentials and download the client secret JSON file
+> [!IMPORTANT]  
+> Use personal `@gmail.com` account
 
-2. **Gmail Configuration**:
-   - `GMAIL_SEND_TO`: Comma-separated list of primary recipients
-   - `GMAIL_SEND_CC`: Comma-separated list of CC recipients
+#### Google Auth Project Configuration
 
-### Gemini AI Configuration
+1. Go to [Google Cloud Console](https://console.cloud.google.com/projectcreate) to create a new project:
+   * Set the `Project name` (e.g., `Weekly Report Generator`)
+   * Set the `Location` as `No organization`
+2. Wait for project creation to complete, then select your project
+3. Navigate to [Google Auth Platform](https://console.cloud.google.com/auth/overview) and click `GET STARTED`
+4. Complete the required sections:
+   * **App Information**:
+     * Enter `App name` (e.g., `Weekly Report Generator`)
+     * Enter your personal email as `User support email`
+   * **Audience**: Select `External`
+   * **Contact Information**: Enter your personal email
+5. Read and accept the `Google API Services: User Data Policy`
+6. Click `CREATE` to finish setup
+7. Navigate to the [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent?) and scroll down to the `Test users` section
+8. Click `+ ADD USERS` to register your `@gdplabs.id` email address as a test user, then click `SAVE`
+   
+#### Create Google OAuth Client ID
 
-- **API Key**: Generate at [Google AI Studio](https://aistudio.google.com/app/apikey)
-  - Important: Use personal `@gmail.com` account (not `@gdplabs.id`)
-  - Create a new Google Cloud project for the API key
+1. Navigate to the [Create OAuth client ID](https://console.cloud.google.com/apis/credentials/oauthclient) page
+2. Configure the OAuth client:
+   * Set `Application type` to `Desktop app`
+   * Enter a `Name` (e.g., `Weekly Report Generator`)
+3. Click `CREATE` to generate the client ID
+4. Download the Google OAuth client secret JSON file
+5. Place the downloaded file in your project's root directory
+6. Update the `GOOGLE_CLIENT_SECRET_FILE` variable in your `.env` file with the path to the client secret file
+      
+#### Enable Google API Services
+
+1. Enable the required Google APIs:
+   * [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+   * [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+
+### Gemini API Key Configuration
+
+  > [!IMPORTANT]  
+  > Use personal `@gmail.com` account
+
+  - Generate at [Google AI Studio](https://aistudio.google.com/app/apikey) (don't worry, it's free!)
   
 ## Report Structure
 

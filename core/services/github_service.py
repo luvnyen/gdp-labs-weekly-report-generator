@@ -272,7 +272,6 @@ class GitHubService:
                     commits = self._get_pr_commits(repo.name, issue['number'])
                     if commits:
                         your_prs.append(pr_details)
-                        print(f"Your PRs: {len(your_prs)}")
                         pr_commits[issue['number']] = commits
 
                 url = response.links.get('next', {}).get('url')
