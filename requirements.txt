@@ -3,6 +3,7 @@ google-auth
 google-auth-httplib2
 google-auth-oauthlib~=1.2.1
 google-generativeai
+groq
 markdown~=3.7
 protobuf~=5.28.1
 python-dotenv~=1.0.1

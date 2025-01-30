@@ -92,7 +92,7 @@ The application uses various service tokens and configurations stored in a `.env
    * **Contact Information**: Enter your personal email
 5. Read and accept the `Google API Services: User Data Policy`
 6. Click `CREATE` to finish setup
-7. Navigate to the [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent?) and scroll down to the `Test users` section
+7. Navigate to the [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent) and scroll down to the `Test users` section
 8. Click `+ ADD USERS` to register your `@gdplabs.id` email address as a test user, then click `SAVE`
    
 #### Create Google OAuth Client ID

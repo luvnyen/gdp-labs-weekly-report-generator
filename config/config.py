@@ -65,22 +65,27 @@ class ServiceRequirements:
 
     Attributes:
         required_vars (Set[str]): Set of environment variable names required by the service
+        alternative_vars (List[Set[str]]): List of alternative sets of variables, where any set being
+                                         complete satisfies the requirement
     """
     required_vars: Set[str]
+    alternative_vars: List[Set[str]] = None
 
 
 class ConfigManager:
     """Manages configuration and environment variables for various services.
 
     This class handles loading, validation, and access to configuration settings
-    for GitHub, Google APIs, SonarQube, and LLM services.
-    It ensures required variables are present before allowing service access.
+    for GitHub, Google APIs, SonarQube, and LLM services. It ensures required
+    variables are present before allowing service access and supports alternative
+    requirements for services that can use different providers.
 
     Attributes:
-        env_vars (Dict[str, str]): Loaded environment variables
+        env_vars (Dict[str, str]): Dictionary containing loaded environment variables
         _available_services (Set[ServiceType]): Set of services with satisfied requirements
+        _service_requirements (Dict[ServiceType, ServiceRequirements]): Mapping of services
+            to their configuration requirements
     """
-
     _service_requirements = {
         ServiceType.GITHUB: ServiceRequirements({
             'GITHUB_PERSONAL_ACCESS_TOKEN',
@@ -102,9 +107,13 @@ class ConfigManager:
             'GOOGLE_CLIENT_SECRET_FILE',
             'GMAIL_SEND_TO'
         }),
-        ServiceType.LLM: ServiceRequirements({
-            'GOOGLE_GEMINI_API_KEY'
-        })
+        ServiceType.LLM: ServiceRequirements(
+            required_vars = set(),
+            alternative_vars = [
+                {'GOOGLE_GEMINI_API_KEY'},
+                {'GROQ_API_KEY'}
+            ]
+        )
     }
 
     def __init__(self):
@@ -125,6 +134,7 @@ class ConfigManager:
             'GITHUB_USERNAME': os.getenv('GITHUB_USERNAME'),
             'GOOGLE_CLIENT_SECRET_FILE': os.getenv('GOOGLE_CLIENT_SECRET_FILE'),
             'GOOGLE_GEMINI_API_KEY': os.getenv('GOOGLE_GEMINI_API_KEY'),
+            'GROQ_API_KEY': os.getenv('GROQ_API_KEY'),
             'REPOS': os.getenv('REPOS'),
             'REPO_OWNER': os.getenv('REPO_OWNER'),
             'SONARQUBE_USER_TOKEN': os.getenv('SONARQUBE_USER_TOKEN'),
@@ -137,6 +147,7 @@ class ConfigManager:
         """Check if all required environment variables for a service are present.
 
         Validates that all required variables are set and any referenced files exist.
+        For services with alternative requirements, checks if any set of alternatives is complete.
 
         Args:
             service_type (ServiceType): The service type to check requirements for
@@ -148,6 +159,14 @@ class ConfigManager:
 
         if not all(self.env_vars.get(var) for var in requirements.required_vars):
             return False
+
+        if requirements.alternative_vars:
+            alternatives_met = any(
+                all(self.env_vars.get(var) for var in alt_set)
+                for alt_set in requirements.alternative_vars
+            )
+            if not alternatives_met:
+                return False
 
         if 'GOOGLE_CLIENT_SECRET_FILE' in requirements.required_vars:
             file_path = self.env_vars['GOOGLE_CLIENT_SECRET_FILE']
@@ -266,6 +285,15 @@ class ConfigManager:
         return self.env_vars.get('GOOGLE_GEMINI_API_KEY')
 
     @property
+    def groq_api_key(self) -> Optional[str]:
+        """Get Groq API key.
+
+        Returns:
+            Optional[str]: Groq API key if available, None otherwise
+        """
+        return self.env_vars.get('GROQ_API_KEY')
+
+    @property
     def gmail_send_to(self) -> Optional[str]:
         """Get Gmail send-to address.
 
@@ -322,5 +350,6 @@ SONARQUBE_USER_TOKEN = config_manager.sonarqube_token
 GOOGLE_CLIENT_SECRET_FILE = config_manager.google_client_secret_file
 SONARQUBE_COMPONENTS = parse_sonarqube_components(config_manager.env_vars.get('SONARQUBE_COMPONENTS', ''))
 GOOGLE_GEMINI_API_KEY = config_manager.gemini_api_key
+GROQ_API_KEY = config_manager.groq_api_key
 GMAIL_SEND_TO = config_manager.gmail_send_to
 GMAIL_SEND_CC = config_manager.gmail_send_cc
