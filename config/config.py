@@ -283,6 +283,15 @@ class ConfigManager:
             Optional[str]: Gemini API key if available, None otherwise
         """
         return self.env_vars.get('GOOGLE_GEMINI_API_KEY')
+    
+    @property
+    def groq_api_key(self) -> Optional[str]:
+        """Get GROQ API key.
+
+        Returns:
+            Optional[str]: GROQ API key if available, None otherwise
+        """
+        return self.env_vars.get('GROQ_API_KEY')
 
     @property
     def groq_api_key(self) -> Optional[str]:
