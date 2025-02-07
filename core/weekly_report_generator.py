@@ -18,7 +18,7 @@ from core.services.github_service import GitHubService
 from core.services.gmail_service import create_gmail_draft
 from core.services.google_calendar_service import get_events_for_week
 from core.services.google_forms_service import get_this_week_filled_forms_formatted
-from core.services.llm_service import summarize_with_gemini
+from core.services.llm_service import summarize_with_groq
 from core.services.sonarqube_service import get_all_components_metrics, format_test_coverage_components
 from utils.date_time_util import ordinal
 from .user_data import (
@@ -63,9 +63,13 @@ def get_github_data(progress_callback: Optional[Callable[[str], None]]) -> Dict[
     update_progress(progress_callback, "Fetching PRs and commits")
     accomplishments = github_service.get_prs_and_commits()
 
-    if config_manager.is_service_available(ServiceType.LLM):
+    with open('ACCOMPLISHMENTS_RAW.md', 'w') as f:
+        f.write(accomplishments)
+
+    if accomplishments and config_manager.is_service_available(ServiceType.LLM):
         update_progress(progress_callback, "Summarizing accomplishments with LLM")
-        accomplishments = summarize_with_gemini(accomplishments)
+        # accomplishments = summarize_with_gemini(accomplishments)
+        accomplishments = summarize_with_groq(accomplishments)
 
     update_progress(progress_callback, "Fetching merged PRs")
     deployments = github_service.get_merged_prs()

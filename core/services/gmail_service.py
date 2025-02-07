@@ -16,7 +16,6 @@ from typing import Union, List, Dict, Any
 import markdown
 from googleapiclient.discovery import Resource
 
-from config.config import GMAIL_SCOPES
 from core.services.google_service import get_google_service
 
 
@@ -38,7 +37,7 @@ def get_user_full_name(service: Resource | None = None) -> str:
     """
     try:
         if service is None:
-            service = get_google_service('gmail', 'v1', 'token_gmail.json', GMAIL_SCOPES)
+            service = get_google_service('gmail', 'v1')
 
         profile = service.users().getProfile(userId='me').execute()
         email = profile.get('emailAddress', '')
@@ -81,10 +80,10 @@ def get_date_range() -> str:
 
 
 def create_gmail_draft(
-    report: str,
-    to: Union[str, List[str]],
-    cc: Union[str, List[str]],
-    template: str
+        report: str,
+        to: Union[str, List[str]],
+        cc: Union[str, List[str]],
+        template: str
 ) -> Dict[str, Any]:
     """Create a Gmail draft with weekly report content.
 
@@ -101,7 +100,7 @@ def create_gmail_draft(
         Exception: If draft creation fails
     """
     try:
-        service = get_google_service('gmail', 'v1', 'token_gmail.json', GMAIL_SCOPES)
+        service = get_google_service('gmail', 'v1')
 
         try:
             author_full_name = get_user_full_name(service)

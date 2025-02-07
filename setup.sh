@@ -7,9 +7,6 @@
 # Authors:
 #     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
 
-# Exit immediately if a command exits with a non-zero status
-set -e
-
 # 1. Install Python (Ubuntu usually comes with Python, but we'll ensure it's installed)
 echo "Updating package list and installing Python..."
 sudo apt update
