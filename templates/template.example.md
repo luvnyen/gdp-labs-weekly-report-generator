@@ -24,23 +24,23 @@
 
 * **Deployment:**
 
-{deployments}
+> {deployments}
 
 * **PRs Reviewed:**
 
-{prs_reviewed}
+> {prs_reviewed}
 
 * **Meetings and Other Activities:**
 
-{meetings_and_activities}
+> {meetings_and_activities}
 
 * **Google Forms Filled:**
 
-{google_forms_filled}
+> {google_forms_filled}
 
 * **Worked from Office (WFO) on:**
 
-{wfo_days}
+> {wfo_days}
 
 #### Next Steps
 
@@ -53,5 +53,7 @@
 <p style="font-size: 0.8em; color: #888; font-style: italic;">
     All times are in UTC+07:00.<br>
     This weekly report is generated using GitHub, Google, and SonarQube APIs.<br>
-    Accomplishments are summarized using the Gemini API LLM.
+    Accomplishments are summarized using the Groq API (DeekSeek R1 LLM).<br>
+    <br>
+    Tired of manual weekly reports? Let AI turn your GitHub activity, meetings, and metrics into perfectly structured weekly reports—effortlessly! <a href="https://github.com/luvnyen/gdp-labs-weekly-report-generator">Try it now</a>
 </p>

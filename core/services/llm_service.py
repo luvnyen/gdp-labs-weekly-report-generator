@@ -29,13 +29,15 @@ Rules for summarizing:
 2. Description must be a single sentence summary of the key changes
 3. Status must always be exactly "leave_this_blank"
 4. For Key Changes Implemented:
-   - List a maximum of 7 most important bullet points
-   - If there are more than 7 changes, summarize the main themes into 7 or fewer points
-   - Ensure each bullet point is concise but informative
+   - Extract and list ALL significant changes from commits, aim for at least 5-8 bullet points per PR
+   - Focus on technical implementation details, method changes, and code improvements
+   - Be specific about what was added, modified, or enhanced
+   - Include class names, methods, and technical approaches used
+   - Always format code elements with backticks (e.g., `className`)
    - No sub-bullet points allowed
-5. Format all code-related terms with backticks (e.g., `className`)
-6. If no commit details exist, use PR title for both Description and Key Changes
-7. Start each PR directly with * - no section headers, PR numbers, or other prefixes
+5. If no commit details exist, use PR title for both Description and Key Changes
+6. Start each PR directly with * - no section headers, PR numbers, or other prefixes
+7. Prioritize extracting comprehensive implementation details over brevity
 
 Here are the PRs to summarize:
 {content}"""

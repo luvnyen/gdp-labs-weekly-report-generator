@@ -15,7 +15,6 @@ from typing import Dict, List, Tuple, Callable, Optional, Any
 
 from config.config import ServiceType, config_manager
 from core.services.github_service import GitHubService
-from core.services.gmail_service import create_gmail_draft
 from core.services.google_calendar_service import get_events_for_week
 from core.services.google_forms_service import get_this_week_filled_forms_formatted
 from core.services.llm_service import summarize_with_groq
@@ -24,7 +23,7 @@ from utils.date_time_util import ordinal
 from .user_data import (
     ISSUES, MAJOR_BUGS_CURRENT_MONTH, MINOR_BUGS_CURRENT_MONTH,
     MAJOR_BUGS_HALF_YEAR, MINOR_BUGS_HALF_YEAR, WFO_DAYS,
-    NEXT_STEPS, LEARNING, GMAIL_TEMPLATE
+    NEXT_STEPS, LEARNING
 )
 
 
@@ -145,9 +144,6 @@ def generate_weekly_report(
         Tuple containing:
             - Generated report as Markdown string
             - Total generation time in seconds
-
-    Note:
-        Creates Gmail draft if Gmail service is available
     """
     start_time = time.time()
 
@@ -185,16 +181,6 @@ def generate_weekly_report(
         template = f.read()
 
     report = template.format(**report_data)
-
-    if config_manager.is_service_available(ServiceType.GMAIL):
-        update_progress(progress_callback, "Creating Gmail draft")
-        gmail_config = config_manager.get_service_vars(ServiceType.GMAIL)
-        create_gmail_draft(
-            report,
-            gmail_config['GMAIL_SEND_TO'].split(','),
-            gmail_config.get('GMAIL_SEND_CC', '').split(','),
-            GMAIL_TEMPLATE
-        )
 
     update_progress(progress_callback, None)
     return report, time.time() - start_time

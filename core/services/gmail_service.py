@@ -117,37 +117,65 @@ def create_gmail_draft(
         html_content = markdown.markdown(content, extensions=['extra'])
 
         styled_html = f"""
-            <html>
-                <head>
-                    <style>
-                        body {{
-                            font-family: Arial, sans-serif;
-                            line-height: 1.6;
-                            color: #333;
-                        }}
-                        hr {{
-                            border: 0;
-                            height: 1px;
-                            background-color: #ddd;
-                            margin: 20px 0;
-                        }}
-                        pre {{
-                            background-color: #f5f5f5;
-                            padding: 10px;
-                            border-radius: 4px;
-                        }}
-                        code {{
-                            background-color: #f5f5f5;
-                            padding: 2px 4px;
-                            border-radius: 4px;
-                        }}
-                    </style>
-                </head>
-                <body>
-                    {html_content}
-                </body>
-            </html>
-            """
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px;">
+            <style>
+                h4 {{
+                    margin-top: 20px;
+                    margin-bottom: 10px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #2c3e50;
+                    border-bottom: 1px solid #eee;
+                    padding-bottom: 5px;
+                }}
+                ul {{
+                    margin-top: 10px;
+                    margin-bottom: 15px;
+                    padding-left: 25px;
+                }}
+                li {{
+                    margin-bottom: 5px;
+                }}
+                li ul {{
+                    margin-top: 5px;
+                }}
+                p {{
+                    margin-bottom: 10px;
+                }}
+                a {{
+                    color: #3498db;
+                    text-decoration: none;
+                }}
+                a:hover {{
+                    text-decoration: underline;
+                }}
+                code {{
+                    background-color: #f8f8f8;
+                    padding: 2px 4px;
+                    border-radius: 3px;
+                    font-family: Consolas, Monaco, 'Andale Mono', monospace;
+                    font-size: 90%;
+                    color: #e74c3c;
+                }}
+                blockquote {{
+                    border-left: 4px solid #ddd;
+                    padding-left: 10px;
+                    margin-left: 20px;
+                    color: #777;
+                }}
+                .emoji {{
+                    font-size: 1.2em;
+                    vertical-align: middle;
+                }}
+                .small-text {{
+                    font-size: 0.8em;
+                    color: #888;
+                    font-style: italic;
+                }}
+            </style>
+            {html_content}
+        </div>
+        """
 
         message = MIMEText(styled_html, 'html')
         message['to'] = to_str
