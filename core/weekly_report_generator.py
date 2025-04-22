@@ -24,7 +24,7 @@ from utils.date_time_util import ordinal
 from .user_data import (
     ISSUES, MAJOR_BUGS_CURRENT_MONTH, MINOR_BUGS_CURRENT_MONTH,
     MAJOR_BUGS_HALF_YEAR, MINOR_BUGS_HALF_YEAR, WFO_DAYS,
-    NEXT_STEPS, LEARNING, GMAIL_TEMPLATE
+    NEXT_STEPS, LEARNING, SELF_ACCOMPLISHMENTS
 )
 
 
@@ -171,6 +171,7 @@ def generate_weekly_report(
         'minor_bugs_half_year': MINOR_BUGS_HALF_YEAR,
         'test_coverage_components': sonarqube_data,
         'accomplishments': github_data['accomplishments'],
+        'self_accomplishments': format_list(SELF_ACCOMPLISHMENTS),
         'deployments': format_list(github_data['deployments'], indent="  "),
         'prs_reviewed': format_list(github_data['prs_reviewed'], indent="  "),
         'meetings_and_activities': format_meetings(calendar_events),
@@ -185,17 +186,6 @@ def generate_weekly_report(
         template = f.read()
 
     report = template.format(**report_data)
-
-    # TODO: Uncomment this block to enable original Gmail draft creation 
-    # if config_manager.is_service_available(ServiceType.GMAIL):
-    #     update_progress(progress_callback, "Creating Gmail draft")
-    #     gmail_config = config_manager.get_service_vars(ServiceType.GMAIL)
-    #     create_gmail_draft(
-    #         report,
-    #         gmail_config['GMAIL_SEND_TO'].split(','),
-    #         gmail_config.get('GMAIL_SEND_CC', '').split(','),
-    #         GMAIL_TEMPLATE
-    #     )
 
     update_progress(progress_callback, None)
     return report, time.time() - start_time

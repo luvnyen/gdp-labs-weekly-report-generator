@@ -23,6 +23,10 @@ NEXT_STEPS = [
     "Next step 1",
 ]
 
+SELF_ACCOMPLISHMENTS = [
+    "Self accomplishment 1"
+]
+
 """Learning activities format with URL to a specific article, video, or book:
 - [title](url) by Author
 

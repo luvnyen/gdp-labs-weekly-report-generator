@@ -32,7 +32,7 @@ enhance_report_task:
     Enhancement rules:
     1. For Style 1 (Cheerful and Emoji-Enhanced):
        - Add relevant emojis and catchy phrases to section headers and key achievements
-       - Use friendly, enthusiastic tone
+       - Use friendly, enthusiastic tone with some humor
        - You can add some casual tone
        - Keep all technical details accurate
        
@@ -63,9 +63,10 @@ quality_check_task:
     Enhancement rules:
     1. For Style 1 (Cheerful and Emoji-Enhanced):
        - Add relevant emojis to section headers and key achievements
-       - Use friendly, enthusiastic tone while maintaining professionalism
+       - Use friendly, enthusiastic tone with some humor
        - You can add some casual tone
        - Keep all technical details accurate
+       - Add a software engineering jokes at the end of the line and keep it short
        
     2. For Style 2 (Professional and Formal):
        - Remove any emojis or informal language

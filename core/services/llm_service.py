@@ -18,7 +18,6 @@ SHARED_PROMPT_TEMPLATE = """Format each PR exactly as shown below, without any a
 
 * test(core): increase code coverage for `/core/personnel/api/v1` module [CATAPA-API#18420](https://github.com/GDP-ADMIN/CATAPA-API/pull/18420)
     * **Description:** Enhanced test coverage through improved MSS integration, notification services, and null handling implementations.
-    * **Status:** leave_this_blank
     * **Key Changes Implemented:**
         * Enhanced `MssEmployeeApiController` with `Optional`
         * Simplified notification config services using `map()`
@@ -27,15 +26,14 @@ SHARED_PROMPT_TEMPLATE = """Format each PR exactly as shown below, without any a
 Rules for summarizing:
 1. Format the PR title exactly as shown in the example, including the PR number and link
 2. Description must be a single sentence summary of the key changes
-3. Status must always be exactly "leave_this_blank"
-4. For Key Changes Implemented:
+3. For Key Changes Implemented:
    - List a maximum of 7 most important bullet points
    - If there are more than 7 changes, summarize the main themes into 7 or fewer points
    - Ensure each bullet point is concise but informative
    - No sub-bullet points allowed
-5. Format all code-related terms with backticks (e.g., `className`)
-6. If no commit details exist, use PR title for both Description and Key Changes
-7. Start each PR directly with * - no section headers, PR numbers, or other prefixes
+4. Format all code-related terms with backticks (e.g., `className`)
+5. If no commit details exist, use PR title for both Description and Key Changes
+6. Start each PR directly with * - no section headers, PR numbers, or other prefixes
 
 Here are the PRs to summarize:
 {content}"""

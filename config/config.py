@@ -17,7 +17,7 @@ from zoneinfo import ZoneInfo
 
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 class ServiceType(Enum):
@@ -135,12 +135,14 @@ class ConfigManager:
             'GOOGLE_CLIENT_SECRET_FILE': os.getenv('GOOGLE_CLIENT_SECRET_FILE'),
             'GOOGLE_GEMINI_API_KEY': os.getenv('GOOGLE_GEMINI_API_KEY'),
             'GROQ_API_KEY': os.getenv('GROQ_API_KEY'),
+            'DEEPSEEK_API_KEY': os.getenv('DEEPSEEK_API_KEY'),
+            'OPENROUTER_API_KEY': os.getenv('OPENROUTER_API_KEY'),
             'REPOS': os.getenv('REPOS'),
             'REPO_OWNER': os.getenv('REPO_OWNER'),
             'SONARQUBE_USER_TOKEN': os.getenv('SONARQUBE_USER_TOKEN'),
             'SONARQUBE_COMPONENTS': os.getenv('SONARQUBE_COMPONENTS'),
             'GMAIL_SEND_TO': os.getenv('GMAIL_SEND_TO'),
-            'GMAIL_SEND_CC': os.getenv('GMAIL_SEND_CC')
+            'GMAIL_SEND_CC': os.getenv('GMAIL_SEND_CC'),
         }
 
     def _check_service_requirements(self, service_type: ServiceType) -> bool:
@@ -292,6 +294,23 @@ class ConfigManager:
             Optional[str]: GROQ API key if available, None otherwise
         """
         return self.env_vars.get('GROQ_API_KEY')
+
+    @property
+    def openrouter_api_key(self) -> Optional[str]:
+        """Get OpenRouter API key.
+        Returns:
+            Optional[str]: OpenRouter API key if available, None otherwise
+        """
+        return self.env_vars.get('OPENROUTER_API_KEY')
+
+    @property
+    def deepseek_api_key(self) -> Optional[str]:
+        """Get DeepSeek API key.
+
+        Returns:
+            Optional[str]: DeepSeek API key if available, None otherwise
+        """
+        return self.env_vars.get('DEEPSEEK_API_KEY')
 
     @property
     def groq_api_key(self) -> Optional[str]:

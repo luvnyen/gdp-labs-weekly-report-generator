@@ -11,6 +11,7 @@ from typing import Dict
 from crewai import Agent, Task, Crew, Process
 from crewai.project import CrewBase, agent, task, crew
 from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from crewai_tools import FileReadTool
 from config.config import ConfigManager
 
@@ -31,11 +32,24 @@ class AIAgentReportService:
         self.config = ConfigManager()
         self.groq_model = ChatGroq(
             groq_api_key=self.config.groq_api_key,
-            model_name="groq/gemma2-9b-it",
+            model_name="groq/deepseek-r1-distill-llama-70b",
             temperature=0.7,
             max_tokens=4096,
             streaming=True,
-            verbose=True
+            verbose=True,
+            max_retries=3
+        )
+
+        # TODO: Debug why openrouter doesn't work
+        self.openrouter_model = ChatOpenAI(
+            openai_api_key=self.config.openrouter_api_key,
+            openai_api_base="https://openrouter.ai/api/v1",
+            model_name="deepseek/deepseek-chat:free",
+            temperature=0.7,
+            max_tokens=4096,
+            streaming=True,
+            verbose=True,
+            max_retries=3,
         )
 
     @agent
