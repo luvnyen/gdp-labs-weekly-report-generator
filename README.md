@@ -54,7 +54,7 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
 
 ## Customizing the LLM Prompt
 
-If you want to modify the prompt for Large Language Model (LLM) summarization (such as the format, instructions, or summary details), you can directly edit the prompt configuration in the [`llm_service.py`](core/services/llm_service.py) file.
+If you want to modify the prompt for Large Language Model (LLM) summarization (such as the format, instructions, or summary details), you can directly edit the prompt configuration in the [`llm_service.py`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/core/services/llm_service.py) file.
 - Look for the `SYSTEM_PROMPT` and `USER_PROMPT` variables within the file.
 - Adjust the content of these variables to fit your desired summarization style or formatting.
 

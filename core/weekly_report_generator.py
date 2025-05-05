@@ -65,9 +65,6 @@ def get_github_data(progress_callback: Optional[Callable[[str], None]]) -> Dict[
     with open('ACCOMPLISHMENTS_RAW.md', 'w') as f:
         f.write(accomplishments)
 
-    # with open('temp.txt', 'r') as f:
-    #     accomplishments = f.read()
-
     if accomplishments and config_manager.is_service_available(ServiceType.LLM):
         update_progress(progress_callback, "Summarizing accomplishments with LLM")
         accomplishments = summarize_with_groq(accomplishments)
