@@ -26,7 +26,6 @@ class ServiceType(Enum):
     SONARQUBE = auto()
     GOOGLE_CALENDAR = auto()
     GOOGLE_FORMS = auto()
-    GMAIL = auto()
     LLM = auto()
 
 
@@ -103,10 +102,6 @@ class ConfigManager:
         ServiceType.GOOGLE_FORMS: ServiceRequirements({
             'GOOGLE_CLIENT_SECRET_FILE'
         }),
-        ServiceType.GMAIL: ServiceRequirements({
-            'GOOGLE_CLIENT_SECRET_FILE',
-            'GMAIL_SEND_TO'
-        }),
         ServiceType.LLM: ServiceRequirements(
             required_vars = set(),
             alternative_vars = [
@@ -139,8 +134,6 @@ class ConfigManager:
             'REPO_OWNER': os.getenv('REPO_OWNER'),
             'SONARQUBE_USER_TOKEN': os.getenv('SONARQUBE_USER_TOKEN'),
             'SONARQUBE_COMPONENTS': os.getenv('SONARQUBE_COMPONENTS'),
-            'GMAIL_SEND_TO': os.getenv('GMAIL_SEND_TO'),
-            'GMAIL_SEND_CC': os.getenv('GMAIL_SEND_CC')
         }
 
     def _check_service_requirements(self, service_type: ServiceType) -> bool:
@@ -293,24 +286,6 @@ class ConfigManager:
         """
         return self.env_vars.get('GROQ_API_KEY')
 
-    @property
-    def gmail_send_to(self) -> Optional[str]:
-        """Get Gmail send-to address.
-
-        Returns:
-            Optional[str]: Email address if available, None otherwise
-        """
-        return self.env_vars.get('GMAIL_SEND_TO')
-
-    @property
-    def gmail_send_cc(self) -> Optional[str]:
-        """Get Gmail CC address.
-
-        Returns:
-            Optional[str]: CC email address if available, None otherwise
-        """
-        return self.env_vars.get('GMAIL_SEND_CC')
-
 
 def parse_sonarqube_components(components_str: str) -> List[SonarQubeComponent]:
     """Parse comma-separated SonarQube component string into component objects.
@@ -338,7 +313,7 @@ config_manager = ConfigManager()
 TIMEZONE = ZoneInfo("Asia/Jakarta")
 GITHUB_API_BASE_URL = "https://api.github.com"
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
-GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.compose']
+GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 SONARQUBE_API_URL = 'https://sqa.gdplabs.net/api/measures/component'
 
 # Expose environment variables for backward compatibility
@@ -351,5 +326,3 @@ GOOGLE_CLIENT_SECRET_FILE = config_manager.google_client_secret_file
 SONARQUBE_COMPONENTS = parse_sonarqube_components(config_manager.env_vars.get('SONARQUBE_COMPONENTS', ''))
 GOOGLE_GEMINI_API_KEY = config_manager.gemini_api_key
 GROQ_API_KEY = config_manager.groq_api_key
-GMAIL_SEND_TO = config_manager.gmail_send_to
-GMAIL_SEND_CC = config_manager.gmail_send_cc
