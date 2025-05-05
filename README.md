@@ -155,8 +155,9 @@ To synchronize your latest weekly report with Google Docs:
 
 ### Known Limitations
 
-> [!NOTE]  
-> Do not modify the heading structure (# and ##) in your template or in Google Docs
+> [!IMPORTANT]  
+> Do not modify the heading structure (only for heading 1 [#] and 2 [##])
+> in your template or in Google Docs as stated by the Weekly Report Agent team.
 
 Currently, the Google Docs API doesn't support direct markdown-to-rich-text conversion.
 All content is inserted as plain text, which means:
