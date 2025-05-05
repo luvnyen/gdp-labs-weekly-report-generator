@@ -29,10 +29,9 @@ A Python-based tool that automatically generates comprehensive weekly reports by
 
 1. Clone this repository
 
-2. Run the setup script:
+2. Run the setup script (1-line installation):
 ```bash
-chmod +x setup.sh
-./setup.sh
+chmod +x setup.sh && ./setup.sh
 ```
 or right-click on the file and select `Run as a Program` (Ubuntu)
 
@@ -284,3 +283,4 @@ Contributions are welcome! Please feel free to submit pull requests.
 
 - Calvert Tanudihardjo ([calvert.tanudihardjo@gdplabs.id](mailto:calvert.tanudihardjo@gdplabs.id))
 - Glenn Steven Santoso ([glenn.s.santoso@gdplabs.id](mailto:glenn.s.santoso@gdplabs.id))
+- Sandy Akbar Dewangga ([sandy.a.dewangga@gdplabs.id](mailto:sandy.a.dewangga@gdplabs.id))

@@ -6,51 +6,139 @@
 #
 # Authors:
 #     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+#     - Sandy Akbar Dewangga (sandy.a.dewangga@gdplabs.id)
 
-# 1. Install Python (Ubuntu usually comes with Python, but we'll ensure it's installed)
-echo "Updating package list and installing Python..."
-sudo apt update
-sudo apt install -y python3 python3-pip python3-venv
+set -e  # Exit on error
 
-# 2. Install python venv (it's included with Python 3.3+, but we ensure it's installed)
-sudo apt install -y python3-venv
+########################################
+# OS Detection
+########################################
+detect_os() {
+    local os_name="$(uname -s)"
+    case "$os_name" in
+        Linux*)     echo "Linux";;
+        Darwin*)    echo "Mac";;
+        CYGWIN*|MINGW*|MSYS*) echo "Windows";;
+        *)          echo "UNKNOWN";;
+    esac
+}
 
-# 3. Make python venv
-echo "Creating virtual environment..."
-python3 -m venv venv
+########################################
+# Dependency Installation
+########################################
+install_dependencies_linux() {
+    local packages=()
+    if ! command -v python3 &> /dev/null; then packages+=(python3); fi
+    if ! command -v pip3 &> /dev/null; then packages+=(python3-pip); fi
+    if ! python3 -m venv --help &> /dev/null; then packages+=(python3-venv); fi
+    if [ ${#packages[@]} -ne 0 ]; then
+        echo "Installing missing packages: ${packages[*]}"
+        sudo apt update
+        sudo apt install -y "${packages[@]}"
+    else
+        echo "All required Python dependencies are already installed."
+    fi
+}
 
-# 4. Activate venv
-echo "Activating virtual environment..."
-source venv/bin/activate
+install_dependencies_mac() {
+    if ! command -v python3 &> /dev/null; then
+        echo "Python3 not found. Installing Python3 via Homebrew..."
+        if ! command -v brew &> /dev/null; then
+            echo "Homebrew not found. Installing Homebrew..."
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        fi
+        brew install python3
+    else
+        echo "Python3 is already installed."
+    fi
+}
 
-# 5. Install from requirements.txt
-echo "Installing requirements..."
-pip install -r requirements.txt
+print_windows_instructions() {
+    echo "This setup script is intended for Unix-like systems (Linux/macOS)."
+    echo "For Windows, please install Python 3, pip, and virtualenv manually."
+    echo "Then, run the following commands in your terminal:"
+    echo "  python -m venv venv"
+    echo "  venv\\Scripts\\activate (or source venv/bin/activate if using Git Bash)"
+    echo "  pip install -r requirements.txt"
+    echo "  cp .env.example .env"
+    echo "  mkdir -p templates"
+    echo "  cp templates/template.example.md templates/template.md"
+}
 
-# 6. Copy .env.example to .env
-echo "Copying .env.example to .env..."
-if [ -f .env.example ]; then
-    cp .env.example .env
-    echo ".env file created successfully."
-else
-    echo "Warning: .env.example file not found. Please create .env file manually."
-fi
+########################################
+# Virtual Environment Setup
+########################################
+setup_venv() {
+    if [ ! -d "venv" ]; then
+        echo "Creating virtual environment..."
+        python3 -m venv venv
+    else
+        echo "Virtual environment already exists."
+    fi
+    echo "Activating virtual environment..."
+    # shellcheck disable=SC1091
+    source venv/bin/activate
+}
 
-# 7. Create templates directory if it doesn't exist
-echo "Setting up templates directory..."
-mkdir -p templates
+########################################
+# File and Directory Setup
+########################################
+setup_files_and_dirs() {
+    echo "Installing requirements..."
+    pip install -r requirements.txt
 
-# 8. Copy template.example.md to templates/template.md
-echo "Copying template.example.md to templates/template.md..."
-if [ -f templates/template.example.md ]; then
-    cp templates/template.example.md templates/template.md
-    echo "template.md file created successfully."
-else
-    echo "Warning: templates/template.example.md file not found. Please create templates/template.md file manually."
-fi
+    echo "Copying .env.example to .env..."
+    if [ -f .env.example ]; then
+        cp .env.example .env
+        echo ".env file created successfully."
+    else
+        echo "Warning: .env.example file not found. Please create .env file manually."
+    fi
 
-echo "Setup complete! Don't forget to configure your credentials in the .env file before running the application."
+    echo "Setting up templates directory..."
+    mkdir -p templates
 
-# Keep the terminal open
-echo "Press Enter to close this window..."
-read
+    echo "Copying template.example.md to templates/template.md..."
+    if [ -f templates/template.example.md ]; then
+        cp templates/template.example.md templates/template.md
+        echo "template.md file created successfully."
+    else
+        echo "Warning: templates/template.example.md file not found. Please create templates/template.md file manually."
+    fi
+}
+
+########################################
+# Main Script Logic
+########################################
+main() {
+    local machine
+    machine=$(detect_os)
+    echo "Detected OS: $machine"
+
+    case "$machine" in
+        Linux)
+            install_dependencies_linux
+            setup_venv
+            setup_files_and_dirs
+            ;;
+        Mac)
+            install_dependencies_mac
+            setup_venv
+            setup_files_and_dirs
+            ;;
+        Windows)
+            print_windows_instructions
+            exit 1
+            ;;
+        *)
+            echo "Unsupported OS: $machine"
+            exit 1
+            ;;
+    esac
+
+    echo "Setup complete! Don't forget to configure your credentials in the .env file before running the application."
+    echo "Press Enter to close this window..."
+    read
+}
+
+main "$@"
