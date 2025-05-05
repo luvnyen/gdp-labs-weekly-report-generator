@@ -45,7 +45,7 @@ def main() -> None:
     """
     start_date, end_date = get_week_dates()
 
-    print("\n📊 Weekly Report Generator")
+    print("📊 Weekly Report Generator")
     print(f"📅 Report period: {start_date} to {end_date}\n")
 
     progress = ProgressDisplay()

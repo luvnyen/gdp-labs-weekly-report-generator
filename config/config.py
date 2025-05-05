@@ -102,13 +102,9 @@ class ConfigManager:
         ServiceType.GOOGLE_FORMS: ServiceRequirements({
             'GOOGLE_CLIENT_SECRET_FILE'
         }),
-        ServiceType.LLM: ServiceRequirements(
-            required_vars = set(),
-            alternative_vars = [
-                {'GOOGLE_GEMINI_API_KEY'},
-                {'GROQ_API_KEY'}
-            ]
-        )
+        ServiceType.LLM: ServiceRequirements({
+            'GROQ_API_KEY',
+        })
     }
 
     def __init__(self):
@@ -128,7 +124,6 @@ class ConfigManager:
             'GITHUB_PERSONAL_ACCESS_TOKEN': os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN'),
             'GITHUB_USERNAME': os.getenv('GITHUB_USERNAME'),
             'GOOGLE_CLIENT_SECRET_FILE': os.getenv('GOOGLE_CLIENT_SECRET_FILE'),
-            'GOOGLE_GEMINI_API_KEY': os.getenv('GOOGLE_GEMINI_API_KEY'),
             'GROQ_API_KEY': os.getenv('GROQ_API_KEY'),
             'REPOS': os.getenv('REPOS'),
             'REPO_OWNER': os.getenv('REPO_OWNER'),
@@ -269,15 +264,6 @@ class ConfigManager:
         return self.env_vars.get('GOOGLE_CLIENT_SECRET_FILE')
 
     @property
-    def gemini_api_key(self) -> Optional[str]:
-        """Get Google Gemini API key.
-
-        Returns:
-            Optional[str]: Gemini API key if available, None otherwise
-        """
-        return self.env_vars.get('GOOGLE_GEMINI_API_KEY')
-
-    @property
     def groq_api_key(self) -> Optional[str]:
         """Get Groq API key.
 
@@ -324,5 +310,4 @@ REPO_OWNER = config_manager.github_repo_owner
 SONARQUBE_USER_TOKEN = config_manager.sonarqube_token
 GOOGLE_CLIENT_SECRET_FILE = config_manager.google_client_secret_file
 SONARQUBE_COMPONENTS = parse_sonarqube_components(config_manager.env_vars.get('SONARQUBE_COMPONENTS', ''))
-GOOGLE_GEMINI_API_KEY = config_manager.gemini_api_key
 GROQ_API_KEY = config_manager.groq_api_key

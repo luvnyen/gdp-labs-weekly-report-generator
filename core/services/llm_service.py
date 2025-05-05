@@ -1,7 +1,6 @@
 """LLM Service Module
 
-This module provides functionality to interact with Google Gemini and Groq
-for summarizing pull requests and commit messages.
+This module provides functionality to interact with Groq for summarizing pull requests and commit messages.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
@@ -9,12 +8,15 @@ Authors:
 
 import re
 
-import google.generativeai as genai
 from groq import Groq
 
-from config.config import GROQ_API_KEY, GOOGLE_GEMINI_API_KEY
+from config.config import GROQ_API_KEY
 
-SHARED_PROMPT_TEMPLATE = """Format each PR exactly as shown below, without any additional headers or prefixes:
+SYSTEM_PROMPT = """You are a technical writer specializing in summarizing pull requests and commit messages.
+Provide only the formatted output following the exact structure specified in the user's prompt.
+Do not include any explanations, thinking process, or additional headers."""
+
+USER_PROMPT = """Format each PR exactly as shown below, without any additional headers or prefixes:
 
 * test(core): increase code coverage for `/core/personnel/api/v1` module [CATAPA-API#18420](https://github.com/GDP-ADMIN/CATAPA-API/pull/18420)
     * **Description:** Enhanced test coverage through improved MSS integration, notification services, and null handling implementations.
@@ -42,22 +44,14 @@ Rules for summarizing:
 Here are the PRs to summarize:
 {content}"""
 
-GEMINI_PROMPT_TEMPLATE = SHARED_PROMPT_TEMPLATE
-
-GROQ_SYSTEM_PROMPT = """You are a technical writer specializing in summarizing pull requests and commit messages.
-Provide only the formatted output following the exact structure specified in the user's prompt.
-Do not include any explanations, thinking process, or additional headers."""
-
-GROQ_USER_PROMPT = SHARED_PROMPT_TEMPLATE
-
-def clean_groq_response(response: str) -> str:
-    """Clean up Groq's response by removing a thinking process and unwanted headers.
+def clean_response(response: str) -> str:
+    """Clean up the response by removing the thinking process and unwanted headers.
 
     Args:
-        response (str): Raw response from Groq API
+        response (str): Raw response to be cleaned.
 
     Returns:
-        str: Cleaned response containing only the formatted PR summaries
+        str: Cleaned response containing only the formatted summaries.
     """
     # Remove a thinking process section
     response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL)
@@ -81,13 +75,13 @@ def summarize_with_groq(content: str) -> str:
     """
     client = Groq(api_key=GROQ_API_KEY)
 
-    formatted_user_prompt = GROQ_USER_PROMPT.format(content=content)
+    formatted_user_prompt = USER_PROMPT.format(content=content)
 
     chat_completion = client.chat.completions.create(
         messages=[
             {
                 "role": "system",
-                "content": GROQ_SYSTEM_PROMPT,
+                "content": SYSTEM_PROMPT,
             },
             {
                 "role": "user",
@@ -97,22 +91,4 @@ def summarize_with_groq(content: str) -> str:
         model="deepseek-r1-distill-llama-70b",
     )
 
-    return clean_groq_response(chat_completion.choices[0].message.content)
-
-
-def summarize_with_gemini(content: str) -> str:
-    """Summarize pull requests using Google's Gemini model.
-
-    Args:
-        content (str): Raw PR and commit content to summarize
-
-    Returns:
-        str: Formatted markdown summary from Gemini
-    """
-    genai.configure(api_key=GOOGLE_GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-2.0-flash-exp")
-
-    formatted_prompt = GEMINI_PROMPT_TEMPLATE.format(content=content)
-    response = model.generate_content(formatted_prompt)
-
-    return response.text
+    return clean_response(chat_completion.choices[0].message.content)

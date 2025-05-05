@@ -1,7 +1,7 @@
 """Weekly Report Generator Module
 
 This module orchestrates the generation of weekly reports by collecting data from
-various services including GitHub, SonarQube, Google Calendar, Google Forms, and Gmail.
+various services including GitHub, SonarQube, Google Calendar, and Google Forms via Gmail.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
@@ -65,9 +65,11 @@ def get_github_data(progress_callback: Optional[Callable[[str], None]]) -> Dict[
     with open('ACCOMPLISHMENTS_RAW.md', 'w') as f:
         f.write(accomplishments)
 
+    # with open('temp.txt', 'r') as f:
+    #     accomplishments = f.read()
+
     if accomplishments and config_manager.is_service_available(ServiceType.LLM):
         update_progress(progress_callback, "Summarizing accomplishments with LLM")
-        # accomplishments = summarize_with_gemini(accomplishments)
         accomplishments = summarize_with_groq(accomplishments)
 
     update_progress(progress_callback, "Fetching merged PRs")

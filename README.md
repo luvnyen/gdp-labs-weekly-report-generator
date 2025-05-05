@@ -1,6 +1,6 @@
 # 📝 GDP Labs Weekly Report Generator
 
-A Python-based tool that automatically generates comprehensive weekly reports by integrating data from multiple services including GitHub, SonarQube, Google Calendar, Google Forms, and Gmail. The generated reports are enhanced with AI-powered summaries using Google's Gemini model.
+A Python-based tool that automatically generates comprehensive weekly reports by integrating data from multiple services including GitHub, SonarQube, Google Calendar, and Google Forms. The generated reports are enhanced with AI-powered summaries using the Groq API and DeepSeek's reasoning R1 model.
 
 ## Features
 
@@ -9,15 +9,13 @@ A Python-based tool that automatically generates comprehensive weekly reports by
   - **SonarQube**: Monitor test coverage metrics
   - **Google Calendar**: Log meetings and activities
   - **Google Forms**: Track form submissions
-  - **Gmail**: Auto-create formatted email drafts
-  - **Gemini AI**: Generate intelligent PR summaries
+  - **Groq**: Generate intelligent PR summaries
 
 - **Smart Report Generation:**
   - Automatic weekly date range detection
   - Customizable report templates
   - Progress tracking during generation
   - Markdown output format
-  - HTML email drafts with styling
 
 - **Flexible Configuration:**
   - Environment-based setup
@@ -41,8 +39,8 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
    - Set your WFO (Work From Office) days using numbers 1-5 for Monday to Friday
    - Update your learning activities with relevant URLs and progress
    - Add any ongoing issues or bugs you're tracking
+   - Update metrics such as major/minor bugs found this month or within the last six months
    - Customize your next steps
-   - Modify the Gmail template if needed
 
 5. Customize your report structure in [template/](https://github.com/luvnyen/gdp-labs-weekly-report-generator/tree/main/templates)template.md:
    - Add or remove sections as needed
@@ -54,6 +52,14 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
 ./run.sh
 ```
 
+## Customizing the LLM Prompt
+
+If you want to modify the prompt for Large Language Model (LLM) summarization (such as the format, instructions, or summary details), you can directly edit the prompt configuration in the [`llm_service.py`](core/services/llm_service.py) file.
+- Look for the `SYSTEM_PROMPT` and `USER_PROMPT` variables within the file.
+- Adjust the content of these variables to fit your desired summarization style or formatting.
+
+After saving your changes, the new prompt will be used for all future AI-powered report summaries.
+
 ## Environment Variables
 
 The application uses various service tokens and configurations stored in a `.env` file. Here's how to obtain each required token:
@@ -61,8 +67,7 @@ The application uses various service tokens and configurations stored in a `.env
 ### GitHub Personal Access Token Configuration
 
  - Generate at [GitHub Token Settings](https://github.com/settings/tokens/new)
-  - Required scopes: `repo` (full repository access)<br>
-    ![github_full_control_of_private_repo.png](assets/github_full_control_of_private_repo.png)
+  - Required scopes: `repo` (we only need `repo:status`)
   - Set expiration as needed (can be set to no expiration)
 
 ### SonarQube User Token Configuration
@@ -111,24 +116,20 @@ The application uses various service tokens and configurations stored in a `.env
    * [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
    * [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
 
-### Gemini API Key Configuration
+### Groq API Key Configuration
 
-  > [!IMPORTANT]  
-  > Use personal `@gmail.com` account
-
-  - Generate at [Google AI Studio](https://aistudio.google.com/app/apikey) (don't worry, it's free!)
+  - Generate at [GroqCloud](https://console.groq.com/keys) (don't worry, it's free!)
   
 ## Report Structure
 
 Generated reports include:
 - Issues and metrics
-- Test coverage statistics
+- Test coverage statistics from SonarQube Analysis (SQA)
 - Weekly accomplishments (PR summaries)
-- Deployment information
+- Deployment (merged PRs) information
 - Code review activities
 - Meetings and calendar events
 - Google Forms submissions
-- Work location tracking
 - Next steps and learning activities
 
 <details>
@@ -248,7 +249,7 @@ weekly-report-generator/
 ├── core/
 │   ├── services/
 │   │   ├── github_service.py
-│   │   ├── gmail_service.py
+│   │   ├── llm_service.py
 │   │   ├── google_service.py
 │   │   └── ...
 │   └── weekly_report_generator.py
@@ -275,11 +276,15 @@ weekly-report-generator/
    - Update placeholders in the template
    - Adjust formatting as needed
 
+3. **Adding Dependencies:**
+   - If your new feature introduces external dependencies, add them to `requirements.txt`
+   - Inform users/contributors to run `pip install -r requirements.txt` after updating dependencies
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit pull requests.
 
-## Authors
+### Contributors
 
 - Calvert Tanudihardjo ([calvert.tanudihardjo@gdplabs.id](mailto:calvert.tanudihardjo@gdplabs.id))
 - Glenn Steven Santoso ([glenn.s.santoso@gdplabs.id](mailto:glenn.s.santoso@gdplabs.id))
