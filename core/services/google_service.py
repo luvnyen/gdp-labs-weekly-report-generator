@@ -14,11 +14,11 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build, Resource
 
-from config.config import GOOGLE_CLIENT_SECRET_FILE, GMAIL_SCOPES, GOOGLE_CALENDAR_SCOPES
+from config.config import GOOGLE_CLIENT_SECRET_FILE, GMAIL_SCOPES, GOOGLE_CALENDAR_SCOPES, GOOGLE_DOCS_SCOPES
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 TOKEN_FILE = 'google_token.json'
-ALL_SCOPES = list(set(GMAIL_SCOPES + GOOGLE_CALENDAR_SCOPES))
+ALL_SCOPES = list(set(GMAIL_SCOPES + GOOGLE_CALENDAR_SCOPES + GOOGLE_DOCS_SCOPES))
 
 
 def get_google_credentials() -> Credentials:

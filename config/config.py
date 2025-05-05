@@ -300,6 +300,7 @@ TIMEZONE = ZoneInfo("Asia/Jakarta")
 GITHUB_API_BASE_URL = "https://api.github.com"
 GOOGLE_CALENDAR_SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+GOOGLE_DOCS_SCOPES = ['https://www.googleapis.com/auth/documents']
 SONARQUBE_API_URL = 'https://sqa.gdplabs.net/api/measures/component'
 
 # Expose environment variables for backward compatibility

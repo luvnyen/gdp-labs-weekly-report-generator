@@ -19,11 +19,11 @@ from core.services.google_calendar_service import get_events_for_week
 from core.services.google_forms_service import get_this_week_filled_forms_formatted
 from core.services.llm_service import summarize_with_groq
 from core.services.sonarqube_service import get_all_components_metrics, format_test_coverage_components
-from utils.date_time_util import ordinal
+from utils.date_time_util import format_weekdays_with_dates, get_current_week_period, format_bulleted_list
 from .user_data import (
     ISSUES, MAJOR_BUGS_CURRENT_MONTH, MINOR_BUGS_CURRENT_MONTH,
     MAJOR_BUGS_HALF_YEAR, MINOR_BUGS_HALF_YEAR, WFO_DAYS,
-    NEXT_STEPS, LEARNING
+    OUT_OF_OFFICE_DAYS, NEXT_STEPS, LEARNING
 )
 
 
@@ -155,7 +155,8 @@ def generate_weekly_report(
     forms_data = get_forms_data(progress_callback)
 
     report_data = {
-        'issues': format_list(ISSUES),
+        'period': get_current_week_period(),
+        'issues': format_bulleted_list(ISSUES),
         'half_year': "H2" if is_h2 else "H1",
         'half_year_year': current_date.year,
         'current_month': current_date.strftime("%B"),
@@ -166,13 +167,14 @@ def generate_weekly_report(
         'minor_bugs_half_year': MINOR_BUGS_HALF_YEAR,
         'test_coverage_components': sonarqube_data,
         'accomplishments': github_data['accomplishments'],
-        'deployments': format_list(github_data['deployments'], indent="  "),
-        'prs_reviewed': format_list(github_data['prs_reviewed'], indent="  "),
+        'deployments': format_bulleted_list(github_data['deployments'], indent="  "),
+        'prs_reviewed': format_bulleted_list(github_data['prs_reviewed'], indent="  "),
         'meetings_and_activities': format_meetings(calendar_events),
-        'google_forms_filled': format_list(forms_data, indent="  "),
-        'wfo_days': format_wfo_days(WFO_DAYS),
-        'next_steps': format_list(NEXT_STEPS),
-        'learning': format_list(LEARNING)
+        'google_forms_filled': format_bulleted_list(forms_data, indent="  "),
+        'wfo_days': format_weekdays_with_dates(WFO_DAYS),
+        'out_of_office_days': format_weekdays_with_dates(OUT_OF_OFFICE_DAYS),
+        'next_steps': format_bulleted_list(NEXT_STEPS),
+        'learning': format_bulleted_list(LEARNING)
     }
 
     template_path = os.path.join('templates', 'template.md')
@@ -183,21 +185,6 @@ def generate_weekly_report(
 
     update_progress(progress_callback, None)
     return report, time.time() - start_time
-
-
-def format_list(items: List[str], indent: str = "") -> str:
-    """Format list items with bullets and optional indentation.
-
-    Args:
-        items: List of items to format
-        indent: String to prepend for indentation
-
-    Returns:
-        Formatted string with bulleted items
-    """
-    if not items:
-        return f"{indent}* None"
-    return '\n'.join(f"{indent}* {item}" for item in items)
 
 
 def format_meetings(meetings: List[str]) -> str:
@@ -212,25 +199,3 @@ def format_meetings(meetings: List[str]) -> str:
     if not meetings:
         return "  * None"
     return "\n".join(f"  {line}" for line in meetings)
-
-
-def format_wfo_days(days: List[int]) -> str:
-    """Format work-from-office days with dates.
-
-    Args:
-        days: List of weekdays (1-5 for Monday-Friday)
-
-    Returns:
-        Formatted string listing WFO days with dates
-    """
-    today = datetime.date.today()
-    monday = today - datetime.timedelta(days=today.weekday())
-    formatted_days = []
-    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-
-    for day in days:
-        if 1 <= day <= 5:
-            date = monday + datetime.timedelta(days=day - 1)
-            formatted_days.append(f"{day_names[day - 1]}, {date.strftime('%B')} {ordinal(date.day)}, {date.year}")
-
-    return format_list(formatted_days, indent="  ")

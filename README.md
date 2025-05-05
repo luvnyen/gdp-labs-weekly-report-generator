@@ -1,6 +1,6 @@
 # 📝 GDP Labs Weekly Report Generator
 
-A Python-based tool that automatically generates comprehensive weekly reports by integrating data from multiple services including GitHub, SonarQube, Google Calendar, and Google Forms. The generated reports are enhanced with AI-powered summaries using the Groq API and DeepSeek's reasoning R1 model.
+A Python-based tool that automatically generates comprehensive weekly reports by integrating data from multiple services including GitHub, SonarQube, Google Calendar, and Google Forms. The generated reports are enhanced with AI-powered summaries using the Groq API and DeepSeek's reasoning R1 model. Reports can be generated locally in Markdown format and synchronized with Google Docs for easier sharing and collaboration.
 
 ## Features
 
@@ -23,6 +23,12 @@ A Python-based tool that automatically generates comprehensive weekly reports by
   - Customizable templates
   - Multiple repository support
 
+- **Google Docs Synchronization:**
+  - Automatic detection of linked Google Docs
+  - Seamless push of report content to Google Docs
+  - Gmail integration for finding report links
+  - Maintain consistent reports across platforms
+
 ## Quick Start
 
 1. Clone this repository
@@ -36,7 +42,7 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
 3. Configure your environment variables
 
 4. Configure your user data in [`user_data.py`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/core/user_data.py):
-   - Set your WFO (Work From Office) days using numbers 1-5 for Monday to Friday
+   - Set your WFO (Work From Office) and Out of Office days using numbers 1-5 for Monday to Friday
    - Update your learning activities with relevant URLs and progress
    - Add any ongoing issues or bugs you're tracking
    - Update metrics such as major/minor bugs found this month or within the last six months
@@ -50,6 +56,13 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
 6. Generate a report:
 ```bash
 ./run.sh
+```
+
+7. Review and make changes if necessary to the generated weekly report in the `output` directory
+
+8. Sync with Google Docs:
+```bash
+./sync_to_gdocs.sh
 ```
 
 ## Customizing the LLM Prompt
@@ -115,22 +128,68 @@ The application uses various service tokens and configurations stored in a `.env
 1. Enable the required Google APIs:
    * [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
    * [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+   * [Google Docs API](https://console.cloud.google.com/apis/library/docs.googleapis.com)
 
 ### Groq API Key Configuration
 
   - Generate at [GroqCloud](https://console.groq.com/keys) (don't worry, it's free!)
-  
+
+## Google Docs Synchronization
+
+The weekly report generator supports synchronization with Google Docs, allowing you to push your generated Markdown reports directly to a connected Google Docs document for easier sharing and collaboration.
+
+### How It Works
+
+1. The system finds your latest generated weekly report Markdown file in the `output` directory
+2. It searches your Gmail for this week's email reminder to fill the weekly report
+3. It extracts the Google Docs document ID from the link
+4. It pushes the Markdown content to the Google Docs document, replacing any existing content
+
+### Usage
+
+To synchronize your latest weekly report with Google Docs:
+
+```bash
+./sync_to_google_docs.sh
+```
+
+### Known Limitations
+
+> [!NOTE]  
+> Do not modify the heading structure (# and ##) in your template or in Google Docs
+
+Currently, the Google Docs API doesn't support direct markdown-to-rich-text conversion.
+All content is inserted as plain text, which means:
+
+- Formatting like bold, italics, and links will appear as Markdown syntax
+- Headings will show with their # characters rather than actual heading styles
+- Tables will appear in their Markdown format rather than as actual Google Docs tables
+
+Future versions may implement automatic conversion between Markdown syntax and Google Docs formatting elements.
+
+### Converting Markdown to Formatted Text
+
+After syncing your report to Google Docs, you can convert the plain Markdown to properly formatted text:
+
+1. In Google Docs, press **Ctrl + A** to select all content
+2. Press **Ctrl + X** to cut the content
+3. Right-click on the empty document area and select **Paste as Markdown**
+
 ## Report Structure
 
 Generated reports include:
-- Issues and metrics
-- Test coverage statistics from SonarQube Analysis (SQA)
-- Weekly accomplishments (PR summaries)
-- Deployment (merged PRs) information
-- Code review activities
-- Meetings and calendar events
-- Google Forms submissions
-- Next steps and learning activities
+- **Issues**: Track ongoing challenges or blockers
+- **Metrics**: Bug counts, code quality measurements, and other key performance indicators
+- **Test Coverage**: Statistics from SonarQube Analysis (SQA) for monitored components
+- **Accomplishments**: AI-generated summaries of your PRs and contributions
+- **Deployments**: Information about merged PRs and releases
+- **PR Reviews**: Code review activities you've conducted
+- **Google Forms**: Forms submitted during the week
+- **Meetings and Events**: Calendar activities including meetings, trainings, and conferences
+- **Work From Office (WFO)**: Days you worked from the office during the week
+- **Next Steps**: Upcoming focus areas and tasks
+- **Learning**: Technology, business, leadership, and other learning activities
+- **Out of Office**: Planned leave or other absences
 
 <details>
 <summary>👈 Click here to see an example of a generated weekly report</summary>
@@ -279,6 +338,54 @@ weekly-report-generator/
 3. **Adding Dependencies:**
    - If your new feature introduces external dependencies, add them to `requirements.txt`
    - Inform users/contributors to run `pip install -r requirements.txt` after updating dependencies
+
+## Pro Tips
+
+### Generate Semantic Commit Messages with AI
+
+You can use AI to generate well-formatted semantic commit messages for your contributions. Here's how:
+
+1. Copy your diff to clipboard by running:
+
+   For Linux:
+   ```bash
+   git diff | xclip -selection clipboard
+   ```
+   
+   For macOS:
+   ```bash
+   git diff | pbcopy
+   ```
+
+   Or for a specific commit:
+   
+   For Linux:
+   ```bash
+   git show <commit_sha> | xclip -selection clipboard
+   ```
+   
+   For macOS:
+   ```bash
+   git show <commit_sha> | pbcopy
+   ```
+
+2. Paste the diff into [GLoria (GL Chat)](https://chat.gdplabs.id/) with this example prompt:
+
+   ```
+   Generate a semantic commit message with a description based on the changes. Look at the module to be included (if any) in the semantic commit message from the file directory (e.g. core, common, api-gateway, etc.). Format code-related words with backticks. The example output should be like this:
+   
+   refactor(api-gateway): revert endpoint name from widgets to installed
+   
+   - Changed API endpoint from `/widgets` back to `/installed`
+   - Renamed `ExtensionWidgetResponse` to `ExtensionInstalledResponse`
+   - Made `ExtensionInstalledDetails` extend `ExtensionViewableResponse`
+   - Updated tests to use new endpoint name
+   - Reverted changes in public and ignored endpoints config
+   ```
+
+This ensures your commit history is clean and consistent.
+Better commit messages also improve the AI-generated summaries in your weekly reports,
+clarifying your accomplishments to your team and managers.
 
 ## Contributing
 

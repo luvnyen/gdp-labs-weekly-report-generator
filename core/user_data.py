@@ -9,6 +9,7 @@ Authors:
 
 ISSUES: list = []
 
+# We really hope these stay at 0...
 MAJOR_BUGS_CURRENT_MONTH: int = 0
 MINOR_BUGS_CURRENT_MONTH: int = 0
 
@@ -18,6 +19,10 @@ MINOR_BUGS_HALF_YEAR: int = 0
 """Work from office days, using numbers 1-5 representing Monday to Friday.
 Example: [1, 2, 5] means WFO on Monday, Tuesday, and Friday"""
 WFO_DAYS: list[int] = [1, 2, 5]
+
+"""Out of office days, using numbers 1-5 representing Monday to Friday.
+Example: [1, 2, 5] means WFO on Monday, Tuesday, and Friday"""
+OUT_OF_OFFICE_DAYS: list[int] = []
 
 NEXT_STEPS = [
     "Next step 1",
@@ -32,5 +37,5 @@ Examples:
 - [Video Title](https://youtube.com/watch?v=123)
 """
 LEARNING = [
-    "[Introducing computer use, a new Claude 3.5 Sonnet, and Claude 3.5 Haiku](https://www.anthropic.com/news/3-5-models-and-computer-use)",
+    "[O'Reilly Media] [Clean Architecture: A Craftsman's Guide to Software Structure and Design](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/) by Robert C. Martin (Chapter 26/34)",
 ]

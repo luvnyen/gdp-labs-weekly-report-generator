@@ -7,8 +7,8 @@ Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
 """
 
-from datetime import datetime
-from typing import Union
+import datetime
+from typing import Union, List
 
 
 def ordinal(n: int) -> str:
@@ -53,3 +53,57 @@ def format_duration(seconds: Union[int, float]) -> str:
         return f"{minutes:.1f}m"
     hours = minutes / 60
     return f"{hours:.1f}h"
+
+
+def format_weekdays_with_dates(days: List[int]) -> str:
+    """
+    Format specified weekdays (by number) with their corresponding dates in the current week.
+
+    Args:
+        days: List of weekdays as integers (1=Monday, ..., 5=Friday)
+
+    Returns:
+        A formatted string listing the given weekdays with full dates (e.g., "Monday, June 3rd, 2024").
+    """
+    today = datetime.date.today()
+    monday = today - datetime.timedelta(days=today.weekday())
+    formatted_days = []
+    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+
+    for day in days:
+        if 1 <= day <= 5:
+            date = monday + datetime.timedelta(days=day - 1)
+            formatted_days.append(f"{day_names[day - 1]}, {date.strftime('%B')} {ordinal(date.day)}, {date.year}")
+
+    return format_bulleted_list(formatted_days, indent="  ")
+
+
+def get_current_week_period() -> str:
+    """
+    Get the period from last week's Sunday to this week's Saturday in format 'DD Month YYYY - DD Month YYYY'.
+
+    Returns:
+        str: Formatted string, e.g. '04 May 2025 - 10 May 2025'
+    """
+    import datetime
+
+    today = datetime.date.today()
+    this_week_monday = today - datetime.timedelta(days=today.weekday())
+    last_week_sunday = this_week_monday - datetime.timedelta(days=1)
+    this_week_saturday = this_week_monday + datetime.timedelta(days=5)
+    return f"{last_week_sunday.strftime('%d %B %Y')} - {this_week_saturday.strftime('%d %B %Y')}"
+
+
+def format_bulleted_list(items: List[str], indent: str = "") -> str:
+    """Format list items with bullets and optional indentation.
+
+    Args:
+        items: List of items to format
+        indent: String to prepend for indentation
+
+    Returns:
+        Formatted string with bulleted items
+    """
+    if not items:
+        return f"{indent}* None"
+    return '\n'.join(f"{indent}* {item}" for item in items)

@@ -1,54 +1,60 @@
-#### Issues
+# [Weekly Report: John Doe] {period}
+
+## **Issues**
 
 {issues}
 
-#### Metrics ({half_year} {half_year_year})
+## **Accomplishments**
 
-##### Reported Bug(s) ({current_month} {current_year})
+{accomplishments}
+
+#### **Deployment Released (Production and BCA Digital):**
+
+{deployments}
+
+#### **PR(s) Reviewed:**
+
+{prs_reviewed}
+
+#### **Google Form(s) Filled:**
+
+{google_forms_filled}
+
+## **Meetings/Events/Training/Conferences**
+
+{meetings_and_activities}
+
+#### **Worked from Surabaya Office (WFO) on:**
+
+{wfo_days}
+
+## **Key Metrics / OMTM**
+
+#### **Reported Bug(s) ({current_month} {current_year})**
 
 * Major: {major_bugs_current_month}
 * Minor: {minor_bugs_current_month}
 
-##### Total Reported Bugs ({half_year} {half_year_year})
+#### **Total Reported Bug(s) ({half_year} {half_year_year})**
 
 * Major: {major_bugs_half_year}
 * Minor: {minor_bugs_half_year}
 
-##### Test Coverage
+#### **Test Coverage**
 
 {test_coverage_components}
 
-#### Accomplishments
-
-{accomplishments}
-
-* **Deployment:**
-
-> {deployments}
-
-* **PRs Reviewed:**
-
-> {prs_reviewed}
-
-* **Meetings and Other Activities:**
-
-> {meetings_and_activities}
-
-* **Google Forms Filled:**
-
-> {google_forms_filled}
-
-* **Worked from Office (WFO) on:**
-
-> {wfo_days}
-
-#### Next Steps
+## **Next Actions**
 
 {next_steps}
 
-#### Business, Communication, Technology, Leadership, Management, Marketing
+## **Technology, Business, Communication, Leadership, Management & Marketing**
 
 {learning}
+
+## **Out of Office**
+
+{out_of_office_days}
 
 <p style="font-size: 0.8em; color: #888; font-style: italic;">
     All times are in UTC+07:00.<br>
