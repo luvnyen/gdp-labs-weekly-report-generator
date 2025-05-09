@@ -6,8 +6,8 @@
 
 ## **Accomplishments**
 
-{self_accomplishments}
-{accomplishments}
+{other_accomplishments}
+{github}
 
 #### **Deployment Released:**
 
@@ -31,8 +31,7 @@
 
 ## **Key Metrics / OMTM**
 
-<!-- {omtm} -->
-<!-- If any, if not, you can deactivate this -->
+{omtm}
 
 #### **Reported Bug(s) ({current_month} {current_year})**
 
