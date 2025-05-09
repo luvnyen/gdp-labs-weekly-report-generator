@@ -6,9 +6,10 @@
 
 ## **Accomplishments**
 
+{self_accomplishments}
 {accomplishments}
 
-#### **Deployment Released (Production and BCA Digital):**
+#### **Deployment Released:**
 
 {deployments}
 
@@ -29,6 +30,9 @@
 {wfo_days}
 
 ## **Key Metrics / OMTM**
+
+<!-- {omtm} -->
+<!-- If any, if not, you can deactivate this -->
 
 #### **Reported Bug(s) ({current_month} {current_year})**
 

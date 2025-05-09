@@ -7,3 +7,4 @@ templates/template.md
 tokens/
 user_data.py
 venv/
+core/user_data.py
