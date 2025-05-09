@@ -254,18 +254,6 @@ Generated reports include:
 >         * Removed `@Override` annotations from methods in the former `EmploymentStatusHistoryServiceImpl` due to the interface's removal.
 >         * Updated all references from `EmploymentStatusHistoryServiceImpl` (and the former interface) to the new `EmploymentStatusHistoryService` class name in service, test, and other related classes.
 > 
-> * feat: implement Google Docs sync [gdp-labs-weekly-report-generator@de137c1](https://github.com/luvnyen/gdp-labs-weekly-report-generator/commit/de137c12c6c9acbaddf8a0e5d9662846e77e7301)
->     * **Description:** Added an end-to-end workflow to sync weekly reports to Google Docs.  
->     * **Status:** Done
->     * **Key Changes Implemented:**  
->         * Added `sync_to_google_docs.sh` for automated synchronization.  
->         * Created `sync_to_google_docs.py` to perform the syncing via Gmail.  
->         * Introduced `GOOGLE_DOCS_SCOPES` in `config.py` for Docs API access.  
->         * Added `update_google_docs_content` and `extract_google_docs_id_from_url` in `google_docs_service.py`.  
->         * Enhanced `user_data.py` with `OUT_OF_OFFICE_DAYS` to track absences.  
->         * Updated report templates to include sync info and out-of-office details.  
->         * Documented Google Docs synchronization in `README.md`.
-> 
 > #### **Deployment Released (Production and BCA Digital):**
 > 
 >   * [#5701-1] fix(core): correct `employment_status_histories` end dates beyond termination dates via DML [CATAPA-API#19924](https://github.com/GDP-ADMIN/CATAPA-API/pull/19924)
@@ -282,8 +270,6 @@ Generated reports include:
 >   * [#5605] update employment type employment group code column and validation [CATAPA-API#19935](https://github.com/GDP-ADMIN/CATAPA-API/pull/19935)
 >   * #4859-kw1 [BE] Create Flyway Migration to Add All Master Data Code Columns and State Description [Release 9May25] [CATAPA-API#19832](https://github.com/GDP-ADMIN/CATAPA-API/pull/19832)
 >   * #4859-kw2d [BE] Implement Institution Code [Release 9May25] [CATAPA-API#19858](https://github.com/GDP-ADMIN/CATAPA-API/pull/19858)
->   * Adjust setup to support mac [gdp-labs-weekly-report-generator#5](https://github.com/luvnyen/gdp-labs-weekly-report-generator/pull/5)
->   * [Enhancement] Add `omtm` and `self_accomplishment` to template [gdp-labs-weekly-report-generator#9](https://github.com/luvnyen/gdp-labs-weekly-report-generator/pull/9)
 > 
 > #### **Google Form(s) Filled:**
 > 
