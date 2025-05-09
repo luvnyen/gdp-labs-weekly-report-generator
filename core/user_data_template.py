@@ -7,6 +7,7 @@ Please copy this file and rename it as user_data.py to make it configurable for 
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Glenn Steven Santoso (glenn.s.santoso@gdplabs.id)
 """
 
 ISSUES: list = []
@@ -23,7 +24,7 @@ Example: [1, 2, 5] means WFO on Monday, Tuesday, and Friday"""
 WFO_DAYS: list[int] = [1, 2, 5]
 
 """Self accomplishments for the week, in case accomplishments are not available from GitHub and is needed to be written manually"""
-SELF_ACCOMPLISHMENTS: list[str] = [
+OTHER_ACCOMPLISHMENTS: list[str] = [
     "Your self accomplishment 1",
     "Your self accomplishment 2",
     "Your self accomplishment 3",

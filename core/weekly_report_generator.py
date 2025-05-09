@@ -23,7 +23,7 @@ from utils.date_time_util import format_weekdays_with_dates, get_current_week_pe
 from .user_data import (
     ISSUES, MAJOR_BUGS_CURRENT_MONTH, MINOR_BUGS_CURRENT_MONTH,
     MAJOR_BUGS_HALF_YEAR, MINOR_BUGS_HALF_YEAR, WFO_DAYS,
-    OUT_OF_OFFICE_DAYS, NEXT_STEPS, LEARNING, SELF_ACCOMPLISHMENTS, OMTM
+    OUT_OF_OFFICE_DAYS, NEXT_STEPS, LEARNING, OTHER_ACCOMPLISHMENTS, OMTM
 )
 
 
@@ -167,13 +167,13 @@ def generate_weekly_report(
         'major_bugs_half_year': MAJOR_BUGS_HALF_YEAR,
         'minor_bugs_half_year': MINOR_BUGS_HALF_YEAR,
         'test_coverage_components': sonarqube_data,
-        'accomplishments': github_data['accomplishments'],
+        'github': github_data['accomplishments'],
         'deployments': format_bulleted_list(github_data['deployments'], indent="  "),
         'prs_reviewed': format_bulleted_list(github_data['prs_reviewed'], indent="  "),
         'meetings_and_activities': format_meetings(calendar_events),
         'google_forms_filled': format_bulleted_list(forms_data, indent="  "),
         'wfo_days': format_weekdays_with_dates(WFO_DAYS),
-        'self_accomplishments': format_bulleted_list(SELF_ACCOMPLISHMENTS),
+        'other_accomplishments': format_bulleted_list(OTHER_ACCOMPLISHMENTS),
         'omtm': format_bulleted_list(OMTM),
         'out_of_office_days': format_weekdays_with_dates(OUT_OF_OFFICE_DAYS),
         'next_steps': format_bulleted_list(NEXT_STEPS),
