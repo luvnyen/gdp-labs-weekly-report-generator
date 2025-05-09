@@ -2,6 +2,8 @@
 
 A Python-based tool that automatically generates comprehensive weekly reports by integrating data from multiple services including GitHub, SonarQube, Google Calendar, and Google Forms. The generated reports are enhanced with AI-powered summaries using the Groq API and DeepSeek's reasoning R1 model. Reports can be generated locally in Markdown format and synchronized with Google Docs for easier sharing and collaboration.
 
+![weekly_report_generator_execution.png](assets/weekly_report_generator_execution.png)
+
 ## Features
 
 - **Multi-Service Integration:**
@@ -177,7 +179,13 @@ Future versions may implement automatic conversion between Markdown syntax and G
 
 ### Converting Markdown to Formatted Text
 
-After syncing your report to Google Docs, you can convert the plain Markdown to properly formatted text:
+Before converting your Markdown to properly format text in Google Docs, ensure that the Markdown option is enabled:
+
+1. In Google Docs, navigate to **Tools** > **Preferences**.
+2. Check the option to **Enable Markdown**.
+3. Click **OK** to save your changes.
+
+After enabling Markdown, follow these steps to convert your plain Markdown to formatted text:
 
 1. In Google Docs, press **Ctrl + A** to select all content
 2. Press **Ctrl + X** to cut the content
@@ -202,108 +210,166 @@ Generated reports include:
 <details>
 <summary>👈 Click here to see an example of a generated weekly report</summary>
 
-> #### 👻 Issue(s)
+> # [Weekly Report: Calvert Tanudihardjo] 04 May 2025 - 10 May 2025
+> 
+> ## **Issues**
 > 
 > * None
 > 
-> #### 📈 Metrics (H2 2024)
+> ## **Accomplishments**
 > 
-> **Reported Bug(s) (November 2024)**
+> ### **CATAPA**
 > 
-> * Major: 0
-> * Minor: 0
+> * feat(api-gateway): map `/core/v1/employees/*/termination-entries` with `READ_TERMINATED_EMPLOYEE` [CATAPA-API#19971](https://github.com/GDP-ADMIN/CATAPA-API/pull/19971)
+>     * **Description:** Mapped the API gateway endpoint `/core/v1/employees/*/termination-entries` to the `READ_TERMINATED_EMPLOYEE` permission.
+>     * **Status:** In Review
+>     * **Key Changes Implemented:**
+>         * Mapped the API gateway endpoint `/core/v1/employees/*/termination-entries` with the `READ_TERMINATED_EMPLOYEE` permission.
 > 
-> **Total Reported Bugs (H2 2024)**
-> 
-> * Major: 0
-> * Minor: 0
-> 
-> **Test Coverage**
-> 
-> * catapa-core
->   * personnel: [97.2%](https://sqa.gdplabs.net/code?id=catapa-core&selected=catapa-core:src/main/java/com/catapa/core/personnel) (target: 97%)
-> 
-> #### 🎯 Accomplishments
-> 
-> * feat(api-gateway): add user existence check endpoint [CATAPA-API#18817](https://github.com/GDP-ADMIN/CATAPA-API/pull/18817)
->     * **Description:** Added a GET `/users/{userId}/exists` endpoint to check user existence, enhanced the `apiGatewayService` to validate user existence before admin check, and updated endpoint filters and integration tests for user existence validation.
+> * [#5701-1] fix(core): correct `employment_status_histories` end dates beyond termination dates via DML [CATAPA-API#19924](https://github.com/GDP-ADMIN/CATAPA-API/pull/19924)
+>     * **Description:** Corrected `employment_status_histories` end dates relative to termination dates via DML, refactored related business logic, enhanced validation, and consolidated service classes for improved data consistency and maintainability.
 >     * **Status:** Done
 >     * **Key Changes Implemented:**
->         * Added GET `/users/{userId}/exists` endpoint to check user existence
->         * Enhanced `apiGatewayService` to validate user existence before admin check
->         * Updated endpoint filters for `UserEndpointFilterService` and `ClientCredentialEndpointFilterService`
->         * Added integration tests for `checkExists` endpoint
+>         * Updated `employment_status_histories` table to set `end_date` to termination's `effective_date` for records with later or `NULL` end dates.
 > 
-> * refactor(core): replace `Position` with `PositionLite` in `Organization` [CATAPA-API#18736]
->     * **Description:** Standardized documentation structure and improved code organization by repositioning Javadoc comments and ensuring consistent formatting across service layers.
->     * **Status:** Deployed to Dev. & In Review
+> * [#5701-2] refactor(core): improve employment status and termination integration logic [CATAPA-API#19941](https://github.com/GDP-ADMIN/CATAPA-API/pull/19941)
+>     * **Description:** Refactored core logic to enhance integration between employment status and termination processes, including DML corrections for end dates, centralized validation, service class consolidation, and improved documentation.
+>     * **Status:** Done
 >     * **Key Changes Implemented:**
->         * Moved class-level Javadoc comments above package declarations
->         * Standardized author attributions and class descriptions format
->         * Ensured consistent documentation structure across service layer
+>         * Updated `EmploymentStatusApprovalService` to delegate employment status validation concerning termination to `AssignmentValidatorService`.
+>         * Modified `EmploymentStatusHistoryServiceImpl` (later `EmploymentStatusHistoryService`) to set end dates based on approved termination data in `create()`, `create(employmentStatusApproval)`, and `update()` methods, simplifying `Optional` handling.
+>         * Added `findApprovedByEmployeeId` method in `TerminationEntryService`.
+>         * Renamed `validateAssignmentWithoutTerminationDateCheck` to `validateAssignmentCore` and subsequently consolidated its logic into a private `validateAssignmentRelationships` method within `AssignmentValidatorService`.
+>         * Added validation in `TerminationEntryValidatorImpl` to check for upcoming employment statuses prior to termination approval.
+>         * Enhanced `setEndDateInEmploymentStatusHistory` method to correctly identify the latest relevant employment status history.
+>         * Added integration tests for `getEndDateBasedOnTermination` method covering various date scenarios.
+>         * Added and improved Javadoc for `AssignmentValidatorService` methods and `EmploymentStatusHistoryService#getEndDateBasedOnTermination`.
 > 
-> * refactor(core): impl auto-approve for `ContactInformationApproval` [CATAPA-API#18631]
->     * **Description:** Implemented auto-approval functionality for contact information updates, improved code organization, and enhanced approval flow validation.
->     * **Status:** Deployed to Demo
+> * [#5701-3] chore(core): remove `EmploymentStatusHistoryService` interface class [CATAPA-API#19943](https://github.com/GDP-ADMIN/CATAPA-API/pull/19943)
+>     * **Description:** This chore removed the `EmploymentStatusHistoryService` interface and consolidated its implementation `EmploymentStatusHistoryServiceImpl` into `EmploymentStatusHistoryService`.
+>     * **Status:** Done
 >     * **Key Changes Implemented:**
->         * Enhanced approval notification flow
->         * Added comprehensive integration tests
+>         * Removed the `EmploymentStatusHistoryService` interface class.
+>         * Renamed `EmploymentStatusHistoryServiceImpl` to `EmploymentStatusHistoryService`.
+>         * Removed `@Override` annotations from methods in the former `EmploymentStatusHistoryServiceImpl` due to the interface's removal.
+>         * Updated all references from `EmploymentStatusHistoryServiceImpl` (and the former interface) to the new `EmploymentStatusHistoryService` class name in service, test, and other related classes.
 > 
-> * **Release Plan (This Week):**
+> * feat: implement Google Docs sync [gdp-labs-weekly-report-generator@de137c1](https://github.com/luvnyen/gdp-labs-weekly-report-generator/commit/de137c12c6c9acbaddf8a0e5d9662846e77e7301)
+>     * **Description:** Added an end-to-end workflow to sync weekly reports to Google Docs.  
+>     * **Status:** Done
+>     * **Key Changes Implemented:**  
+>         * Added `sync_to_google_docs.sh` for automated synchronization.  
+>         * Created `sync_to_google_docs.py` to perform the syncing via Gmail.  
+>         * Introduced `GOOGLE_DOCS_SCOPES` in `config.py` for Docs API access.  
+>         * Added `update_google_docs_content` and `extract_google_docs_id_from_url` in `google_docs_service.py`.  
+>         * Enhanced `user_data.py` with `OUT_OF_OFFICE_DAYS` to track absences.  
+>         * Updated report templates to include sync info and out-of-office details.  
+>         * Documented Google Docs synchronization in `README.md`.
 > 
->   * feat(core): additional assignment core employee dependency delete services [CATAPA-API#18779](https://github.com/GDP-ADMIN/CATAPA-API/pull/18779)
->   * refactor(core): impl auto-approve for `EmployeeIdentityCardApproval` [CATAPA-API#18705](https://github.com/GDP-ADMIN/CATAPA-API/pull/18705)
->   * refactor(core): restructure personnel notification configuration services [CATAPA-API#18740](https://github.com/GDP-ADMIN/CATAPA-API/pull/18740)
+> #### **Deployment Released (Production and BCA Digital):**
 > 
-> * **PR(s) Reviewed:**
+>   * [#5701-1] fix(core): correct `employment_status_histories` end dates beyond termination dates via DML [CATAPA-API#19924](https://github.com/GDP-ADMIN/CATAPA-API/pull/19924)
+>   * [#5701-2] refactor(core): improve employment status and termination integration logic [CATAPA-API#19941](https://github.com/GDP-ADMIN/CATAPA-API/pull/19941)
+>   * [#5701-3] chore(core): remove `EmploymentStatusHistoryService` interface class [CATAPA-API#19943](https://github.com/GDP-ADMIN/CATAPA-API/pull/19943)
 > 
->   * feat(core): custom workflow builder [CATAPA-API#18608](https://github.com/GDP-ADMIN/CATAPA-API/pull/18608)
->   * feat(core): employee details auto-approve [CATAPA-API#18791](https://github.com/GDP-ADMIN/CATAPA-API/pull/18791)
->   * feat(core): termination update end date update [CATAPA-API#18764](https://github.com/GDP-ADMIN/CATAPA-API/pull/18764)
+> #### **PR(s) Reviewed:**
 > 
-> * **Meetings and Other Activities:**
+>   * New Public API for GET Historical Education [CATAPA-API#19887](https://github.com/GDP-ADMIN/CATAPA-API/pull/19887)
+>   * feat(api-gateway): update chart related authority in role authority [CATAPA-API#19970](https://github.com/GDP-ADMIN/CATAPA-API/pull/19970)
+>   * Support Sub Location Event Listener for Djarum Extension [Release 13May25] [CATAPA-API#19925](https://github.com/GDP-ADMIN/CATAPA-API/pull/19925)
+>   * [#4520-1] feat(core): add endpoint without data trustee [Release 9 May 25] [CATAPA-API#19845](https://github.com/GDP-ADMIN/CATAPA-API/pull/19845)
+>   * [#4520-3] feat(core): add data trustee in dropdown endpoint [Release 9 May 2025] [CATAPA-API#19848](https://github.com/GDP-ADMIN/CATAPA-API/pull/19848)
+>   * [#5605] update employment type employment group code column and validation [CATAPA-API#19935](https://github.com/GDP-ADMIN/CATAPA-API/pull/19935)
+>   * #4859-kw1 [BE] Create Flyway Migration to Add All Master Data Code Columns and State Description [Release 9May25] [CATAPA-API#19832](https://github.com/GDP-ADMIN/CATAPA-API/pull/19832)
+>   * #4859-kw2d [BE] Implement Institution Code [Release 9May25] [CATAPA-API#19858](https://github.com/GDP-ADMIN/CATAPA-API/pull/19858)
+>   * Adjust setup to support mac [gdp-labs-weekly-report-generator#5](https://github.com/luvnyen/gdp-labs-weekly-report-generator/pull/5)
+>   * [Enhancement] Add `omtm` and `self_accomplishment` to template [gdp-labs-weekly-report-generator#9](https://github.com/luvnyen/gdp-labs-weekly-report-generator/pull/9)
 > 
->   * **Monday, October 28th, 2024**
->     * 2:00 PM – 3:00 PM: ECHO Emo - Sprint Planning
->     * 5:00 PM – 6:00 PM: [Brownbag] Design For All session 1 by Fransiska Handayani, Fajar Yudhistira, Rina Lia Aryati, Pradono Kusumo
->   * **Tuesday, October 29th, 2024**
->     * 11:00 AM – 11:30 AM: ECHO Emo - Daily Sync
->     * 5:00 PM – 6:00 PM: [Brownbag] Design For All session 2 by Fransiska Handayani, Fajar Yudhistira, Rina Lia Aryati, Pradono Kusumo
->   * **Wednesday, October 30th, 2024**
->     * 11:00 AM – 11:30 AM: ECHO Emo - Daily Sync
->   * **Thursday, October 31st, 2024**
->     * 11:00 AM – 11:30 AM: ECHO Emo - Daily Sync
->     * 1:00 PM – 2:30 PM: GL Monthly Meeting & AMA
->     * 5:00 PM – 6:00 PM: [Brownbag] AI-Assisted Tools for Increasing Developer's Productivity by Petry, Raymond, Sahat, Vilia, Henry, Rima
->   * **Friday, November 1st, 2024**
->     * 11:00 AM – 11:30 AM: ECHO Emo - Daily Sync
->     * 2:30 PM – 3:00 PM: CATAPA BE Weekly Meeting
+> #### **Google Form(s) Filled:**
 > 
-> * **Google Forms Filled:**
+>   * Feedback Form for GLoria (submitted on Monday, May 5th, 2025 at 11:42 AM)
+>   * Feedback Form for AI Agents (submitted on Monday, May 5th, 2025 at 7:53 AM)
 > 
->   * Data Kehadiran CATAPA (submitted on Friday, November 1st, 2024 at 8:55 AM)
->   * Javadoc @author tag (submitted on Monday, October 28th, 2024 at 4:29 PM)
+> ### **Others**
 > 
-> * **Worked from Surabaya Office (WFO) on:**
+> * feat: implement Google Docs sync [gdp-labs-weekly-report-generator@de137c1](https://github.com/luvnyen/gdp-labs-weekly-report-generator/commit/de137c12c6c9acbaddf8a0e5d9662846e77e7301)
+>     * **Description:** Added an end-to-end workflow to sync weekly reports to Google Docs.  
+>     * **Status:** Done
+>     * **Key Changes Implemented:**  
+>         * Added `sync_to_google_docs.sh` for automated synchronization.  
+>         * Created `sync_to_google_docs.py` to perform the syncing via Gmail.  
+>         * Introduced `GOOGLE_DOCS_SCOPES` in `config.py` for Docs API access.  
+>         * Added `update_google_docs_content` and `extract_google_docs_id_from_url` in `google_docs_service.py`.  
+>         * Enhanced `user_data.py` with `OUT_OF_OFFICE_DAYS` to track absences.  
+>         * Updated report templates to include sync info and out-of-office details.  
+>         * Documented Google Docs synchronization in `README.md`.
 > 
->   * Tuesday, October 29th, 2024
->   * Wednesday, October 30th, 2024
->   * Thursday, October 31st, 2024
+> #### **PR(s) Reviewed:**
 > 
-> #### 🚀 What is next?
+>   * Adjust setup to support mac [gdp-labs-weekly-report-generator#5](https://github.com/luvnyen/gdp-labs-weekly-report-generator/pull/5)
+>   * [Enhancement] Add `omtm` and `self_accomplishment` to template [gdp-labs-weekly-report-generator#9](https://github.com/luvnyen/gdp-labs-weekly-report-generator/pull/9)
 > 
-> * Action workflow's tech debts
+> ## **Meetings/Events/Training/Conferences**
 > 
-> #### 📖 Business, Communication, Technology, Leadership, Management, Marketing
+>   * **Monday, May 5th, 2025**
+>     * 8:00 AM – 9:00 AM: ECHO - Sprint Planning📝
+>     * 9:00 AM – 9:45 AM: CATAPA Sync
+>     * 10:00 AM – 10:30 AM: Calvert / David Regular 1:1
+>     * 11:15 AM – 12:15 PM: CEO & Engineers Town Hall
+>   * **Tuesday, May 6th, 2025**
+>     * 11:00 AM – 12:00 PM: ECHO - Daily Sync
+>   * **Wednesday, May 7th, 2025**
+>     * 11:00 AM – 12:00 PM: ECHO - Daily Sync
+>   * **Thursday, May 8th, 2025**
+>     * 11:00 AM – 12:00 PM: ECHO - Daily Sync
+>     * 1:30 PM – 2:30 PM: CATAPA BE Weekly Meeting
+>   * **Friday, May 9th, 2025**
+>     * 11:00 AM – 12:00 PM: ECHO - Daily Sync
 > 
-> * [Head First Design Patterns, 2nd Edition](https://learning.oreilly.com/library/view/head-first-design/9781492077992/) by Eric Freeman & Elisabeth Robson (Chapter 3/13)
-> * [Installing Claude for Desktop](https://support.anthropic.com/en/articles/10065433-installing-claude-for-desktop)
-> * [Introducing ChatGPT search](https://openai.com/index/introducing-chatgpt-search/)
+> #### **Worked from Surabaya Office (WFO) on:**
+> 
+>   * Monday, May 5th, 2025
+>   * Tuesday, May 6th, 2025
+>   * Wednesday, May 7th, 2025
+> 
+> ## **Key Metrics / OMTM**
+> 
+> #### **Reported Bug(s) (May 2025)**
+> 
+> * Major: 0
+> * Minor: 0
+> 
+> #### **Total Reported Bug(s) (H1 2025)**
+> 
+> * Major: 0
+> * Minor: 1
+> 
+> #### **Test Coverage**
+> 
+> * catapa-core
+>   * personnel: [96.7%](https://sqa.gdplabs.net/code?id=catapa-core&selected=catapa-core:src/main/java/com/catapa/core/personnel) (target: 97%)
+> 
+> ## **Next Actions**
+> 
+> * Refactor termination entry service for extension needs
+> * Review installed extensions PR
+> 
+> ## **Technology, Business, Communication, Leadership, Management & Marketing**
+> 
+> * [O'Reilly Media] [Clean Architecture: A Craftsman's Guide to Software Structure and Design](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/) by Robert C. Martin (Chapter 30/34)
+> * [YouTube] [What is MCP? Integrate AI Agents with Databases & APIs](https://youtu.be/eur8dUO9mvE?si=W2r1u5b0PA-Dnjik)
+> * [YouTube] [Build Anything With a CUSTOM MCP Server - Python Tutorial](https://youtu.be/-8k9lGpGQ6g?si=c8l5AFtgtIExZ6r6)
+> 
+> ## **Out of Office**
+> 
+>   * None
 > 
 > <p style="font-size: 0.8em; color: #888; font-style: italic;">
 >     All times are in UTC+07:00.<br>
 >     This weekly report is generated using GitHub, Google, and SonarQube APIs.<br>
->     Accomplishments are summarized using the Gemini API LLM.
+>     Accomplishments are summarized using the Gemini 2.5 Pro LLM API.<br>
+>     <br>
+>     Tired of manual weekly reports? Let AI turn your GitHub activity, meetings, and metrics into perfectly structured weekly reports—effortlessly! <a href="https://github.com/luvnyen/gdp-labs-weekly-report-generator">Try it now</a>
 > </p>
 
 </details>
