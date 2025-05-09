@@ -1,6 +1,7 @@
 """LLM Service Module
 
-This module provides functionality to interact with Groq for summarizing pull requests and commit messages.
+This module provides functionality to interact with Google Gemini and Groq
+for summarizing pull requests and commit messages.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
@@ -8,9 +9,10 @@ Authors:
 
 import re
 
+import google.generativeai as genai
 from groq import Groq
 
-from config.config import GROQ_API_KEY
+from config.config import GROQ_API_KEY, GOOGLE_GEMINI_API_KEY
 
 SYSTEM_PROMPT = """You are a technical writer specializing in summarizing pull requests and commit messages.
 Provide only the formatted output following the exact structure specified in the user's prompt.
@@ -92,3 +94,20 @@ def summarize_with_groq(content: str) -> str:
     )
 
     return clean_response(chat_completion.choices[0].message.content)
+
+def summarize_with_gemini(content: str) -> str:
+    """Summarize pull requests using Google's Gemini model.
+
+    Args:
+        content (str): Raw PR and commit content to summarize
+
+    Returns:
+        str: Formatted Markdown summary from Gemini
+    """
+    genai.configure(api_key=GOOGLE_GEMINI_API_KEY)
+    model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+
+    formatted_prompt = SYSTEM_PROMPT + USER_PROMPT.format(content=content)
+    response = model.generate_content(formatted_prompt)
+
+    return response.text

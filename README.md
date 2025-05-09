@@ -9,7 +9,7 @@ A Python-based tool that automatically generates comprehensive weekly reports by
   - **SonarQube**: Monitor test coverage metrics
   - **Google Calendar**: Log meetings and activities
   - **Google Forms**: Track form submissions
-  - **Groq**: Generate intelligent PR summaries
+  - **Groq & Gemini AI**: Generate intelligent PR summaries
 
 - **Smart Report Generation:**
   - Automatic weekly date range detection
@@ -129,6 +129,13 @@ The application uses various service tokens and configurations stored in a `.env
    * [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
    * [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
    * [Google Docs API](https://console.cloud.google.com/apis/library/docs.googleapis.com)
+
+### Gemini API Key Configuration
+
+  > [!IMPORTANT]  
+  > Use personal `@gmail.com` account
+
+  - Generate at [Google AI Studio](https://aistudio.google.com/app/apikey) (don't worry, it's free!)
 
 ### Groq API Key Configuration
 

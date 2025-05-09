@@ -18,7 +18,10 @@ else
     echo "Virtual environment is already activated."
 fi
 
-python3 main.py
+export GRPC_VERBOSITY=error
+export GRPC_CPP_LOG_LEVEL=error
+
+python3 main.py 2>/dev/null
 
 if [[ "$VIRTUAL_ENV" != "" && "$VIRTUAL_ENV" == *"/venv" ]]; then
     deactivate

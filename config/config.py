@@ -102,9 +102,13 @@ class ConfigManager:
         ServiceType.GOOGLE_FORMS: ServiceRequirements({
             'GOOGLE_CLIENT_SECRET_FILE'
         }),
-        ServiceType.LLM: ServiceRequirements({
-            'GROQ_API_KEY',
-        })
+        ServiceType.LLM: ServiceRequirements(
+            required_vars = set(),
+            alternative_vars = [
+                {'GOOGLE_GEMINI_API_KEY'},
+                {'GROQ_API_KEY'}
+            ]
+        )
     }
 
     def __init__(self):
@@ -124,6 +128,7 @@ class ConfigManager:
             'GITHUB_PERSONAL_ACCESS_TOKEN': os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN'),
             'GITHUB_USERNAME': os.getenv('GITHUB_USERNAME'),
             'GOOGLE_CLIENT_SECRET_FILE': os.getenv('GOOGLE_CLIENT_SECRET_FILE'),
+            'GOOGLE_GEMINI_API_KEY': os.getenv('GOOGLE_GEMINI_API_KEY'),
             'GROQ_API_KEY': os.getenv('GROQ_API_KEY'),
             'REPOS': os.getenv('REPOS'),
             'REPO_OWNER': os.getenv('REPO_OWNER'),
@@ -135,7 +140,7 @@ class ConfigManager:
         """Check if all required environment variables for a service are present.
 
         Validates that all required variables are set and any referenced files exist.
-        For services with alternative requirements, checks if any set of alternatives is complete.
+        For services with alternative requirements, check if any set of alternatives is complete.
 
         Args:
             service_type (ServiceType): The service type to check requirements for
@@ -182,7 +187,7 @@ class ConfigManager:
             service_type (ServiceType): Service type to check
 
         Returns:
-            bool: True if service is available, False otherwise
+            bool: True if the service is available, False otherwise
         """
         return service_type in self._available_services
 
@@ -208,7 +213,7 @@ class ConfigManager:
 
     @property
     def github_token(self) -> Optional[str]:
-        """Get GitHub personal access token.
+        """Get a GitHub personal access token.
 
         Returns:
             Optional[str]: GitHub token if available, None otherwise
@@ -217,7 +222,7 @@ class ConfigManager:
 
     @property
     def github_username(self) -> Optional[str]:
-        """Get GitHub username.
+        """Get a GitHub username.
 
         Returns:
             Optional[str]: GitHub username if available, None otherwise
@@ -229,7 +234,7 @@ class ConfigManager:
         """Get a list of GitHub repositories.
 
         Returns:
-            List[str]: List of repository names, empty list if none configured
+            List[str]: List of repository names, empty list if none is configured
         """
         repos = self.env_vars.get('REPOS', '')
         if not repos:
@@ -238,7 +243,7 @@ class ConfigManager:
 
     @property
     def github_repo_owner(self) -> Optional[str]:
-        """Get GitHub repository owner.
+        """Get a GitHub repository owner.
 
         Returns:
             Optional[str]: Repository owner if available, None otherwise
@@ -264,8 +269,17 @@ class ConfigManager:
         return self.env_vars.get('GOOGLE_CLIENT_SECRET_FILE')
 
     @property
+    def gemini_api_key(self) -> Optional[str]:
+        """Get Google Gemini API key.
+
+        Returns:
+            Optional[str]: Gemini API key if available, None otherwise
+        """
+        return self.env_vars.get('GOOGLE_GEMINI_API_KEY')
+
+    @property
     def groq_api_key(self) -> Optional[str]:
-        """Get Groq API key.
+        """Get a Groq API key.
 
         Returns:
             Optional[str]: Groq API key if available, None otherwise
@@ -311,4 +325,5 @@ REPO_OWNER = config_manager.github_repo_owner
 SONARQUBE_USER_TOKEN = config_manager.sonarqube_token
 GOOGLE_CLIENT_SECRET_FILE = config_manager.google_client_secret_file
 SONARQUBE_COMPONENTS = parse_sonarqube_components(config_manager.env_vars.get('SONARQUBE_COMPONENTS', ''))
+GOOGLE_GEMINI_API_KEY = config_manager.gemini_api_key
 GROQ_API_KEY = config_manager.groq_api_key
