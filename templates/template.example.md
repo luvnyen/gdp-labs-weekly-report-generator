@@ -7,7 +7,7 @@
 ## **Accomplishments**
 
 {other_accomplishments}
-{github}
+{github_accomplishments}
 
 #### **Deployment Released:**
 

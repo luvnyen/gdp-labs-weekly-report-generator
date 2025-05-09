@@ -167,7 +167,7 @@ def generate_weekly_report(
         'major_bugs_half_year': MAJOR_BUGS_HALF_YEAR,
         'minor_bugs_half_year': MINOR_BUGS_HALF_YEAR,
         'test_coverage_components': sonarqube_data,
-        'github': github_data['accomplishments'],
+        'github_accomplishments': github_data['accomplishments'],
         'deployments': format_bulleted_list(github_data['deployments'], indent="  "),
         'prs_reviewed': format_bulleted_list(github_data['prs_reviewed'], indent="  "),
         'meetings_and_activities': format_meetings(calendar_events),
