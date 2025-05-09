@@ -24,7 +24,7 @@ class GitHubRepo:
     """
 
     def __init__(self, name: str) -> None:
-        """Initialize GitHubRepo with repository name.
+        """Initialize GitHubRepo with the repository name.
 
         Args:
             name (str): The name of the GitHub repository.
@@ -102,7 +102,7 @@ class GitHubService:
                           None if the request fails.
 
         Note:
-            Prints an error message to console if the request fails.
+            Prints an error message to the console if the request fails.
         """
         url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo_name}/pulls/{pr_number}"
         response = requests.get(url, headers=self.headers)
@@ -114,7 +114,7 @@ class GitHubService:
     def _get_pr_commits(self, repo_name: str, pr_number: int) -> List[Dict]:
         """Get commits from a specific pull request.
 
-        Retrieves all commit from the specified pull request that was made by the
+        Retrieves all commits from the specified pull request made by the
         authenticated user during the current week.
 
         Args:
@@ -128,7 +128,7 @@ class GitHubService:
                        - date: commit date
 
         Note:
-            Prints an error message to console if the request fails.
+            Prints an error message to the console if the request fails.
         """
         url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo_name}/pulls/{pr_number}/commits"
         commits = []
@@ -170,7 +170,7 @@ class GitHubService:
             List[str]: List of formatted strings representing merged pull requests.
 
         Note:
-            Prints an error message to console if the request fails.
+            Prints an error message to the console if the request fails.
         """
         query = (
             f"repo:{REPO_OWNER}/{repo.name} is:pr is:merged "
@@ -226,7 +226,7 @@ class GitHubService:
     def _fetch_repo_prs_and_commits(self, repo: GitHubRepo) -> Tuple[List[Any], Dict[int, List[Any]]]:
         """Fetch PRs and their commits from a repository.
 
-        Retrieves all pull requests authored by the authenticated user and their
+        Retrieves all pulls requests authored by the authenticated user and their
         associated commits from the specified repository.
 
         Args:
@@ -239,7 +239,7 @@ class GitHubService:
 
         Note:
             - Only returns PRs updated since the start of the current week
-            - Prints error message to console if request fails
+            - Prints an error message to console if request fails
             - Prints progress information about the number of PRs found
         """
         url = f"{GITHUB_API_BASE_URL}/search/issues"
@@ -282,20 +282,63 @@ class GitHubService:
 
         return your_prs, pr_commits
 
-    def _fetch_reviewed_prs(self, repo: GitHubRepo) -> List[str]:
-        """Fetch reviewed pull requests from a repository.
+    def _did_user_interact_this_week(self, repo: GitHubRepo, pr_number: int) -> bool:
+        """
+        Determine whether the authenticated user interacted with a pull request
+        during the current week.
 
-        Retrieves all pull requests reviewed by the authenticated user (excluding
-        their own PRs) that were updated since the start of the current week.
+        An interaction is any of the following actions that occurred on or after
+        the start-of-week timestamp (UTC):
+        - Submitting an official review.
+        - Leaving a review-level code comment.
+        - Posting an issue comment in the PR conversation.
 
         Args:
-            repo (GitHubRepo): Repository object containing repository information.
+            repo (GitHubRepo): Repository containing the pull request.
+            pr_number (int): Identifier of the pull request.
 
         Returns:
-            List[str]: List of formatted strings representing reviewed pull requests.
+            bool: True if the user performed at least one interaction this week,
+                  otherwise False.
+        """
+        since_iso = self.start_of_week_datetime.isoformat()
 
-        Note:
-            Prints an error message to console if the request fails.
+        url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo.name}/pulls/{pr_number}/reviews"
+        r = requests.get(url, headers=self.headers)
+        if r.status_code == 200:
+            for rev in r.json():
+                if rev["user"]["login"] == GITHUB_USERNAME and rev["submitted_at"] >= since_iso:
+                    return True
+
+        url = (
+            f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo.name}"
+            f"/pulls/{pr_number}/comments?since={since_iso}"
+        )
+        r = requests.get(url, headers=self.headers)
+        if r.status_code == 200 and any(
+                c["user"]["login"] == GITHUB_USERNAME for c in r.json()
+        ):
+            return True
+
+        return False
+
+    def _fetch_reviewed_prs(self, repo: GitHubRepo) -> List[str]:
+        """
+        Retrieve pull requests in the given repository that the authenticated user
+        reviewed or commented on during the current week.
+
+        The method uses the GitHub Search API to find candidate PRs that list the
+        user as a reviewer (excluding self-authored PRs) and validates each result
+        with `_did_user_interact_this_week` to ensure the interaction occurred
+        within the desired time window.
+
+        Args:
+            repo (GitHubRepo): Repository to inspect.
+
+        Returns:
+            List[str]: Formatted strings in the form
+                       ``"<title> [RepoName#<number>](<url>)"`` for every
+                       qualifying pull request.
         """
         query = (
             f"repo:{REPO_OWNER}/{repo.name} is:pr "
@@ -304,26 +347,30 @@ class GitHubService:
         )
 
         url = f"{GITHUB_API_BASE_URL}/search/issues"
-        params = {
-            "q": query,
-            "sort": "updated",
-            "order": "desc",
-            "per_page": 100
-        }
+        params = {"q": query, "per_page": 100, "sort": "updated", "order": "desc"}
 
-        response = requests.get(url, params=params, headers=self.headers)
-        if response.status_code == 200:
-            reviewed_prs = response.json()['items']
-            return [
-                f"{pr['title']} [{repo.name}#{pr['number']}]({repo.get_pr_url(pr['number'])})"
-                for pr in reviewed_prs
-            ]
+        results: List[str] = []
+        while url:
+            resp = requests.get(url, params=params, headers=self.headers)
+            if resp.status_code != 200:
+                print(f"Error fetching reviewed PRs for {repo.name}: {resp.status_code}")
+                break
 
-        print(f"Error fetching reviewed PRs for {repo.name}: {response.status_code}")
-        return []
+            for pr in resp.json()["items"]:
+                pr_number = pr["number"]
+                if self._did_user_interact_this_week(repo, pr_number):
+                    results.append(
+                        f"{pr['title']} "
+                        f"[{repo.name}#{pr_number}]({repo.get_pr_url(pr_number)})"
+                    )
+
+            url = resp.links.get("next", {}).get("url")
+            params = {} if url else None
+
+        return results
 
     def get_prs_and_commits(self) -> str:
-        """Get formatted string of PRs and commits for all repositories.
+        """Get a formatted string of PRs and commits for all repositories.
 
         Retrieves and formats all pull requests and their associated commits
         across all configured repositories.

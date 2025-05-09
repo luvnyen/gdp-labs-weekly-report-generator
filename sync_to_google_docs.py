@@ -1,4 +1,4 @@
-"""Weekly Report to Google Docs Synchronization Module.
+"""Weekly Report to Google Docs Synchronization Module
 
 This module provides functionality to automatically push weekly report content from 
 local Markdown files to connected Google Docs documents. It serves as a bridge between 
