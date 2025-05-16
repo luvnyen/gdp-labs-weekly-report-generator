@@ -8,18 +8,39 @@ Authors:
     - Mikhael Chris (mikhael.chris@gdplabs.id)
 """
 
+import os
 import re
 
 import google.generativeai as genai
 from groq import Groq
 
-from config.config import GROQ_API_KEY, GOOGLE_GEMINI_API_KEY
+from config.config import GOOGLE_GEMINI_API_KEY, GROQ_API_KEY
 
-SYSTEM_PROMPT = """You are a technical writer specializing in summarizing pull requests and commit messages.
+
+def load_prompt(filename: str) -> str:
+    """Load prompt content from a markdown file.
+
+    Args:
+        filename (str): Name of the markdown file in the prompts directory
+
+    Returns:
+        str: Content of the prompt file
+    """
+    project_root = os.path.dirname(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    )
+    prompt_path = os.path.join(project_root, "prompts", filename)
+
+    with open(prompt_path, "r") as file:
+        return file.read()
+
+
+# Default prompts
+DEFAULT_SYSTEM_PROMPT = """You are a technical writer specializing in summarizing pull requests and commit messages.
 Provide only the formatted output following the exact structure specified in the user's prompt.
 Do not include any explanations, thinking process, or additional headers."""
 
-USER_PROMPT = """Format each PR exactly as shown below, without any additional headers or prefixes:
+DEFAULT_USER_PROMPT = """Format each PR exactly as shown below, without any additional headers or prefixes:
 
 * test(core): increase code coverage for `/core/personnel/api/v1` module [CATAPA-API#18420](https://github.com/GDP-ADMIN/CATAPA-API/pull/18420)
     * **Description:** Enhanced test coverage through improved MSS integration, notification services, and null handling implementations.
@@ -48,6 +69,18 @@ Rules for summarizing:
 Here are the PRs to summarize:
 {content}"""
 
+# Load custom prompts if available, otherwise use defaults
+try:
+    SYSTEM_PROMPT = load_prompt("system_prompt.md")
+except FileNotFoundError:
+    SYSTEM_PROMPT = DEFAULT_SYSTEM_PROMPT
+
+try:
+    USER_PROMPT = load_prompt("user_prompt.md")
+except FileNotFoundError:
+    USER_PROMPT = DEFAULT_USER_PROMPT
+
+
 def clean_response(response: str) -> str:
     """Clean up the response by removing the thinking process and unwanted headers.
 
@@ -58,9 +91,10 @@ def clean_response(response: str) -> str:
         str: Cleaned response containing only the formatted summaries.
     """
     # Remove a thinking process section
-    response = re.sub(r'<think>.*?</think>', '', response, flags=re.DOTALL)
+    response = re.sub(r"<think>.*?</think>", "", response, flags=re.DOTALL)
 
     return response.strip()
+
 
 def summarize_with_groq(content: str) -> str:
     """Summarize pull requests using Groq's LLM model.
@@ -90,12 +124,13 @@ def summarize_with_groq(content: str) -> str:
             {
                 "role": "user",
                 "content": formatted_user_prompt,
-            }
+            },
         ],
         model="deepseek-r1-distill-llama-70b",
     )
 
     return clean_response(chat_completion.choices[0].message.content)
+
 
 def summarize_with_gemini(content: str) -> str:
     """Summarize pull requests using Google's Gemini model.
