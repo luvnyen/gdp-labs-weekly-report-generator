@@ -5,6 +5,7 @@ for summarizing pull requests and commit messages.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Mikhael Chris (mikhael.chris@gdplabs.id)
 """
 
 import re
@@ -42,6 +43,7 @@ Rules for summarizing:
 5. If no commit details exist, use PR title for both Description and Key Changes
 6. Start each PR directly with * - no section headers, PR numbers, or other prefixes
 7. Prioritize extracting comprehensive implementation details over brevity
+8. Group PRs by repository, using the repository name (with underscores/hyphens replaced by spaces and first letter of each word capitalized) as a heading 3 section header
 
 Here are the PRs to summarize:
 {content}"""

@@ -456,3 +456,4 @@ Contributions are welcome! Please feel free to submit pull requests.
 - Calvert Tanudihardjo ([calvert.tanudihardjo@gdplabs.id](mailto:calvert.tanudihardjo@gdplabs.id))
 - Glenn Steven Santoso ([glenn.s.santoso@gdplabs.id](mailto:glenn.s.santoso@gdplabs.id))
 - Sandy Akbar Dewangga ([sandy.a.dewangga@gdplabs.id](mailto:sandy.a.dewangga@gdplabs.id))
+- Mikhael Chris ([mikhael.chris@gdplabs.id](mailto:mikhael.chris@gdplabs.id))
