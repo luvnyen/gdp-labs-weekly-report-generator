@@ -1,6 +1,6 @@
 # 📝 GDP Labs Weekly Report Generator
 
-A Python-based tool that automatically generates comprehensive weekly reports by integrating data from GitHub, SonarQube, Google Calendar, and Google Forms; AI-powered summaries can be produced with either the Groq API (running the DeepSeek Reasoning R1 model) or Google’s Gemini 2.5 Pro, and the resulting Markdown reports can be seamlessly synchronized with Google Docs for easy sharing and collaboration.
+A Python-based tool that automatically generates comprehensive weekly reports by integrating data from GitHub, SonarQube, Google Calendar, and Google Forms; AI-powered summaries can be produced with either the Groq API (running the DeepSeek Reasoning R1 model) or Google’s Gemini 2.5 Flash, and the resulting Markdown reports can be seamlessly synchronized with Google Docs for easy sharing and collaboration.
 
 ![weekly_report_generator_execution.png](assets/weekly_report_generator_execution.png)
 
@@ -102,27 +102,27 @@ The application uses various service tokens and configurations stored in a `.env
    * Set the `Project name` (e.g., `Weekly Report Generator`)
    * Set the `Location` as `No organization`
 2. Wait for project creation to complete, then select your project
-3. Navigate to [Google Auth Platform](https://console.cloud.google.com/auth/overview) and click `GET STARTED`
+3. Navigate to [Google Auth Platform Overview](https://console.cloud.google.com/auth/overview) page and click `Get started`
 4. Complete the required sections:
    * **App Information**:
      * Enter `App name` (e.g., `Weekly Report Generator`)
      * Enter your personal email as `User support email`
    * **Audience**: Select `External`
    * **Contact Information**: Enter your personal email
-5. Read and accept the `Google API Services: User Data Policy`
-6. Click `CREATE` to finish setup
-7. Navigate to the [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent) and scroll down to the `Test users` section
-8. Click `+ ADD USERS` to register your `@gdplabs.id` email address as a test user, then click `SAVE`
+5. Read and agree to the `Google API Services: User Data Policy`
+6. Click `Create` to finish setup
+7. Navigate to the [Google Auth Platform Audience](https://console.cloud.google.com/auth/audience) page and scroll down to the `Test users` section
+8. Click `+ Add users` to register your `@gdplabs.id` email address as a test user, then click `Save`
    
 #### Create Google OAuth Client ID
 
-1. Navigate to the [Create OAuth client ID](https://console.cloud.google.com/apis/credentials/oauthclient) page
-2. Configure the OAuth client:
+1. Navigate to the [Google Auth Platform Clients](https://console.cloud.google.com/auth/clients) page
+2. Click `+ Create client` and configure the OAuth client:
    * Set `Application type` to `Desktop app`
    * Enter a `Name` (e.g., `Weekly Report Generator`)
-3. Click `CREATE` to generate the client ID
-4. Download the Google OAuth client secret JSON file
-5. Place the downloaded file in your project's root directory
+3. Click `Create` to generate the client ID
+4. Click `Download JSON` to download the Google OAuth client secret JSON file
+5. Place the downloaded Google OAuth client secret JSON file in your project's root directory
 6. Update the `GOOGLE_CLIENT_SECRET_FILE` variable in your `.env` file with the path to the client secret file
       
 #### Enable Google API Services
@@ -353,7 +353,7 @@ Generated reports include:
 > <p style="font-size: 0.8em; color: #888; font-style: italic;">
 >     All times are in UTC+07:00.<br>
 >     This weekly report is generated using GitHub, Google, and SonarQube APIs.<br>
->     Accomplishments are summarized using the Gemini 2.5 Pro LLM API.<br>
+>     Accomplishments are summarized using the Gemini 2.5 Flash LLM API.<br>
 >     <br>
 >     Tired of manual weekly reports? Let AI turn your GitHub activity, meetings, and metrics into perfectly structured weekly reports—effortlessly! <a href="https://github.com/luvnyen/gdp-labs-weekly-report-generator">Try it now</a>
 > </p>

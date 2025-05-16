@@ -105,7 +105,7 @@ def summarize_with_gemini(content: str) -> str:
         str: Formatted Markdown summary from Gemini
     """
     genai.configure(api_key=GOOGLE_GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-2.5-pro-exp-03-25")
+    model = genai.GenerativeModel("gemini-2.5-flash-preview-04-17")
 
     formatted_prompt = SYSTEM_PROMPT + USER_PROMPT.format(content=content)
     response = model.generate_content(formatted_prompt)
