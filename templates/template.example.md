@@ -6,9 +6,10 @@
 
 ## **Accomplishments**
 
-{accomplishments}
+{other_accomplishments}
+{github_accomplishments}
 
-#### **Deployment Released (Production and BCA Digital):**
+#### **Deployment Released:**
 
 {deployments}
 
@@ -29,6 +30,8 @@
 {wfo_days}
 
 ## **Key Metrics / OMTM**
+
+{omtm}
 
 #### **Reported Bug(s) ({current_month} {current_year})**
 

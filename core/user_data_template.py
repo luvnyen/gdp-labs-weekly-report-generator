@@ -3,8 +3,11 @@
 This module contains user-specific data for weekly report generation including
 work information, learning activities, next steps, and email template.
 
+Please copy this file and rename it as user_data.py to make it configurable for you.
+
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Glenn Steven Santoso (glenn.s.santoso@gdplabs.id)
 """
 
 ISSUES: list = []
@@ -19,6 +22,20 @@ MINOR_BUGS_HALF_YEAR: int = 0
 """Work from office days, using numbers 1-5 representing Monday to Friday.
 Example: [1, 2, 5] means WFO on Monday, Tuesday, and Friday"""
 WFO_DAYS: list[int] = [1, 2, 5]
+
+"""Self accomplishments for the week, in case accomplishments are not available from GitHub and is needed to be written manually"""
+OTHER_ACCOMPLISHMENTS: list[str] = [
+    "Your self accomplishment 1",
+    "Your self accomplishment 2",
+    "Your self accomplishment 3",
+]
+
+"""Since each teams has their own OMTM/Metrics and not all of them can be automated, therefore an option to fill it manually is provided"""
+OMTM: list[str] = [
+    "Your OMTM 1",
+    "Your OMTM 2",
+    "Your OMTM 3",
+]
 
 """Out of office days, using numbers 1-5 representing Monday to Friday.
 Example: [1, 2, 5] means WFO on Monday, Tuesday, and Friday"""

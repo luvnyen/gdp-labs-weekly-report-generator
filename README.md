@@ -49,6 +49,8 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
    - Add any ongoing issues or bugs you're tracking
    - Update metrics such as major/minor bugs found this month or within the last six months
    - Customize your next steps
+   - Update your OMTM in case your team doesn't have collective OMTM or you have a custom OMTM
+   - Update your other accomplishments in case accomplishments are not available from GitHub and is needed to be written manually (e.g. "Wrote an exploration document", "Participated in a training session", etc.)
 
 5. Customize your report structure in [template/](https://github.com/luvnyen/gdp-labs-weekly-report-generator/tree/main/templates)template.md:
    - Add or remove sections as needed
