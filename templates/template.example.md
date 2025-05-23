@@ -6,9 +6,11 @@
 
 ## **Accomplishments**
 
-{accomplishments}
+{github_accomplishments}
 
-#### **Deployment Released (Production and BCA Digital):**
+{other_accomplishments}
+
+#### **Deployment Released:**
 
 {deployments}
 
@@ -24,11 +26,13 @@
 
 {meetings_and_activities}
 
-#### **Worked from Surabaya Office (WFO) on:**
+#### **Worked from Office (WFO) on:**
 
 {wfo_days}
 
 ## **Key Metrics / OMTM**
+
+{omtm}
 
 #### **Reported Bug(s) ({current_month} {current_year})**
 

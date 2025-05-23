@@ -2,8 +2,8 @@
 __pycache__/
 ACCOMPLISHMENTS_RAW.md
 client_secret_*.apps.googleusercontent.com.json
+core/user_data.py
 output/
 templates/template.md
 tokens/
-user_data.py
 venv/
