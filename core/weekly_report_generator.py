@@ -66,7 +66,7 @@ def get_github_data(progress_callback: Optional[Callable[[str], None]]) -> Dict[
         f.write(accomplishments)
 
     if accomplishments and config_manager.is_service_available(ServiceType.LLM):
-        update_progress(progress_callback, "Summarizing accomplishments with LLM")
+        update_progress(progress_callback, "Summarizing GitHub accomplishments with LLM")
         accomplishments = summarize_with_gemini(accomplishments)
         # accomplishments = summarize_with_groq(accomplishments)
 
@@ -167,14 +167,14 @@ def generate_weekly_report(
         'major_bugs_half_year': MAJOR_BUGS_HALF_YEAR,
         'minor_bugs_half_year': MINOR_BUGS_HALF_YEAR,
         'test_coverage_components': sonarqube_data,
+        'omtm': format_bulleted_list(OMTM),
         'github_accomplishments': github_data['accomplishments'],
+        'other_accomplishments': format_bulleted_list(OTHER_ACCOMPLISHMENTS),
         'deployments': format_bulleted_list(github_data['deployments'], indent="  "),
         'prs_reviewed': format_bulleted_list(github_data['prs_reviewed'], indent="  "),
         'meetings_and_activities': format_meetings(calendar_events),
         'google_forms_filled': format_bulleted_list(forms_data, indent="  "),
         'wfo_days': format_weekdays_with_dates(WFO_DAYS),
-        'other_accomplishments': format_bulleted_list(OTHER_ACCOMPLISHMENTS),
-        'omtm': format_bulleted_list(OMTM),
         'out_of_office_days': format_weekdays_with_dates(OUT_OF_OFFICE_DAYS),
         'next_steps': format_bulleted_list(NEXT_STEPS),
         'learning': format_bulleted_list(LEARNING)

@@ -49,8 +49,9 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
    - Add any ongoing issues or bugs you're tracking
    - Update metrics such as major/minor bugs found this month or within the last six months
    - Customize your next steps
-   - Update your OMTM in case your team doesn't have collective OMTM or you have a custom OMTM
-   - Update your other accomplishments in case accomplishments are not available from GitHub and is needed to be written manually (e.g. "Wrote an exploration document", "Participated in a training session", etc.)
+   - Add your other accomplishments in case they are not recorded via GitHub
+   - Update your OMTM (One Metric That Matters) if your team doesn't have a shared OMTM or if you are using a personal/custom metric
+   - Add any calendar events you want to exclude from the report, such as reminders or administrative tasks
 
 5. Customize your report structure in [template/](https://github.com/luvnyen/gdp-labs-weekly-report-generator/tree/main/templates)template.md:
    - Add or remove sections as needed
@@ -196,18 +197,18 @@ After enabling Markdown, follow these steps to convert your plain Markdown to fo
 ## Report Structure
 
 Generated reports include:
-- **Issues**: Track ongoing challenges or blockers
-- **Metrics**: Bug counts, code quality measurements, and other key performance indicators
-- **Test Coverage**: Statistics from SonarQube Analysis (SQA) for monitored components
-- **Accomplishments**: AI-generated summaries of your PRs and contributions
-- **Deployments**: Information about merged PRs and releases
-- **PR Reviews**: Code review activities you've conducted
-- **Google Forms**: Forms submitted during the week
-- **Meetings and Events**: Calendar activities including meetings, trainings, and conferences
-- **Work From Office (WFO)**: Days you worked from the office during the week
-- **Next Steps**: Upcoming focus areas and tasks
-- **Learning**: Technology, business, leadership, and other learning activities
-- **Out of Office**: Planned leave or other absences
+* **Issues**: Track ongoing challenges, blockers, or tasks requiring further attention.
+* **Accomplishments**: AI-generated summaries of your contributions, including GitHub PRs and non-code work.
+* **Deployments**: Details on production deployments based on merged PRs.
+* **PR Reviews**: Pull requests you have reviewed during the week.
+* **Google Forms**: Forms you've submitted.
+* **Meetings and Events**: Calendar activities including meetings, trainings, and conferences.
+* **Work From Office (WFO)**: Days you worked from the office during the week.
+* **Out of Office**: Days when you were on leave or otherwise unavailable.
+* **Next Steps**: Upcoming tasks, initiatives, or goals you plan to work on.
+* **Learning**: Technology, business, leadership, and other learning activities.
+* **Key Metrics / OMTM**: Includes your team's One Metric That Matters and bug stats (monthly & 6-monthly).
+* **Test Coverage**: Statistics from SonarQube Analysis (SQA) for monitored components.
 
 <details>
 <summary>👈 Click here to see an example of a generated weekly report</summary>

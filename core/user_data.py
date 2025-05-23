@@ -5,6 +5,7 @@ work information, learning activities, next steps, and email template.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Glenn Steven Santoso (glenn.s.santoso@gdplabs.id)
 """
 
 ISSUES: list = []
@@ -23,6 +24,16 @@ WFO_DAYS: list[int] = [1, 2, 5]
 """Out of office days, using numbers 1-5 representing Monday to Friday.
 Example: [1, 2, 5] means WFO on Monday, Tuesday, and Friday"""
 OUT_OF_OFFICE_DAYS: list[int] = []
+
+"""Manual accomplishments not captured via GitHub"""
+OTHER_ACCOMPLISHMENTS: list[str] = [
+    "Accomplishment 1",
+]
+
+"""Manually entered OMTM/Metrics for teams without automation"""
+OMTM: list[str] = [
+    "OMTM 1",
+]
 
 NEXT_STEPS = [
     "Next step 1",

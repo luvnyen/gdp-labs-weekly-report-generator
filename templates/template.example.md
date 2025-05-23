@@ -6,8 +6,9 @@
 
 ## **Accomplishments**
 
-{other_accomplishments}
 {github_accomplishments}
+
+{other_accomplishments}
 
 #### **Deployment Released:**
 
@@ -25,7 +26,7 @@
 
 {meetings_and_activities}
 
-#### **Worked from Surabaya Office (WFO) on:**
+#### **Worked from Office (WFO) on:**
 
 {wfo_days}
 
