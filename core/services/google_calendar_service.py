@@ -16,9 +16,8 @@ from googleapiclient.errors import HttpError
 
 from config.config import TIMEZONE
 from core.services.google_service import get_google_service
+from core.user_data import EXCLUDED_MEETINGS
 from utils.date_time_util import ordinal, format_time
-
-EXCLUDED_MEETINGS = []
 
 
 def format_time_range(start: datetime.datetime, end: datetime.datetime) -> str:

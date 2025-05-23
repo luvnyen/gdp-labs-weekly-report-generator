@@ -39,3 +39,11 @@ Examples:
 LEARNING = [
     "[O'Reilly Media] [Clean Architecture: A Craftsman's Guide to Software Structure and Design](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/) by Robert C. Martin (Chapter 26/34)",
 ]
+
+"""
+List of meeting titles to be excluded from the weekly report, even if they exist in the calendar.
+
+These meetings are typically reminders or administrative tasks that do not need to be reflected
+in productivity reports or summaries.
+"""
+EXCLUDED_MEETINGS = []
