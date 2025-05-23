@@ -5,6 +5,7 @@ work information, learning activities, next steps, and email template.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Glenn Steven Santoso (glenn.s.santoso@gdplabs.id)
 """
 
 ISSUES: list = []
@@ -24,6 +25,16 @@ WFO_DAYS: list[int] = [1, 2, 5]
 Example: [1, 2, 5] means WFO on Monday, Tuesday, and Friday"""
 OUT_OF_OFFICE_DAYS: list[int] = []
 
+"""Manual accomplishments not captured via GitHub"""
+OTHER_ACCOMPLISHMENTS: list[str] = [
+    "Accomplishment 1",
+]
+
+"""Manually entered OMTM/Metrics for teams without automation"""
+OMTM: list[str] = [
+    "OMTM 1",
+]
+
 NEXT_STEPS = [
     "Next step 1",
 ]
@@ -39,3 +50,11 @@ Examples:
 LEARNING = [
     "[O'Reilly Media] [Clean Architecture: A Craftsman's Guide to Software Structure and Design](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/) by Robert C. Martin (Chapter 26/34)",
 ]
+
+"""
+List of meeting titles to be excluded from the weekly report, even if they exist in the calendar.
+
+These meetings are typically reminders or administrative tasks that do not need to be reflected
+in productivity reports or summaries.
+"""
+EXCLUDED_MEETINGS = []

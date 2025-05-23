@@ -23,7 +23,7 @@ from utils.date_time_util import format_weekdays_with_dates, get_current_week_pe
 from .user_data import (
     ISSUES, MAJOR_BUGS_CURRENT_MONTH, MINOR_BUGS_CURRENT_MONTH,
     MAJOR_BUGS_HALF_YEAR, MINOR_BUGS_HALF_YEAR, WFO_DAYS,
-    OUT_OF_OFFICE_DAYS, NEXT_STEPS, LEARNING
+    OUT_OF_OFFICE_DAYS, NEXT_STEPS, LEARNING, OTHER_ACCOMPLISHMENTS, OMTM
 )
 
 
@@ -66,7 +66,7 @@ def get_github_data(progress_callback: Optional[Callable[[str], None]]) -> Dict[
         f.write(accomplishments)
 
     if accomplishments and config_manager.is_service_available(ServiceType.LLM):
-        update_progress(progress_callback, "Summarizing accomplishments with LLM")
+        update_progress(progress_callback, "Summarizing GitHub accomplishments with LLM")
         accomplishments = summarize_with_gemini(accomplishments)
         # accomplishments = summarize_with_groq(accomplishments)
 
@@ -167,7 +167,9 @@ def generate_weekly_report(
         'major_bugs_half_year': MAJOR_BUGS_HALF_YEAR,
         'minor_bugs_half_year': MINOR_BUGS_HALF_YEAR,
         'test_coverage_components': sonarqube_data,
-        'accomplishments': github_data['accomplishments'],
+        'omtm': format_bulleted_list(OMTM),
+        'github_accomplishments': github_data['accomplishments'],
+        'other_accomplishments': format_bulleted_list(OTHER_ACCOMPLISHMENTS),
         'deployments': format_bulleted_list(github_data['deployments'], indent="  "),
         'prs_reviewed': format_bulleted_list(github_data['prs_reviewed'], indent="  "),
         'meetings_and_activities': format_meetings(calendar_events),
