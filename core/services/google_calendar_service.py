@@ -18,9 +18,7 @@ from config.config import TIMEZONE
 from core.services.google_service import get_google_service
 from utils.date_time_util import ordinal, format_time
 
-EXCLUDED_MEETINGS = [
-    'Isi Data Kehadiran CATAPA',
-]
+EXCLUDED_MEETINGS = []
 
 
 def format_time_range(start: datetime.datetime, end: datetime.datetime) -> str:
@@ -106,6 +104,9 @@ def get_events_for_week() -> List[str]:
 
         events_by_day = defaultdict(list)
         for event in events:
+            if event.get('eventType') == "workingLocation":
+                continue
+
             if event['summary'] in EXCLUDED_MEETINGS or not is_event_accepted_or_needs_action(event):
                 continue
 
