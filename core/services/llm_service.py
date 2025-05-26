@@ -35,50 +35,25 @@ def load_prompt(filename: str) -> str:
         return file.read()
 
 
-# Default prompts
-DEFAULT_SYSTEM_PROMPT = """You are a technical writer specializing in summarizing pull requests and commit messages.
-Provide only the formatted output following the exact structure specified in the user's prompt.
-Do not include any explanations, thinking process, or additional headers."""
+def load_prompt_or_fail(filename: str) -> str:
+    """Load prompt content from a markdown file.
 
-DEFAULT_USER_PROMPT = """Format each PR exactly as shown below, without any additional headers or prefixes:
+    Args:
+        filename (str): Name of the markdown file in the prompts directory
 
-* test(core): increase code coverage for `/core/personnel/api/v1` module [CATAPA-API#18420](https://github.com/GDP-ADMIN/CATAPA-API/pull/18420)
-    * **Description:** Enhanced test coverage through improved MSS integration, notification services, and null handling implementations.
-    * **Status:** leave_this_blank
-    * **Key Changes Implemented:**
-        * Enhanced `MssEmployeeApiController` with `Optional`
-        * Simplified notification config services using `map()`
-        * Updated tests for better null handling and mocking
+    Returns:
+        str: Content of the prompt file
+    """
+    try:
+        return load_prompt(filename)
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"Prompt file {filename} not found. Please create a `{filename}` file in the `prompts` directory."
+        )
 
-Rules for summarizing:
-1. Format the PR title exactly as shown in the example, including the PR number and link
-2. Description must be a single sentence summary of the key changes
-3. Status must always be exactly "leave_this_blank"
-4. For Key Changes Implemented:
-   - Extract and list ALL significant changes from commits, aim for at least 5-8 bullet points per PR
-   - Focus on technical implementation details, method changes, and code improvements
-   - Be specific about what was added, modified, or enhanced
-   - Include class names, methods, and technical approaches used
-   - Always format code elements with backticks (e.g., `className`)
-   - No sub-bullet points allowed
-5. If no commit details exist, use PR title for both Description and Key Changes
-6. Start each PR directly with * - no section headers, PR numbers, or other prefixes
-7. Prioritize extracting comprehensive implementation details over brevity
-8. Group PRs by repository, using the repository name (with underscores/hyphens replaced by spaces and first letter of each word capitalized) as a heading 3 section header
 
-Here are the PRs to summarize:
-{content}"""
-
-# Load custom prompts if available, otherwise use defaults
-try:
-    SYSTEM_PROMPT = load_prompt("system_prompt.md")
-except FileNotFoundError:
-    SYSTEM_PROMPT = DEFAULT_SYSTEM_PROMPT
-
-try:
-    USER_PROMPT = load_prompt("user_prompt.md")
-except FileNotFoundError:
-    USER_PROMPT = DEFAULT_USER_PROMPT
+USER_PROMPT = load_prompt_or_fail("user_prompt.md")
+SYSTEM_PROMPT = load_prompt_or_fail("system_prompt.md")
 
 
 def clean_response(response: str) -> str:

@@ -7,5 +7,3 @@ output/
 templates/template.md
 tokens/
 venv/
-prompts/system_prompt.md
-prompts/user_prompt.md
