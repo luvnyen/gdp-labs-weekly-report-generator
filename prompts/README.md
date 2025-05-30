@@ -15,7 +15,7 @@ When using these prompts in code, the `{content}` placeholder in the user prompt
 
 ## How-to
 
-To customize the prompt used by the Weekly Report Agent's LLM service, edit the corresponding file as indicated above. The prompt file is automatically loaded by the application at runtime. By default, a template prompt is provided, but users are encouraged to modify it as needed. When editing `user_prompt.md`, ensure that the `{content}` placeholder remains intact, as it will be dynamically replaced with the PR data to be summarized in the weekly report.
+To customize the prompt used by the Weekly Report Agent's LLM service, edit the corresponding file as indicated above. The prompt file is automatically loaded by the application at runtime. By default, a template prompt is provided, but users are encouraged to modify it as needed. When editing [`user_prompt.md`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/master/prompts/user_prompt.md), ensure that the `{content}` placeholder remains intact, as it will be dynamically replaced with the PR data to be summarized in the weekly report.
 
 ## Default Prompt
 
