@@ -72,11 +72,11 @@ or right-click on the file and select `Run as a Program` (Ubuntu)
 
 ## Customizing the LLM Prompt
 
-If you want to modify the prompt for Large Language Model (LLM) summarization (such as the format, instructions, or summary details), you can directly edit the prompt configuration in the [`llm_service.py`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/core/services/llm_service.py) file.
-- Look for the `SYSTEM_PROMPT` and `USER_PROMPT` variables within the file.
-- Adjust the content of these variables to fit your desired summarization style or formatting.
+To modify the prompt used for Large Language Model (LLM) summarization (such as format, instructions, or summary details), edit the relevant prompt files in the [`prompts/`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/tree/main/prompts) directory. You will need to modify the [`prompts/system_prompt.md`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/prompts/system_prompt.md) or [`prompts/user_prompt.md`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/prompts/user_prompt.md).
 
 After saving your changes, the new prompt will be used for all future AI-powered report summaries.
+
+See [`prompts/README.md`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/prompts/README.md) for details. 
 
 ## Environment Variables
 
