@@ -7,9 +7,10 @@ consistent content across platforms.
 
 The module works by:
 1. Finding the appropriate weekly report Markdown file in output directory
-2. Locating the corresponding Google Docs link from Gmail notifications
-3. Extracting the Google Docs document ID from link
-4. Updating the Google Docs document with the Markdown content
+2. Extracting the author name from the report
+3. Locating the corresponding Google Docs link from Gmail notifications that match the author
+4. Extracting the Google Docs document ID from link
+5. Updating the Google Docs document with the Markdown content
 
 This automation ensures that weekly reports are properly archived in Google Docs
 for team visibility and collaboration without manual copy-paste operations.
@@ -37,7 +38,7 @@ def get_last_week_sunday_and_this_week_saturday() -> Tuple[str, str]:
     represents a standard weekly reporting period.
 
     Returns:
-        Tuple[str, str]: Formatted date strings for last week's Sunday and this week's 
+        Tuple[str, str]: Formatted date strings for last week's Sunday and this week's
             Saturday in the format "DD Month YYYY" (e.g., "01 January 2023").
     """
     today = datetime.datetime.now(TIMEZONE).date()
@@ -47,26 +48,70 @@ def get_last_week_sunday_and_this_week_saturday() -> Tuple[str, str]:
     return last_week_sunday.strftime("%d %B %Y"), this_week_saturday.strftime("%d %B %Y")
 
 
-def find_gmail_with_weekly_report_link() -> Optional[str]:
-    """Search Gmail for the weekly report email containing the Google Docs link.
+def extract_author_name_from_report(report_path: str) -> Optional[str]:
+    """Extract the author name from the weekly report markdown file.
+
+    Parses the markdown file to find the author name from the title line.
+    Expected format: # [Weekly Report: Author Name] Date Range
+
+    Args:
+        report_path (str): Path to the weekly report markdown file.
+
+    Returns:
+        Optional[str]: The extracted author name, or None if not found.
+    """
+    try:
+        with open(report_path, 'r', encoding='utf-8') as f:
+            first_line = f.readline().strip()
+
+        match = re.search(r'\[Weekly Report:\s*([^\]]+)\]', first_line)
+        if match:
+            return match.group(1).strip()
+    except Exception as e:
+        print(f"Error extracting author name: {e}")
+
+    return None
+
+
+def find_gmail_with_weekly_report_link(author_name: str) -> Optional[str]:
+    """Search Gmail for the weekly report email containing the Google Docs link for specific author.
 
     Queries the user's Gmail account for automated weekly report notification emails
     that contain links to the Google Docs where report content should be synced.
-    The search uses date-specific subject lines generated from the current reporting period.
+    The search uses date-specific subject lines and filters by author name in content.
+
+    Args:
+        author_name (str): The name of the report author to filter emails.
 
     Returns:
-        Optional[str]: Message ID of the weekly report email, or None if not found.
+        Optional[str]: Message ID of the weekly report email for the author, or None if not found.
     """
     service = get_google_service('gmail', 'v1')
     last_week_sunday, this_week_saturday = get_last_week_sunday_and_this_week_saturday()
     subject = f"[Fill Weekly Report] {last_week_sunday} - {this_week_saturday}"
     query = f'from:agent@gdplabs.id subject:"{subject}"'
 
-    results = service.users().messages().list(userId='me', q=query, maxResults=1).execute()
+    results = service.users().messages().list(userId='me', q=query, maxResults=10).execute()
     messages = results.get('messages', [])
+
     if not messages:
         return None
-    return messages[0]['id']
+
+    for message in messages:
+        msg = service.users().messages().get(userId='me', id=message['id'], format='full').execute()
+
+        payload = msg.get('payload', {})
+        parts = payload.get('parts', [])
+
+        email_content = ''
+        for part in parts:
+            if part.get('mimeType') in ['text/html', 'text/plain'] and part['body'].get('data'):
+                email_content += base64.urlsafe_b64decode(part['body']['data']).decode('utf-8')
+
+        if author_name and author_name.lower() in email_content.lower():
+            return message['id']
+
+    return None
 
 
 def extract_google_docs_link_from_email(email_msg: dict) -> Optional[str]:
@@ -118,9 +163,9 @@ def extract_google_docs_link_from_email(email_msg: dict) -> Optional[str]:
 class MarkdownToGoogleDocsSync:
     """Synchronize local Markdown reports with Google Docs.
 
-    This class provides utilities to locate weekly report Markdown files and 
-    push their content to corresponding Google Docs documents. It handles the 
-    entire workflow from finding the latest report to locating the linked 
+    This class provides utilities to locate weekly report Markdown files and
+    push their content to corresponding Google Docs documents. It handles the
+    entire workflow from finding the latest report to locating the linked
     Google Docs via Gmail and updating the document's content.
 
     The synchronization process maintains consistency between local Markdown reports
@@ -159,10 +204,10 @@ class MarkdownToGoogleDocsSync:
         """Push weekly report Markdown content to its connected Google Docs document.
 
         The main orchestration function that handles the entire process of finding the
-        appropriate weekly report, locating its linked Google Docs document via Gmail,
-        and updating the Google Docs content with the Markdown report.
+        appropriate weekly report, locating its linked Google Docs document via Gmail
+        (filtered by author name), and updating the Google Docs content with the Markdown report.
 
-        If no specific report path is provided, the method will use the most recently 
+        If no specific report path is provided, the method will use the most recently
         modified weekly report from the output directory.
 
         Args:
@@ -172,10 +217,26 @@ class MarkdownToGoogleDocsSync:
         report_path = report_path or self.find_latest_weekly_report_md()
         print(f"📄 Using weekly report: {report_path}")
 
-        msg_id = find_gmail_with_weekly_report_link()
+        author_name = extract_author_name_from_report(report_path)
+        if not author_name:
+            print("❌ Could not extract author name from report")
+            return
+
+        print(f"👤 Found author: {author_name}")
+
+        msg_id = find_gmail_with_weekly_report_link(author_name)
+        if not msg_id:
+            print(f"❌ Could not find weekly report email for author: {author_name}")
+            return
+
         gmail_service = get_google_service('gmail', 'v1')
         msg = gmail_service.users().messages().get(userId='me', id=msg_id, format='full').execute()
         google_docs_link = extract_google_docs_link_from_email(msg)
+
+        if not google_docs_link:
+            print("❌ Could not extract Google Docs link from email")
+            return
+
         doc_id = extract_google_docs_id_from_url(google_docs_link)
 
         with open(report_path, 'r', encoding='utf-8') as f:
