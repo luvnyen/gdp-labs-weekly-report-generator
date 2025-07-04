@@ -64,32 +64,42 @@ class GitHubService:
     commits, and reviewing activities from GitHub repositories.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, start_date: datetime.date = None, end_date: datetime.date = None) -> None:
         """Initialize GitHubService with authentication headers and time settings.
 
+        Args:
+            start_date: Start date for the report period (default: current week Monday)
+            end_date: End date for the report period (default: current week Friday)
+
         Sets up authentication headers using personal access token and initializes
-        time-related variables for filtering weekly data.
+        time-related variables for filtering data within the specified date range.
         """
         self.headers = {
             "Authorization": f"token {GITHUB_PERSONAL_ACCESS_TOKEN}",
             "Accept": "application/vnd.github.v3+json"
         }
-        self.start_of_week = self._get_start_of_week()
-        self.start_of_week_str = self.start_of_week.strftime("%Y-%m-%d")
-        self.start_of_week_datetime = datetime.combine(
-            self.start_of_week,
+        
+        # Use provided dates or calculate current week
+        if start_date is None or end_date is None:
+            today = datetime.now(timezone.utc).date()
+            if start_date is None:
+                start_date = today - timedelta(days=today.weekday())  # Monday
+            if end_date is None:
+                end_date = start_date + timedelta(days=4)  # Friday
+        
+        self.start_date = start_date
+        self.start_date_str = self.start_date.strftime("%Y-%m-%d")
+        self.start_datetime = datetime.combine(
+            self.start_date,
             datetime.min.time()
         ).replace(tzinfo=timezone.utc)
-
-    @staticmethod
-    def _get_start_of_week() -> datetime.date:
-        """Get the date of the start of the current week (Monday).
-
-        Returns:
-            datetime.date: The date representing the start (Monday) of the current week.
-        """
-        today = datetime.now(timezone.utc).date()
-        return today - timedelta(days=today.weekday())
+        
+        self.end_date = end_date
+        self.end_date_str = self.end_date.strftime("%Y-%m-%d")
+        self.end_datetime = datetime.combine(
+            self.end_date,
+            datetime.max.time()
+        ).replace(tzinfo=timezone.utc)
 
     def _get_pr_details(self, repo_name: str, pr_number: int) -> Optional[Dict]:
         """Get detailed information about a specific pull request.
@@ -143,7 +153,7 @@ class GitHubService:
                         "%Y-%m-%dT%H:%M:%SZ"
                     ).replace(tzinfo=timezone.utc)
 
-                    if (committer_date >= self.start_of_week_datetime and
+                    if (committer_date >= self.start_datetime and
                             commit['author'] and
                             commit['author']['login'] == GITHUB_USERNAME):
                         commits.append({
@@ -175,7 +185,7 @@ class GitHubService:
         """
         query = (
             f"repo:{REPO_OWNER}/{repo.name} is:pr is:merged "
-            f"author:{GITHUB_USERNAME} merged:>={self.start_of_week_str}"
+            f"author:{GITHUB_USERNAME} merged:>={self.start_date_str}"
         )
 
         url = f"{GITHUB_API_BASE_URL}/search/issues"
@@ -267,7 +277,7 @@ class GitHubService:
                         "%Y-%m-%dT%H:%M:%SZ"
                     ).replace(tzinfo=timezone.utc)
 
-                    if pr_date < self.start_of_week_datetime:
+                    if pr_date < self.start_datetime:
                         return your_prs, pr_commits
 
                     commits = self._get_pr_commits(repo.name, issue['number'])
@@ -302,7 +312,7 @@ class GitHubService:
             bool: True if the user performed at least one interaction this week,
                   otherwise False.
         """
-        since_iso = self.start_of_week_datetime.isoformat()
+        since_iso = self.start_datetime.isoformat()
 
         url = f"{GITHUB_API_BASE_URL}/repos/{REPO_OWNER}/{repo.name}/pulls/{pr_number}/reviews"
         r = requests.get(url, headers=self.headers)
@@ -349,7 +359,7 @@ class GitHubService:
         query = (
             f"repo:{REPO_OWNER}/{repo.name} is:pr "
             f"reviewed-by:{GITHUB_USERNAME} -author:{GITHUB_USERNAME} "
-            f"updated:>={self.start_of_week_str}"
+            f"updated:>={self.start_date_str}"
         )
 
         url = f"{GITHUB_API_BASE_URL}/search/issues"
