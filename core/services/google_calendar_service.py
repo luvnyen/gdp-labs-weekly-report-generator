@@ -57,15 +57,19 @@ def is_event_accepted_or_needs_action(event: Dict[str, Any]) -> bool:
     return True
 
 
-def get_events_for_week() -> List[str]:
-    """Retrieve and format calendar events for the current week.
+def get_events_for_date_range(start_date: datetime.date, end_date: datetime.date) -> List[str]:
+    """Retrieve and format calendar events for a specified date range.
 
-    Fetches events from Google Calendar API for the current week,
+    Fetches events from Google Calendar API for the specified date range,
     filters based on acceptance status and exclusion list,
     and formats them in a Markdown list grouped by day.
 
     Events are sorted chronologically within each day.
     Days without events after filtering are omitted.
+
+    Args:
+        start_date: Start date for the event range
+        end_date: End date for the event range
 
     Returns:
         List[str]: Markdown formatted list of events. Each day starts with a header
@@ -82,17 +86,13 @@ def get_events_for_week() -> List[str]:
     try:
         service = get_google_service('calendar', 'v3')
 
-        today = datetime.datetime.now(TIMEZONE).date()
-        start_of_week = today - datetime.timedelta(days=today.weekday())
-        end_of_week = start_of_week + datetime.timedelta(days=6)
-
-        start_of_week = datetime.datetime.combine(start_of_week, datetime.time.min, tzinfo=TIMEZONE).isoformat()
-        end_of_week = datetime.datetime.combine(end_of_week, datetime.time.max, tzinfo=TIMEZONE).isoformat()
+        start_datetime = datetime.datetime.combine(start_date, datetime.time.min, tzinfo=TIMEZONE).isoformat()
+        end_datetime = datetime.datetime.combine(end_date, datetime.time.max, tzinfo=TIMEZONE).isoformat()
 
         events_result = service.events().list(
             calendarId='primary',
-            timeMin=start_of_week,
-            timeMax=end_of_week,
+            timeMin=start_datetime,
+            timeMax=end_datetime,
             singleEvents=True,
             orderBy='startTime'
         ).execute()
@@ -134,3 +134,32 @@ def get_events_for_week() -> List[str]:
     except HttpError as error:
         print(f'An error occurred: {error}')
         return []
+
+
+def get_events_for_current_week() -> List[str]:
+    """Retrieve and format calendar events for the current week.
+
+    Fetches events from Google Calendar API for the current week,
+    filters based on acceptance status and exclusion list,
+    and formats them in a Markdown list grouped by day.
+
+    Events are sorted chronologically within each day.
+    Days without events after filtering are omitted.
+
+    Returns:
+        List[str]: Markdown formatted list of events. Each day starts with a header
+        followed by indented event entries with time and summary. Empty list if
+        error occurs or no events found.
+
+    Example output:
+        [
+            "* **Thursday, October 31st, 2024**",
+            "* 9:00 AM – 10:00 AM: Team Meeting",
+            "* 14:00 PM – 15:00 PM: Project Review"
+        ]
+    """
+    today = datetime.datetime.now(TIMEZONE).date()
+    start_of_week = today - datetime.timedelta(days=today.weekday())
+    end_of_week = start_of_week + datetime.timedelta(days=6)
+    
+    return get_events_for_date_range(start_of_week, end_of_week)
