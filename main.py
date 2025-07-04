@@ -8,31 +8,87 @@ Authors:
 """
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from typing import Tuple
 
 from core.weekly_report_generator import generate_weekly_report
+from core.user_data import REPORT_START_DATE, REPORT_END_DATE
 from utils.date_time_util import format_duration
 from utils.progress_display_util import ProgressDisplay
 
 
+def parse_date(date_str: str) -> date:
+    """Parse date string in YYYY-MM-DD format.
+    
+    Args:
+        date_str: Date string in YYYY-MM-DD format
+        
+    Returns:
+        Parsed date object
+        
+    Raises:
+        ValueError: If date string is not in correct format
+    """
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        raise ValueError(f"Invalid date format: {date_str}. Please use YYYY-MM-DD format.")
+
+
 def get_week_dates() -> Tuple[datetime.date, datetime.date]:
-    """Get the date range for the current work week (Monday to Friday).
+    """Get the date range for the report period from user_data.py or current week.
 
     Returns:
-        Tuple[datetime.date, datetime.date]: Start date (Monday) and end date (Friday)
-        of the current week
+        Tuple[datetime.date, datetime.date]: Start date and end date of the report period
+        
+    Raises:
+        ValueError: If date format in user_data.py is invalid
     """
-    today = datetime.now()
-    start_of_week = today - timedelta(days=today.weekday())  # Monday
-    end_of_week = start_of_week + timedelta(days=4)  # Friday
-    return start_of_week.date(), end_of_week.date()
+    start_date = REPORT_START_DATE
+    end_date = REPORT_END_DATE
+    
+    if start_date and end_date:
+        # User provided custom date range in user_data.py
+        try:
+            start = parse_date(start_date)
+            end = parse_date(end_date)
+            
+            if start > end:
+                raise ValueError("Start date must be before or equal to end date")
+                
+            return start, end
+        except ValueError as e:
+            raise ValueError(f"Invalid date format in user_data.py: {e}")
+    elif start_date:
+        # User provided only start date, use current week Friday as end
+        try:
+            start = parse_date(start_date)
+            today = datetime.now()
+            end_of_week = today - timedelta(days=today.weekday()) + timedelta(days=4)  # Friday
+            return start, end_of_week.date()
+        except ValueError as e:
+            raise ValueError(f"Invalid start date format in user_data.py: {e}")
+    elif end_date:
+        # User provided only end date, use current week Monday as start
+        try:
+            end = parse_date(end_date)
+            today = datetime.now()
+            start_of_week = today - timedelta(days=today.weekday())  # Monday
+            return start_of_week.date(), end
+        except ValueError as e:
+            raise ValueError(f"Invalid end date format in user_data.py: {e}")
+    else:
+        # No dates provided, use current week (Monday to Friday)
+        today = datetime.now()
+        start_of_week = today - timedelta(days=today.weekday())  # Monday
+        end_of_week = start_of_week + timedelta(days=4)  # Friday
+        return start_of_week.date(), end_of_week.date()
 
 
 def main() -> None:
     """Main entry point for the weekly report generator.
 
-    - Determines the report date range (current week)
+    - Determines the report date range from user_data.py (custom period) or current week (default)
     - Initializes progress display
     - Generates the report with progress updates
     - Saves a report to Markdown file in 'output' directory
@@ -43,10 +99,21 @@ def main() -> None:
     Raises:
         Exception: Re-raises any exceptions from report generation after cleanup
     """
-    start_date, end_date = get_week_dates()
+    try:
+        start_date, end_date = get_week_dates()
+    except ValueError as e:
+        print(f"❌ Error: {e}")
+        print("Please check the REPORT_START_DATE and REPORT_END_DATE variables in core/user_data.py")
+        print("Use YYYY-MM-DD format (e.g., '2025-01-01') or set to None for current week")
+        return
 
     print("📊 Weekly Report Generator")
-    print(f"📅 Report period: {start_date} to {end_date}\n")
+    print(f"📅 Report period: {start_date} to {end_date}")
+    if REPORT_START_DATE or REPORT_END_DATE:
+        print("📝 Using custom date range from user_data.py")
+    else:
+        print("📝 Using current week (Monday to Friday)")
+    print()
 
     progress = ProgressDisplay()
     progress.start()
@@ -56,6 +123,8 @@ def main() -> None:
             progress.update_task(task)
 
         report, total_duration = generate_weekly_report(
+            start_date=start_date,
+            end_date=end_date,
             progress_callback=progress_callback
         )
 
