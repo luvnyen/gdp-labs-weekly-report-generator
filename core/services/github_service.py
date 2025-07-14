@@ -5,6 +5,7 @@ and managing pull requests, commits, and reviewing activities.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Sandy Akbar Dewangga (sandy.a.dewangga@gdplabs.id)
 """
 
 from collections import defaultdict
