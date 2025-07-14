@@ -5,6 +5,7 @@ and managing pull requests, commits, and reviewing activities.
 
 Authors:
     - Calvert Tanudihardjo (calvert.tanudihardjo@gdplabs.id)
+    - Sandy Akbar Dewangga (sandy.a.dewangga@gdplabs.id)
 """
 
 from collections import defaultdict
@@ -307,7 +308,12 @@ class GitHubService:
         r = requests.get(url, headers=self.headers)
         if r.status_code == 200:
             for rev in r.json():
-                if rev["user"]["login"] == GITHUB_USERNAME and rev["submitted_at"] >= since_iso:
+                submitted_at = rev.get("submitted_at")
+                if (
+                    rev["user"]["login"] == GITHUB_USERNAME
+                    and submitted_at is not None
+                    and submitted_at >= since_iso
+                ):
                     return True
 
         url = (
