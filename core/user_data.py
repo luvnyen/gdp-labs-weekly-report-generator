@@ -67,5 +67,5 @@ Examples:
 - REPORT_END_DATE = "2025-01-31"    # Report until January 31st, 2025
 - REPORT_START_DATE = None          # Use current week Monday
 - REPORT_END_DATE = None            # Use current week Friday"""
-REPORT_START_DATE: str = None
-REPORT_END_DATE: str = None
+REPORT_START_DATE: Optional[str] = None
+REPORT_END_DATE: Optional[str] = None

@@ -180,6 +180,21 @@ All content is inserted as plain text, which means:
 
 Future versions may implement automatic conversion between Markdown syntax and Google Docs formatting elements.
 
+### Converting Markdown to Formatted Text
+
+Before converting your Markdown to properly format text in Google Docs, ensure that the Markdown option is enabled:
+
+1. In Google Docs, navigate to **Tools** > **Preferences**.
+2. Check the option to **Enable Markdown**.
+3. Click **OK** to save your changes.
+
+After enabling Markdown, follow these steps to convert your plain Markdown to formatted text:
+
+1. In Google Docs, press **Ctrl + A** to select all content
+2. Press **Ctrl + X** to cut the content
+3. Right-click on the empty document area and select **Paste as Markdown**
+
+
 ## Custom Date Ranges
 
 The weekly report generator supports custom date ranges, allowing you to generate reports for specific periods instead of just the current week.
@@ -213,19 +228,6 @@ REPORT_END_DATE: str = None
 
 If invalid date formats are provided, the system will display an error message and instructions to fix the format.
 
-### Converting Markdown to Formatted Text
-
-Before converting your Markdown to properly format text in Google Docs, ensure that the Markdown option is enabled:
-
-1. In Google Docs, navigate to **Tools** > **Preferences**.
-2. Check the option to **Enable Markdown**.
-3. Click **OK** to save your changes.
-
-After enabling Markdown, follow these steps to convert your plain Markdown to formatted text:
-
-1. In Google Docs, press **Ctrl + A** to select all content
-2. Press **Ctrl + X** to cut the content
-3. Right-click on the empty document area and select **Paste as Markdown**
 
 ## Report Structure
 
