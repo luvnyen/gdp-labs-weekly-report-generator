@@ -194,6 +194,41 @@ After enabling Markdown, follow these steps to convert your plain Markdown to fo
 2. Press **Ctrl + X** to cut the content
 3. Right-click on the empty document area and select **Paste as Markdown**
 
+
+## Custom Date Ranges
+
+The weekly report generator supports custom date ranges, allowing you to generate reports for specific periods instead of just the current week.
+
+### Configuration
+
+To set a custom date range, edit the `REPORT_START_DATE` and `REPORT_END_DATE` variables in [`core/user_data.py`](https://github.com/luvnyen/gdp-labs-weekly-report-generator/blob/main/core/user_data.py):
+
+```python
+# Example: Generate report for January 2025
+REPORT_START_DATE: str = "2025-01-01"
+REPORT_END_DATE: str = "2025-01-31"
+
+# Example: Generate report for a specific week
+REPORT_START_DATE: str = "2025-01-06"
+REPORT_END_DATE: str = "2025-01-10"
+
+# Example: Use current week (default behavior)
+REPORT_START_DATE: str = None
+REPORT_END_DATE: str = None
+```
+
+### Date Format
+
+- Use the format: `YYYY-MM-DD` (e.g., "2025-01-01")
+- Both dates are inclusive
+- Start date must be before or equal to end date
+- If only one date is provided, the system will use the current week for the missing date
+
+### Error Handling
+
+If invalid date formats are provided, the system will display an error message and instructions to fix the format.
+
+
 ## Report Structure
 
 Generated reports include:

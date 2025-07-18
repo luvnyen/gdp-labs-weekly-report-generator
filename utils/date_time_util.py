@@ -55,6 +55,36 @@ def format_duration(seconds: Union[int, float]) -> str:
     return f"{hours:.1f}h"
 
 
+def format_weekdays_with_dates_for_period(days: List[int], start_date: datetime.date, end_date: datetime.date) -> str:
+    """
+    Format specified weekdays (by number) with their corresponding dates in a custom period.
+
+    Args:
+        days: List of weekdays as integers (1=Monday, ..., 5=Friday)
+        start_date: Start date of the period
+        end_date: End date of the period
+
+    Returns:
+        A formatted string listing the given weekdays with full dates (e.g., "Monday, June 3rd, 2024").
+    """
+    formatted_days = []
+    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+
+    # Calculate the Monday of the start date's week
+    start_monday = start_date - datetime.timedelta(days=start_date.weekday())
+    
+    for day in days:
+        if 1 <= day <= 5:
+            # Calculate the date for this weekday in the period
+            date = start_monday + datetime.timedelta(days=day - 1)
+            
+            # Check if this date falls within our period
+            if start_date <= date <= end_date:
+                formatted_days.append(f"{day_names[day - 1]}, {date.strftime('%B')} {ordinal(date.day)}, {date.year}")
+
+    return format_bulleted_list(formatted_days, indent="  ")
+
+
 def format_weekdays_with_dates(days: List[int]) -> str:
     """
     Format specified weekdays (by number) with their corresponding dates in the current week.
@@ -66,16 +96,10 @@ def format_weekdays_with_dates(days: List[int]) -> str:
         A formatted string listing the given weekdays with full dates (e.g., "Monday, June 3rd, 2024").
     """
     today = datetime.date.today()
-    monday = today - datetime.timedelta(days=today.weekday())
-    formatted_days = []
-    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-
-    for day in days:
-        if 1 <= day <= 5:
-            date = monday + datetime.timedelta(days=day - 1)
-            formatted_days.append(f"{day_names[day - 1]}, {date.strftime('%B')} {ordinal(date.day)}, {date.year}")
-
-    return format_bulleted_list(formatted_days, indent="  ")
+    start_of_week = today - datetime.timedelta(days=today.weekday())
+    end_of_week = start_of_week + datetime.timedelta(days=4)  # Friday
+    
+    return format_weekdays_with_dates_for_period(days, start_of_week, end_of_week)
 
 
 def get_current_week_period() -> str:
