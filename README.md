@@ -434,17 +434,58 @@ You can use AI to generate well-formatted semantic commit messages for your cont
 
 2. Paste the diff into [GLoria (GL Chat)](https://chat.gdplabs.id/) with this example prompt:
 
-   ```
-   Generate a semantic commit message with a description based on the changes. Look at the module to be included (if any) in the semantic commit message from the file directory (e.g. core, common, api-gateway, etc.). Format code-related words with backticks. The example output should be like this:
-   
-   refactor(api-gateway): revert endpoint name from widgets to installed
-   
-   - Changed API endpoint from `/widgets` back to `/installed`
-   - Renamed `ExtensionWidgetResponse` to `ExtensionInstalledResponse`
-   - Made `ExtensionInstalledDetails` extend `ExtensionViewableResponse`
-   - Updated tests to use new endpoint name
-   - Reverted changes in public and ignored endpoints config
-   ```
+> Generate a semantic commit message following the Conventional Commits specification based on the provided changes.
+> 
+> **Commit Message Structure:**
+> ```
+> <type>(<scope>): <subject>
+> 
+> <body>
+> ```
+> 
+> **Guidelines:**
+> 
+> 1. **Type** - Use the appropriate prefix:
+>   - `feat`: New feature or functionality
+>   - `fix`: Bug fix
+>   - `refactor`: Code restructuring without changing functionality
+>   - `perf`: Performance improvements
+>   - `style`: Code formatting, whitespace, semicolons, etc.
+>   - `test`: Adding or updating tests
+>   - `docs`: Documentation changes
+>   - `build`: Build system or dependency updates
+>   - `ci`: CI/CD configuration changes
+>   - `chore`: Maintenance tasks, tooling changes
+> 
+> 2. **Scope** - Extract from the file path/module name:
+>   - Use the primary module affected (e.g., `core`, `common`, `api-gateway`)
+>   - For multi-module changes, list alphabetically separated by commas (e.g., `api-gateway, core`)
+> 
+> 3. **Subject** - Concise description (max 50 chars):
+>   - Use imperative mood ("change" not "changed")
+>   - Don't capitalize first letter
+>   - No period at the end
+> 
+> 4. **Body** - Detailed changes as bullet points:
+>   - Start each line with `-`
+>   - Use past tense to describe what was done
+>   - Format code elements with backticks: `ClassName`, `methodName()`, `/endpoint`
+>   - Include renamed entities, modified logic, and affected files
+>   - Explain the "what" and "why" if not obvious
+> 
+> **Example Output:**
+> ```
+> refactor(api-gateway, core): revert endpoint name from widgets to installed
+> 
+> - Changed API endpoint from `/widgets` back to `/installed`
+> - Renamed `ExtensionWidgetResponse` to `ExtensionInstalledResponse`
+> - Made `ExtensionInstalledDetails` extend `ExtensionViewableResponse`
+> - Updated tests to use new endpoint name
+> - Reverted changes in public and ignored endpoints config
+> ```
+> 
+> **Additional Considerations:**
+> - Keep the entire message under 100 characters per line
 
 This ensures your commit history is clean and consistent.
 Better commit messages also improve the AI-generated summaries in your weekly reports,
