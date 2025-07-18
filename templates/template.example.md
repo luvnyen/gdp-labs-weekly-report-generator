@@ -63,7 +63,7 @@
 <p style="font-size: 0.8em; color: #888; font-style: italic;">
     All times are in UTC+07:00.<br>
     This weekly report is generated using GitHub, Google, and SonarQube APIs.<br>
-    Accomplishments are summarized using the Gemini 2.5 Flash LLM API.<br>
+    Accomplishments are summarized using the Gemini 2.5 Pro LLM API.<br>
     <br>
     Tired of manual weekly reports? Let AI turn your GitHub activity, meetings, and metrics into perfectly structured weekly reports—effortlessly! <a href="https://github.com/luvnyen/gdp-labs-weekly-report-generator">Try it now</a>
 </p>

@@ -1,6 +1,6 @@
 # 📝 GDP Labs Weekly Report Generator
 
-A Python-based tool that automatically generates comprehensive weekly reports by integrating data from GitHub, SonarQube, Google Calendar, and Google Forms; AI-powered summaries can be produced with either the Groq API (running the DeepSeek Reasoning R1 model) or Google’s Gemini 2.5 Flash, and the resulting Markdown reports can be seamlessly synchronized with Google Docs for easy sharing and collaboration.
+A Python-based tool that automatically generates comprehensive weekly reports by integrating data from GitHub, SonarQube, Google Calendar, and Google Forms; AI-powered summaries can be produced with either the Groq API (running the DeepSeek Reasoning R1 model) or Google’s Gemini 2.5 Pro, and the resulting Markdown reports can be seamlessly synchronized with Google Docs for easy sharing and collaboration.
 
 ![weekly_report_generator_execution.png](assets/weekly_report_generator_execution.png)
 
@@ -356,7 +356,7 @@ Generated reports include:
 > <p style="font-size: 0.8em; color: #888; font-style: italic;">
 >     All times are in UTC+07:00.<br>
 >     This weekly report is generated using GitHub, Google, and SonarQube APIs.<br>
->     Accomplishments are summarized using the Gemini 2.5 Flash LLM API.<br>
+>     Accomplishments are summarized using the Gemini 2.5 Pro LLM API.<br>
 >     <br>
 >     Tired of manual weekly reports? Let AI turn your GitHub activity, meetings, and metrics into perfectly structured weekly reports—effortlessly! <a href="https://github.com/luvnyen/gdp-labs-weekly-report-generator">Try it now</a>
 > </p>
