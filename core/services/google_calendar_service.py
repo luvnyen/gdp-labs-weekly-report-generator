@@ -14,7 +14,7 @@ from typing import List, Dict, Any
 
 from googleapiclient.errors import HttpError
 
-from config.config import TIMEZONE, GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME
+from config.config import TIMEZONE, GOOGLE_CALENDAR_ONLY_INCLUDE_DEFAULT_TYPE
 from core.services.google_service import get_google_service
 from core.user_data import EXCLUDED_MEETINGS
 from utils.date_time_util import ordinal, format_time
@@ -106,8 +106,7 @@ def get_events_for_week() -> List[str]:
             if event.get('eventType') == "workingLocation":
                 continue
 
-            # Exclude focus time events if configured to do so
-            if GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME and event.get('eventType') == "focusTime":
+            if GOOGLE_CALENDAR_ONLY_INCLUDE_DEFAULT_TYPE and event.get('eventType') != "default":
                 continue
 
             if event['summary'] in EXCLUDED_MEETINGS or not is_event_accepted_or_needs_action(event):

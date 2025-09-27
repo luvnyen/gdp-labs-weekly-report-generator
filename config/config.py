@@ -98,7 +98,7 @@ class ConfigManager:
         }),
         ServiceType.GOOGLE_CALENDAR: ServiceRequirements({
             'GOOGLE_CLIENT_SECRET_FILE',
-            'GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME'
+            'GOOGLE_CALENDAR_ONLY_INCLUDE_DEFAULT_TYPE'
         }),
         ServiceType.GOOGLE_FORMS: ServiceRequirements({
             'GOOGLE_CLIENT_SECRET_FILE'
@@ -129,7 +129,7 @@ class ConfigManager:
             'GITHUB_PERSONAL_ACCESS_TOKEN': os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN'),
             'GITHUB_USERNAME': os.getenv('GITHUB_USERNAME'),
             'GOOGLE_CLIENT_SECRET_FILE': os.getenv('GOOGLE_CLIENT_SECRET_FILE'),
-            'GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME': os.getenv('GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME', 'true'),
+            'GOOGLE_CALENDAR_ONLY_INCLUDE_DEFAULT_TYPE': os.getenv('GOOGLE_CALENDAR_ONLY_INCLUDE_DEFAULT_TYPE', 'true'),
             'GOOGLE_GEMINI_API_KEY': os.getenv('GOOGLE_GEMINI_API_KEY'),
             'GROQ_API_KEY': os.getenv('GROQ_API_KEY'),
             'REPOS': os.getenv('REPOS'),
@@ -289,14 +289,14 @@ class ConfigManager:
         return self.env_vars.get('GROQ_API_KEY')
 
     @property
-    def google_calendar_exclude_focus_time(self) -> bool:
-        """Get Google Calendar focus time exclusion setting.
+    def google_calendar_only_include_default_type(self) -> bool:
+        """Get Google Calendar default type only inclusion setting.
 
         Returns:
-            bool: True if focus time events should be excluded, False otherwise.
+            bool: True if only default type events should be included, False otherwise.
                  Defaults to True if not set.
         """
-        value = self.env_vars.get('GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME', 'true')
+        value = self.env_vars.get('GOOGLE_CALENDAR_ONLY_INCLUDE_DEFAULT_TYPE', 'true')
         return value.lower() in ('true', '1', 'yes', 'on')
 
 
@@ -340,4 +340,4 @@ GOOGLE_CLIENT_SECRET_FILE = config_manager.google_client_secret_file
 SONARQUBE_COMPONENTS = parse_sonarqube_components(config_manager.env_vars.get('SONARQUBE_COMPONENTS', ''))
 GOOGLE_GEMINI_API_KEY = config_manager.gemini_api_key
 GROQ_API_KEY = config_manager.groq_api_key
-GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME = config_manager.google_calendar_exclude_focus_time
+GOOGLE_CALENDAR_ONLY_INCLUDE_DEFAULT_TYPE = config_manager.google_calendar_only_include_default_type
