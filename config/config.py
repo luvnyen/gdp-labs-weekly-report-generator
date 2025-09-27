@@ -97,7 +97,8 @@ class ConfigManager:
             'SONARQUBE_COMPONENTS'
         }),
         ServiceType.GOOGLE_CALENDAR: ServiceRequirements({
-            'GOOGLE_CLIENT_SECRET_FILE'
+            'GOOGLE_CLIENT_SECRET_FILE',
+            'GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME'
         }),
         ServiceType.GOOGLE_FORMS: ServiceRequirements({
             'GOOGLE_CLIENT_SECRET_FILE'
@@ -128,6 +129,7 @@ class ConfigManager:
             'GITHUB_PERSONAL_ACCESS_TOKEN': os.getenv('GITHUB_PERSONAL_ACCESS_TOKEN'),
             'GITHUB_USERNAME': os.getenv('GITHUB_USERNAME'),
             'GOOGLE_CLIENT_SECRET_FILE': os.getenv('GOOGLE_CLIENT_SECRET_FILE'),
+            'GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME': os.getenv('GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME', 'true'),
             'GOOGLE_GEMINI_API_KEY': os.getenv('GOOGLE_GEMINI_API_KEY'),
             'GROQ_API_KEY': os.getenv('GROQ_API_KEY'),
             'REPOS': os.getenv('REPOS'),
@@ -286,6 +288,17 @@ class ConfigManager:
         """
         return self.env_vars.get('GROQ_API_KEY')
 
+    @property
+    def google_calendar_exclude_focus_time(self) -> bool:
+        """Get Google Calendar focus time exclusion setting.
+
+        Returns:
+            bool: True if focus time events should be excluded, False otherwise.
+                 Defaults to True if not set.
+        """
+        value = self.env_vars.get('GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME', 'true')
+        return value.lower() in ('true', '1', 'yes', 'on')
+
 
 def parse_sonarqube_components(components_str: str) -> List[SonarQubeComponent]:
     """Parse comma-separated SonarQube component string into component objects.
@@ -327,3 +340,4 @@ GOOGLE_CLIENT_SECRET_FILE = config_manager.google_client_secret_file
 SONARQUBE_COMPONENTS = parse_sonarqube_components(config_manager.env_vars.get('SONARQUBE_COMPONENTS', ''))
 GOOGLE_GEMINI_API_KEY = config_manager.gemini_api_key
 GROQ_API_KEY = config_manager.groq_api_key
+GOOGLE_CALENDAR_EXCLUDE_FOCUS_TIME = config_manager.google_calendar_exclude_focus_time
