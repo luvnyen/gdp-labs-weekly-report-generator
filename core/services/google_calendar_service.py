@@ -97,7 +97,6 @@ def get_events_for_week() -> List[str]:
             orderBy='startTime'
         ).execute()
         events = events_result.get('items', [])
-        excluded_focus_time_events = []
 
         if not events:
             return []
