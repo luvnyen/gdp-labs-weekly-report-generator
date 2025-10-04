@@ -15,11 +15,11 @@ from typing import Dict, List, Tuple, Callable, Optional, Any
 
 from config.config import ServiceType, config_manager
 from core.services.github_service import GitHubService
-from core.services.google_calendar_service import get_events_for_week
-from core.services.google_forms_service import get_this_week_filled_forms_formatted
+from core.services.google_calendar_service import get_events_for_current_week, get_events_for_date_range
+from core.services.google_forms_service import get_this_week_filled_forms_formatted, get_forms_filled_for_date_range_formatted
 from core.services.llm_service import summarize_with_gemini
 from core.services.sonarqube_service import get_all_components_metrics, format_test_coverage_components
-from utils.date_time_util import format_weekdays_with_dates, get_current_week_period, format_bulleted_list
+from utils.date_time_util import format_weekdays_with_dates, format_weekdays_with_dates_for_period, get_current_week_period, format_bulleted_list
 from .user_data import (
     ISSUES, MAJOR_BUGS_CURRENT_MONTH, MINOR_BUGS_CURRENT_MONTH,
     MAJOR_BUGS_HALF_YEAR, MINOR_BUGS_HALF_YEAR, WFO_DAYS,
@@ -38,10 +38,12 @@ def update_progress(callback: Optional[Callable[[str], None]], task: Optional[st
         callback(task)
 
 
-def get_github_data(progress_callback: Optional[Callable[[str], None]]) -> Dict[str, Any]:
+def get_github_data(start_date: datetime.date, end_date: datetime.date, progress_callback: Optional[Callable[[str], None]]) -> Dict[str, Any]:
     """Retrieve GitHub activity data including PRs and commits.
 
     Args:
+        start_date: Start date for the report period
+        end_date: End date for the report period
         progress_callback: Function for progress updates
 
     Returns:
@@ -57,7 +59,7 @@ def get_github_data(progress_callback: Optional[Callable[[str], None]]) -> Dict[
             'prs_reviewed': []
         }
 
-    github_service = GitHubService()
+    github_service = GitHubService(start_date, end_date)
 
     update_progress(progress_callback, "Fetching PRs and commits")
     accomplishments = github_service.get_prs_and_commits()
@@ -100,10 +102,12 @@ def get_sonarqube_metrics(progress_callback: Optional[Callable[[str], None]]) ->
     return format_test_coverage_components(metrics)
 
 
-def get_calendar_events(progress_callback: Optional[Callable[[str], None]]) -> List[str]:
-    """Retrieve Google Calendar events for the week.
+def get_calendar_events(start_date: datetime.date, end_date: datetime.date, progress_callback: Optional[Callable[[str], None]]) -> List[str]:
+    """Retrieve Google Calendar events for the specified date range.
 
     Args:
+        start_date: Start date for the report period
+        end_date: End date for the report period
         progress_callback: Function for progress updates
 
     Returns:
@@ -113,13 +117,15 @@ def get_calendar_events(progress_callback: Optional[Callable[[str], None]]) -> L
         return ["Google Calendar integration not configured"]
 
     update_progress(progress_callback, "Fetching Google Calendar events")
-    return get_events_for_week()
+    return get_events_for_date_range(start_date, end_date)
 
 
-def get_forms_data(progress_callback: Optional[Callable[[str], None]]) -> List[str]:
-    """Retrieve Google Forms submissions for the week.
+def get_forms_data(start_date: datetime.date, end_date: datetime.date, progress_callback: Optional[Callable[[str], None]]) -> List[str]:
+    """Retrieve Google Forms submissions for the specified date range.
 
     Args:
+        start_date: Start date for the report period
+        end_date: End date for the report period
         progress_callback: Function for progress updates
 
     Returns:
@@ -129,15 +135,33 @@ def get_forms_data(progress_callback: Optional[Callable[[str], None]]) -> List[s
         return ["Google Forms integration not configured"]
 
     update_progress(progress_callback, "Fetching Google Forms submissions")
-    return get_this_week_filled_forms_formatted()
+    return get_forms_filled_for_date_range_formatted(start_date, end_date)
+
+
+def get_custom_period(start_date: datetime.date, end_date: datetime.date) -> str:
+    """
+    Get the period from start_date to end_date in format 'DD Month YYYY - DD Month YYYY'.
+
+    Args:
+        start_date: Start date of the period
+        end_date: End date of the period
+
+    Returns:
+        str: Formatted string, e.g. '04 May 2025 - 10 May 2025'
+    """
+    return f"{start_date.strftime('%d %B %Y')} - {end_date.strftime('%d %B %Y')}"
 
 
 def generate_weekly_report(
+        start_date: datetime.date = None,
+        end_date: datetime.date = None,
         progress_callback: Optional[Callable[[str], None]] = None
 ) -> Tuple[str, float]:
     """Generate a complete weekly report from all data sources.
 
     Args:
+        start_date: Start date for the report period (default: current week Monday)
+        end_date: End date for the report period (default: current week Friday)
         progress_callback: Optional function for progress updates
 
     Returns:
@@ -150,13 +174,13 @@ def generate_weekly_report(
     current_date = datetime.datetime.now()
     is_h2 = current_date.month > 6
 
-    github_data = get_github_data(progress_callback)
+    github_data = get_github_data(start_date, end_date, progress_callback)
     sonarqube_data = get_sonarqube_metrics(progress_callback)
-    calendar_events = get_calendar_events(progress_callback)
-    forms_data = get_forms_data(progress_callback)
+    calendar_events = get_calendar_events(start_date, end_date, progress_callback)
+    forms_data = get_forms_data(start_date, end_date, progress_callback)
 
     report_data = {
-        'period': get_current_week_period(),
+        'period': get_custom_period(start_date, end_date),
         'issues': format_bulleted_list(ISSUES),
         'half_year': "H2" if is_h2 else "H1",
         'half_year_year': current_date.year,
@@ -174,8 +198,8 @@ def generate_weekly_report(
         'prs_reviewed': format_bulleted_list(github_data['prs_reviewed'], indent="  "),
         'meetings_and_activities': format_meetings(calendar_events),
         'google_forms_filled': format_bulleted_list(forms_data, indent="  "),
-        'wfo_days': format_weekdays_with_dates(WFO_DAYS),
-        'out_of_office_days': format_weekdays_with_dates(OUT_OF_OFFICE_DAYS),
+        'wfo_days': format_weekdays_with_dates_for_period(WFO_DAYS, start_date, end_date),
+        'out_of_office_days': format_weekdays_with_dates_for_period(OUT_OF_OFFICE_DAYS, start_date, end_date),
         'next_steps': format_bulleted_list(NEXT_STEPS),
         'learning': format_bulleted_list(LEARNING)
     }

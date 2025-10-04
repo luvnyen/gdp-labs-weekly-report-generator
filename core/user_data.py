@@ -35,7 +35,7 @@ OMTM: list[str] = [
     "OMTM 1",
 ]
 
-NEXT_STEPS = [
+NEXT_STEPS: list[str] = [
     "Next step 1",
 ]
 
@@ -47,7 +47,7 @@ Examples:
 - [Article Title](https://example.com)
 - [Video Title](https://youtube.com/watch?v=123)
 """
-LEARNING = [
+LEARNING: list[str] = [
     "[O'Reilly Media] [Clean Architecture: A Craftsman's Guide to Software Structure and Design](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/) by Robert C. Martin (Chapter 26/34)",
 ]
 
@@ -57,4 +57,15 @@ List of meeting titles to be excluded from the weekly report, even if they exist
 These meetings are typically reminders or administrative tasks that do not need to be reflected
 in productivity reports or summaries.
 """
-EXCLUDED_MEETINGS = []
+EXCLUDED_MEETINGS: list[str] = []
+
+"""Report period configuration. Set these variables to specify a custom date range for the weekly report.
+If not set or set to None, the system will use the current week (Monday to Friday).
+Format: YYYY-MM-DD (e.g., "2025-01-01")
+Examples:
+- REPORT_START_DATE = "2025-01-01"  # Report from January 1st, 2025
+- REPORT_END_DATE = "2025-01-31"    # Report until January 31st, 2025
+- REPORT_START_DATE = None          # Use current week Monday
+- REPORT_END_DATE = None            # Use current week Friday"""
+REPORT_START_DATE: Optional[str] = None
+REPORT_END_DATE: Optional[str] = None
